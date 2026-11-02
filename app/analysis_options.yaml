@@ -1,0 +1,25 @@
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  exclude:
+    - lib/core/l10n/generated/**
+    - build/**
+    - android/**
+    - web/**
+  language:
+    strict-casts: true
+    strict-raw-types: true
+
+linter:
+  rules:
+    - prefer_single_quotes
+    - prefer_const_constructors
+    - prefer_final_locals
+    - always_declare_return_types
+    - avoid_print
+    - unawaited_futures
+    - directives_ordering
+    - require_trailing_commas
+
+formatter:
+  page_width: 100
