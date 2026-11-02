@@ -10,7 +10,7 @@ rules enforce it. Update it whenever the model or rules change.
 | `users/{uid}` | Step 1, live | owner, admin (claim) | owner create/update with field allowlist; no delete (use `deleteMyAccount`) |
 | `price_board/{commodityId_marketId}` | rules live, data from Step 3 | any signed-in user | **none** (Cloud Functions only) |
 | `audit_logs/{id}` | live | admin (claim) | **none** (Cloud Functions only) |
-| `commodities`, `markets` | locked until Step 2 | none | none |
+| `commodities`, `markets` | Step 2, live | any signed-in user | **none** (`upsertCatalog` / `clearDemoCatalog`, admin only) |
 | `price_reports` | locked until Step 3 | none | none |
 | `listings` | locked until Step 5 | none | none |
 | `inquiries` | locked until Step 6 | none | none |
@@ -34,9 +34,27 @@ Anything not listed is denied (`match /{document=**}` → false).
 | `fcmTokens` | list, max 10 | owner | used from Step 6 |
 | `reporterScore`, `assignedMarketIds` | number, list | server only | reporters, from Step 3/8 |
 
+## `commodities/{id}` and `markets/{id}` (Step 2)
+
+The lists are **data, not code**. They are managed by admins in the web dashboard (form or CSV
+import), so the official DA / DAR / NVAT lists can replace the demo lists without a code change.
+
+- Document ID = a stable slug (`kamatis`, `bayombong-public-market`), used as the CSV `id` column.
+  Importing a row with an existing ID updates it.
+- `commodities`: `nameFil` (1-60), `nameEn` (1-60), `unit` (kg | bundle | piece), `category`
+  (free text 1-40, e.g. "Lowland vegetables"), `active`, `isDemo`, `updatedAt`.
+- `markets`: `name` (2-80), `municipality` (one of the 15), `type` (public_market | trading_post |
+  farmgate_area), `active`, `isDemo`, `updatedAt`.
+- Items are never deleted, only set `active: false`, so old price reports keep their references.
+  The exception is seeded demo data (`isDemo: true`), removed with `clearDemoCatalog`.
+- Imports are all-or-nothing (max 500 rows per call); the server re-validates every row and
+  returns per-row errors. Every write is recorded in `audit_logs`.
+- CSV templates: `docs/templates/commodities.csv`, `docs/templates/markets.csv`.
+
 ## `audit_logs/{id}`
 
-`actorId`, `action` (`set_user_role`, `delete_account`), `targetPath`, `detail`, `timestamp`.
+`actorId`, `action` (`set_user_role`, `delete_account`, `upsert_commodities`, `upsert_markets`,
+`clear_demo_commodities`, `clear_demo_markets`), `targetPath`, `detail`, `timestamp`.
 No personal data (uids and paths only).
 
 ## Roles (custom claims)

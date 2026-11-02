@@ -3,6 +3,9 @@ import 'package:flutter/foundation.dart';
 /// All tunable client numbers and allowed values. Keep in sync with
 /// functions/src/config.ts and firestore.rules.
 abstract final class AppConfig {
+  /// Shown in footers. Keep in sync with pubspec.yaml `version`.
+  static const appVersion = '0.1.0';
+
   /// Use the Firebase Emulator Suite. Defaults to on in debug builds.
   /// Override: --dart-define=USE_EMULATORS=false
   static const useEmulators = bool.fromEnvironment('USE_EMULATORS', defaultValue: kDebugMode);
@@ -45,4 +48,11 @@ abstract final class AppConfig {
     'Solano',
     'Villaverde',
   ];
+
+  // Catalog (Step 2). The lists themselves are admin-managed data in Firestore;
+  // only their shape lives here. Keep in sync with functions/src/config.ts.
+  static const units = <String>['kg', 'bundle', 'piece'];
+  static const marketTypes = <String>['public_market', 'trading_post', 'farmgate_area'];
+  static final catalogIdPattern = RegExp(r'^[a-z0-9][a-z0-9-]{1,48}$');
+  static const catalogMaxItemsPerImport = 500;
 }
