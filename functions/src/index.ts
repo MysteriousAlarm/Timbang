@@ -5,6 +5,7 @@ import { REGION } from './config';
 import { auth, db, writeAudit } from './firebase';
 import { setUserRoleHandler, RoleDeps } from './roles';
 import { deleteMyAccountHandler } from './account';
+import { CatalogDeps, clearDemoCatalogHandler, upsertCatalogHandler } from './catalog';
 
 setGlobalOptions({ region: REGION, maxInstances: 5 });
 
@@ -48,4 +49,40 @@ export const deleteMyAccount = onCall((req) =>
     deleteAuthUser: (uid) => auth.deleteUser(uid),
     audit: writeAudit,
   }),
+);
+
+const catalogDeps: CatalogDeps = {
+  async upsert(kind, items) {
+    // Firestore batches hold up to 500 writes; items are capped at 500 per call.
+    const batch = db.batch();
+    for (const { id, ...fields } of items) {
+      batch.set(
+        db.collection(kind).doc(id),
+        { ...fields, isDemo: false, updatedAt: FieldValue.serverTimestamp() },
+        { merge: true },
+      );
+    }
+    await batch.commit();
+  },
+  async deleteDemo(kind) {
+    const snap = await db.collection(kind).where('isDemo', '==', true).get();
+    const batch = db.batch();
+    snap.docs.forEach((d) => batch.delete(d.ref));
+    await batch.commit();
+    return snap.size;
+  },
+  audit: writeAudit,
+};
+
+const caller = (auth?: { uid: string; token: Record<string, unknown> }) =>
+  auth ? { uid: auth.uid, role: auth.token.role } : undefined;
+
+/** Admin-only callable: create/update commodities or markets (form edit or CSV import). */
+export const upsertCatalog = onCall((req) =>
+  upsertCatalogHandler(caller(req.auth), req.data, catalogDeps),
+);
+
+/** Admin-only callable: delete seeded demo commodities or markets. */
+export const clearDemoCatalog = onCall((req) =>
+  clearDemoCatalogHandler(caller(req.auth), req.data, catalogDeps),
 );

@@ -9,7 +9,7 @@ const { getAuth, connectAuthEmulator, signInWithCustomToken, signOut } = require
 const { getFunctions, connectFunctionsEmulator, httpsCallable } = require('firebase/functions');
 
 const PROJECT = 'demo-timbang';
-initAdmin({ projectId: PROJECT });
+if (!require('firebase-admin/app').getApps().length) initAdmin({ projectId: PROJECT });
 const aAuth = adminAuth();
 const aDb = adminDb();
 

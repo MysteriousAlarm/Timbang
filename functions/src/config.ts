@@ -33,3 +33,9 @@ export const PRICE_WINDOW_HOURS = 24;
 export const OUTLIER_THRESHOLD = 0.3;
 export const AGREEMENT_THRESHOLD = 0.15;
 export const TREND_FLAT_BAND = 0.03;
+
+// Catalog (Step 2). Lists are admin-managed data, not code: these are only the shapes.
+export const UNITS = ['kg', 'bundle', 'piece'] as const;
+export const MARKET_TYPES = ['public_market', 'trading_post', 'farmgate_area'] as const;
+export const CATALOG_ID_PATTERN = /^[a-z0-9][a-z0-9-]{1,48}$/;
+export const CATALOG_MAX_ITEMS_PER_CALL = 500;

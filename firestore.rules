@@ -89,8 +89,20 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    // ---------- catalog (Step 2) ----------
+    // Readable by signed-in users. Written ONLY by the admin-only `upsertCatalog` and
+    // `clearDemoCatalog` functions, which validate every field and write audit_logs.
+    match /commodities/{id} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+    match /markets/{id} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+
     // ---------- locked until their build step (Section 13) ----------
-    // commodities, markets (Step 2), price_reports (Step 3), listings (Step 5),
+    // price_reports (Step 3), listings (Step 5),
     // inquiries (Step 6), alerts (Step 7), abuse_reports (Step 8).
     // No explicit match = denied by default.
     match /{document=**} {

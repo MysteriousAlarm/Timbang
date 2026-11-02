@@ -206,9 +206,22 @@ describe('audit_logs (functions only)', () => {
   });
 });
 
+describe.each(['commodities', 'markets'])('%s (catalog, functions-only writes)', (name) => {
+  test('signed-in user can read', async () => {
+    await assertSucceeds(getDoc(doc(farmerCtx(), name, 'x')));
+  });
+  test('unauthenticated cannot read', async () => {
+    await assertFails(getDoc(doc(anonCtx(), name, 'x')));
+  });
+  test('no client writes, not even admin (goes through upsertCatalog)', async () => {
+    await assertFails(setDoc(doc(farmerCtx(), name, 'x'), { active: true }));
+    await assertFails(setDoc(doc(adminCtx(), name, 'x'), { active: true }));
+  });
+});
+
 describe('locked collections (until their build step)', () => {
   const locked = [
-    'commodities', 'markets', 'price_reports', 'listings', 'inquiries', 'alerts',
+    'price_reports', 'listings', 'inquiries', 'alerts',
     'abuse_reports', 'random_collection',
   ];
   test.each(locked)('%s: no client read or write', async (name) => {
