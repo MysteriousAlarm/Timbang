@@ -55,4 +55,9 @@ abstract final class AppConfig {
   static const marketTypes = <String>['public_market', 'trading_post', 'farmgate_area'];
   static final catalogIdPattern = RegExp(r'^[a-z0-9][a-z0-9-]{1,48}$');
   static const catalogMaxItemsPerImport = 500;
+
+  // Price reports (Step 3). Keep in sync with functions/src/config.ts.
+  static const priceMin = 0.01;
+  static const priceMax = 100000.0;
+  static const officialImportMaxRows = 500;
 }

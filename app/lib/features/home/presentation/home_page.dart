@@ -92,9 +92,10 @@ class HomePage extends ConsumerWidget {
               onTap: () => context.go(Routes.alerts),
             ),
             _ActionTile(
-              icon: Icons.forum_outlined,
-              label: l10n.navInquiries,
-              onTap: () => context.go(Routes.inquiries),
+              key: const Key('tileReport'),
+              icon: Icons.edit_note,
+              label: l10n.actionReportPrice,
+              onTap: () => context.push(Routes.report),
             ),
           ],
         ),
@@ -123,6 +124,7 @@ class HomePage extends ConsumerWidget {
 
 class _ActionTile extends StatelessWidget {
   const _ActionTile({
+    super.key,
     required this.icon,
     required this.label,
     required this.onTap,

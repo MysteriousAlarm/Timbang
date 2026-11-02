@@ -360,5 +360,68 @@
     }
   },
   "preview": "Silip",
-  "kpiDemoNote": "alisin kapag dumating ang opisyal"
+  "kpiDemoNote": "alisin kapag dumating ang opisyal",
+  "sourceOfficial": "Opisyal",
+  "sourceReporter": "Beripikadong tagapag-ulat",
+  "sourceCommunity": "Komunidad",
+  "actionReportPrice": "Mag-ulat ng presyo",
+  "reportTitle": "Mag-ulat ng presyo",
+  "reportKicker": "Ulat ng presyo",
+  "reportHeading": "Magkano ang nakita mong presyo?",
+  "reportAsReporter": "Ikaw ay beripikadong tagapag-ulat. Ang ulat mo ay bibilangin bilang beripikado.",
+  "reportAsCommunity": "Ang ulat mo ay ulat ng komunidad: mababa ang kumpiyansa hanggang may tumugmang ulat mula sa beripikadong tagapag-ulat.",
+  "reportNoCatalog": "Wala pang bilihin o palengke na maiuulat. Hintayin ang admin na magdagdag.",
+  "fieldCommodity": "Bilihin",
+  "fieldMarket": "Palengke",
+  "fieldPrice": "Presyo",
+  "fieldPriceHelp": "Presyong nakita mo ngayon, hal. 55.50",
+  "reportSubmit": "Ipadala ang ulat",
+  "reportFinePrint": "Iniuulat lamang ng TIMBANG ang napansing presyo. Ang median ng lahat ng ulat ang ipinapakita, hindi ang isang ulat lamang.",
+  "reportThanks": "Salamat! Natanggap ang ulat.",
+  "reportDoneCommunity": "Isasama ito sa median kapag may iba pang tumugmang ulat.",
+  "reportDoneReporter": "Na-update na ang median at kumpiyansa para sa palengkeng ito.",
+  "reportAnother": "Mag-ulat ng iba pa",
+  "reportErrPick": "Pumili ng bilihin at palengke.",
+  "reportErrInvalid": "Ilagay ang tamang presyo (hal. 55 o 55.50).",
+  "reportErrRateLimited": "Marami ka nang naiulat ngayong oras. Subukan ulit mamaya.",
+  "reportErrDuplicate": "Kaka-ulat mo lang nito. Subukan ulit pagkalipas ng ilang minuto.",
+  "reportErrNotFound": "Hindi na aktibo ang bilihin o palengkeng ito.",
+  "reportErrNotAllowed": "Hindi ka pinapayagang mag-ulat dito.",
+  "adminPrices": "Mga presyo",
+  "adminPricesKicker": "Datos ng presyo",
+  "adminPricesDesc": "Mag-import ng opisyal na presyo at bantayan ang mga bagong ulat.",
+  "importOfficialPrices": "I-import ang opisyal na presyo",
+  "officialImportHelp": "Para sa datos mula sa DA, DAR o NVAT. Bawat linya ay magiging opisyal na ulat (mataas na kumpiyansa). Kailangang tama ang lahat ng linya (hanggang {max}).",
+  "@officialImportHelp": {
+    "placeholders": {
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "officialSourceLabel": "Pinagmulan ng datos",
+  "officialSourceHelp": "Hal. DA Bantay Presyo, Nobyembre 3, 2026",
+  "officialCsvColumns": "commodityId at marketId: ID mula sa listahan · price: hal. 60 o 60.50 · date: YYYY-MM-DD (opsyonal, ngayon kung wala)",
+  "officialFieldInvalid": "mali o hindi kilala",
+  "importedPrices": "Na-import ang {count} na opisyal na presyo.",
+  "@importedPrices": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "recentReportsKicker": "Pinakabago",
+  "recentReportsTitle": "Mga bagong ulat ng presyo",
+  "noReportsTitle": "Wala pang ulat",
+  "noReportsBody": "Lalabas dito ang mga ulat mula sa app at mga na-import na opisyal na presyo.",
+  "statusValid": "Tanggap",
+  "statusOutlier": "Outlier",
+  "statusRejected": "Tinanggihan",
+  "colTime": "Oras",
+  "colCommodity": "Bilihin",
+  "colMarket": "Palengke",
+  "colPrice": "Presyo",
+  "colSource": "Pinagmulan",
+  "sourceReporterShort": "Tagapag-ulat"
 }

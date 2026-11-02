@@ -17,6 +17,8 @@ abstract final class Routes {
   static const admin = '/admin';
   static const adminCommodities = '/admin/commodities';
   static const adminMarkets = '/admin/markets';
+  static const adminPrices = '/admin/prices';
+  static const report = '/report';
 }
 
 /// Pure redirect logic (unit tested). Returns null to stay on [location].

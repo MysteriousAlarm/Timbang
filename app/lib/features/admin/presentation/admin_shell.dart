@@ -17,7 +17,12 @@ class AdminShell extends ConsumerWidget {
   final String location;
   final Widget child;
 
-  static const _routes = [Routes.admin, Routes.adminCommodities, Routes.adminMarkets];
+  static const _routes = [
+    Routes.admin,
+    Routes.adminCommodities,
+    Routes.adminMarkets,
+    Routes.adminPrices,
+  ];
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -27,7 +32,9 @@ class AdminShell extends ConsumerWidget {
     final session = ref.watch(sessionProvider);
     final name = session is SignedIn ? session.profile.name : '';
     final width = MediaQuery.sizeOf(context).width;
-    final index = _routes.lastIndexWhere((r) => location.startsWith(r)).clamp(0, 2);
+    final index = _routes
+        .lastIndexWhere((r) => location.startsWith(r))
+        .clamp(0, _routes.length - 1);
 
     return Scaffold(
       appBar: AppBar(
@@ -97,6 +104,11 @@ class AdminShell extends ConsumerWidget {
                 icon: const Icon(Icons.storefront_outlined),
                 selectedIcon: const Icon(Icons.storefront),
                 label: Text(l10n.adminMarkets),
+              ),
+              NavigationRailDestination(
+                icon: const Icon(Icons.price_change_outlined),
+                selectedIcon: const Icon(Icons.price_change),
+                label: Text(l10n.adminPrices),
               ),
             ],
           ),

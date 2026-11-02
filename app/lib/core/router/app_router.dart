@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../features/admin/presentation/admin_shell.dart';
 import '../../features/admin/presentation/catalog_page.dart';
 import '../../features/admin/presentation/overview_page.dart';
+import '../../features/admin/presentation/prices_page.dart';
 import '../../features/auth/application/session.dart';
 import '../../features/auth/presentation/otp_screen.dart';
 import '../../features/auth/presentation/phone_screen.dart';
@@ -15,6 +16,7 @@ import '../../features/home/presentation/placeholder_tabs.dart';
 import '../../features/landing/presentation/landing_page.dart';
 import '../../features/profile/presentation/profile_screen.dart';
 import '../../features/profile/presentation/profile_setup_screen.dart';
+import '../../features/reports/presentation/report_price_screen.dart';
 import '../../shared/widgets/state_views.dart';
 import '../theme/forest_gold_theme.dart';
 import '../theme/harvest_earth_theme.dart';
@@ -49,6 +51,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (_, _) => _farmerTheme(const PhoneScreen()),
         routes: [GoRoute(path: 'otp', builder: (_, _) => _farmerTheme(const OtpScreen()))],
       ),
+      GoRoute(path: Routes.report, builder: (_, _) => _farmerTheme(const ReportPriceScreen())),
       GoRoute(path: Routes.setup, builder: (_, _) => _farmerTheme(const ProfileSetupScreen())),
       StatefulShellRoute.indexedStack(
         builder: (_, _, shell) => _farmerTheme(HomeShell(shell: shell)),
@@ -73,6 +76,7 @@ final routerProvider = Provider<GoRouter>((ref) {
             path: Routes.adminMarkets,
             builder: (_, _) => const CatalogPage(kind: CatalogKind.markets),
           ),
+          GoRoute(path: Routes.adminPrices, builder: (_, _) => const AdminPricesPage()),
         ],
       ),
     ],
