@@ -1,0 +1,100 @@
+rules_version = '2';
+
+// Project TIMBANG Firestore rules.
+// Deny by default. Roles come ONLY from custom claims (request.auth.token.role),
+// which are set by the admin-only `setUserRole` Cloud Function.
+// The `role` field in users/{uid} is a display mirror and is never trusted here.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ---------- helpers ----------
+    function signedIn() {
+      return request.auth != null;
+    }
+    function claimRole() {
+      return signedIn() && ('role' in request.auth.token) ? request.auth.token.role : null;
+    }
+    function isAdmin() {
+      return claimRole() == 'admin';
+    }
+    function isOwner(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    // The 15 municipalities of Nueva Vizcaya (keep in sync with app core/config and functions config.ts).
+    function municipalities() {
+      return ['Alfonso Castañeda', 'Ambaguio', 'Aritao', 'Bagabag', 'Bambang',
+              'Bayombong', 'Diadi', 'Dupax del Norte', 'Dupax del Sur', 'Kasibu',
+              'Kayapa', 'Quezon', 'Santa Fe', 'Solano', 'Villaverde'];
+    }
+    function validName(v) {
+      return v is string && v.trim().size() >= 2 && v.size() <= 80;
+    }
+    function validMunicipality(v) {
+      return v is string && v in municipalities();
+    }
+    function validFcmTokens(v) {
+      return v is list && v.size() <= 10;
+    }
+
+    // ---------- users ----------
+    // Data minimization (RA 10173): only name, phone, municipality are personal data.
+    match /users/{uid} {
+      allow read: if isOwner(uid) || isAdmin();
+
+      // Self-signup: only farmer or buyer, unverified, active. Phone must match the
+      // verified phone on the auth token, so nobody can claim another number.
+      allow create: if isOwner(uid)
+        && request.resource.data.keys().hasOnly(
+             ['name', 'phone', 'municipality', 'role', 'verified', 'status',
+              'createdAt', 'consentAt', 'fcmTokens'])
+        && request.resource.data.keys().hasAll(
+             ['name', 'phone', 'municipality', 'role', 'verified', 'status',
+              'createdAt', 'consentAt'])
+        && validName(request.resource.data.name)
+        && request.resource.data.phone is string
+        && request.resource.data.phone == request.auth.token.phone_number
+        && validMunicipality(request.resource.data.municipality)
+        && request.resource.data.role in ['farmer', 'buyer']
+        && request.resource.data.verified == false
+        && request.resource.data.status == 'active'
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.consentAt == request.time
+        && (!('fcmTokens' in request.resource.data) || validFcmTokens(request.resource.data.fcmTokens));
+
+      // Owners may change only their name, municipality and FCM tokens.
+      // role, verified, status, reporterScore, assignedMarketIds, phone: server only.
+      allow update: if isOwner(uid)
+        && resource.data.status == 'active'
+        && request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(['name', 'municipality', 'fcmTokens', 'updatedAt'])
+        && validName(request.resource.data.name)
+        && validMunicipality(request.resource.data.municipality)
+        && (!('fcmTokens' in request.resource.data) || validFcmTokens(request.resource.data.fcmTokens))
+        && (!('updatedAt' in request.resource.data.diff(resource.data).affectedKeys())
+            || request.resource.data.updatedAt == request.time);
+
+      // Account deletion goes through a Cloud Function (it also removes the Auth user).
+      allow delete: if false;
+    }
+
+    // ---------- written by Cloud Functions only ----------
+    match /price_board/{id} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+
+    match /audit_logs/{id} {
+      allow read: if isAdmin();
+      allow write: if false;
+    }
+
+    // ---------- locked until their build step (Section 13) ----------
+    // commodities, markets (Step 2), price_reports (Step 3), listings (Step 5),
+    // inquiries (Step 6), alerts (Step 7), abuse_reports (Step 8).
+    // No explicit match = denied by default.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
