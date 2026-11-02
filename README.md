@@ -46,14 +46,17 @@ Typeface: Public Sans (SIL Open Font License), bundled in `app/assets/fonts` so 
 ## Demo data and the official lists
 
 The official commodity / market lists (DA, DAR, NVAT via the Governor's office) are pending.
-Until then, seed illustrative items (all marked `isDemo`, shown with a DEMO badge):
+Until then, seed illustrative items and price reports (all marked `isDemo`, shown with a DEMO
+badge; run while the emulators are up so the board trigger computes the demo price board):
 
 ```bash
 FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 npm run seed:demo
 ```
 
 When the official lists arrive: Admin dashboard → Mga bilihin / Mga palengke → **I-import ang CSV**
-(templates in `docs/templates/`), then **Alisin ang demo data**. No code changes needed.
+(templates in `docs/templates/`), then **Alisin ang demo data**. Official prices go in through
+**Mga presyo → I-import ang opisyal na presyo** (columns `commodityId, marketId, price, date`;
+Filipino aliases like `Bilihin, Palengke, Presyo` also work). No code changes needed.
 
 ## First admin
 
@@ -66,7 +69,8 @@ FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099 npm run seed:admin -- +639171234567
 
 ## Connecting a real Firebase project (later)
 
-1. Create the project, upgrade to Blaze, enable Phone Auth, Firestore, Storage.
+1. Create the project, upgrade to Blaze, enable Phone Auth, Firestore (location
+   `asia-southeast1`, to match the functions region), Storage.
 2. Edit `.firebaserc` (`default`) and run `cd app && flutterfire configure`
    (generates `lib/firebase_options.dart`; replaces the demo options).
 3. `firebase deploy --only firestore,storage,functions,hosting`.

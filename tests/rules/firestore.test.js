@@ -219,9 +219,35 @@ describe.each(['commodities', 'markets'])('%s (catalog, functions-only writes)',
   });
 });
 
+describe('price_reports (functions-only writes)', () => {
+  beforeEach(async () => {
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      await setDoc(doc(ctx.firestore(), 'price_reports', 'mine'), { reporterId: FARMER_UID, price: 50 });
+      await setDoc(doc(ctx.firestore(), 'price_reports', 'theirs'), { reporterId: 'other1', price: 50 });
+    });
+  });
+  test('reporter can read own report', async () => {
+    await assertSucceeds(getDoc(doc(farmerCtx(), 'price_reports', 'mine')));
+  });
+  test('cannot read other users reports (reporterId is not shared)', async () => {
+    await assertFails(getDoc(doc(farmerCtx(), 'price_reports', 'theirs')));
+  });
+  test('admin can read any report', async () => {
+    await assertSucceeds(getDoc(doc(adminCtx(), 'price_reports', 'theirs')));
+  });
+  test('no client writes: not even official-looking ones or admin', async () => {
+    await assertFails(
+      addDoc(collection(farmerCtx(), 'price_reports'), {
+        reporterId: FARMER_UID, source: 'official', price: 1,
+      }),
+    );
+    await assertFails(updateDoc(doc(farmerCtx(), 'price_reports', 'mine'), { price: 1 }));
+    await assertFails(setDoc(doc(adminCtx(), 'price_reports', 'x'), { price: 1 }));
+  });
+});
+
 describe('locked collections (until their build step)', () => {
-  const locked = [
-    'price_reports', 'listings', 'inquiries', 'alerts',
+  const locked = [ 'listings', 'inquiries', 'alerts',
     'abuse_reports', 'random_collection',
   ];
   test.each(locked)('%s: no client read or write', async (name) => {

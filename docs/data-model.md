@@ -8,10 +8,10 @@ rules enforce it. Update it whenever the model or rules change.
 | Collection | Status | Client read | Client write |
 |---|---|---|---|
 | `users/{uid}` | Step 1, live | owner, admin (claim) | owner create/update with field allowlist; no delete (use `deleteMyAccount`) |
-| `price_board/{commodityId_marketId}` | rules live, data from Step 3 | any signed-in user | **none** (Cloud Functions only) |
+| `price_board/{commodityId_marketId}` | Step 3, live | any signed-in user | **none** (`onPriceReportCreated` / `importOfficialPrices`) |
 | `audit_logs/{id}` | live | admin (claim) | **none** (Cloud Functions only) |
 | `commodities`, `markets` | Step 2, live | any signed-in user | **none** (`upsertCatalog` / `clearDemoCatalog`, admin only) |
-| `price_reports` | locked until Step 3 | none | none |
+| `price_reports` | Step 3, live | admin; reporter reads own | **none** (`submitPriceReport` / `importOfficialPrices`) |
 | `listings` | locked until Step 5 | none | none |
 | `inquiries` | locked until Step 6 | none | none |
 | `alerts` | locked until Step 7 | none | none |
@@ -51,10 +51,40 @@ import), so the official DA / DAR / NVAT lists can replace the demo lists withou
   returns per-row errors. Every write is recorded in `audit_logs`.
 - CSV templates: `docs/templates/commodities.csv`, `docs/templates/markets.csv`.
 
+## `price_reports/{id}` (Step 3)
+
+`commodityId`, `marketId`, `price` (0.01-100000, 2 decimals), `unit` (copied from the commodity),
+`reporterId`, `reporterRole`, `source` (official | reporter | community), `timestamp`,
+`status` (valid | outlier | rejected), `isDemo`, optional `batchId` + `sourceNote` (official imports).
+
+- Submitted only through `submitPriceReport` (any signed-in, active user). The **source tier is
+  set by the server from the role claim**: reporter/admin -> `reporter`, everyone else -> `community`.
+  Official reports only come from the admin-only `importOfficialPrices`.
+- Reporters with `assignedMarketIds` can only report for those markets.
+- Rate limits: 20 reports per user per hour; the same user + commodity + market at most once per
+  10 minutes (`functions/src/config.ts`).
+- `status` is maintained by the board function (valid/outlier); `rejected` is an admin decision (Step 8).
+
+## `price_board/{commodityId}_{marketId}` (Step 3)
+
+`commodityId`, `marketId`, `unit`, `medianPrice`, `confidence` (high | medium | low), `reportCount`,
+`trend` (up | down | flat), `previousMedian`, `sources` {official, reporter, community counts},
+`isDemo`, `latestReportAt`, `updatedAt`.
+
+Computed by `functions/src/confidence.ts` (pure, unit-tested) on every new report:
+1. Reports from the last 24 h, excluding `rejected`. Median, never mean or latest.
+2. Non-official reports > 30% from the median become `outlier`; median recomputed. Official
+   reports are never outliers. If every report would be an outlier, none are marked.
+3. High: any official, or 3+ reports within 15% of the median incl. a verified reporter.
+   Medium: verified reporter report(s) without that agreement. Low: community only.
+4. Trend vs the previous 24 h median; within ±3% is flat.
+5. No reports in 24 h: the entry is left as is; the UI shows it as stale with its age.
+6. `users.reporterScore` = share of a reporter's reports within 15% of the median.
+
 ## `audit_logs/{id}`
 
 `actorId`, `action` (`set_user_role`, `delete_account`, `upsert_commodities`, `upsert_markets`,
-`clear_demo_commodities`, `clear_demo_markets`), `targetPath`, `detail`, `timestamp`.
+`clear_demo_commodities`, `clear_demo_markets`, `import_official_prices`), `targetPath`, `detail`, `timestamp`.
 No personal data (uids and paths only).
 
 ## Roles (custom claims)

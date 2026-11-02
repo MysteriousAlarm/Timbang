@@ -101,8 +101,17 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    // ---------- price reports (Step 3) ----------
+    // Submitted ONLY through `submitPriceReport` (validates, rate-limits, sets the source
+    // tier from the role claim) or the admin-only `importOfficialPrices`.
+    // Readable by admins (moderation) and by the reporter for their own reports.
+    match /price_reports/{id} {
+      allow read: if isAdmin() || (signedIn() && resource.data.reporterId == request.auth.uid);
+      allow write: if false;
+    }
+
     // ---------- locked until their build step (Section 13) ----------
-    // price_reports (Step 3), listings (Step 5),
+    // listings (Step 5),
     // inquiries (Step 6), alerts (Step 7), abuse_reports (Step 8).
     // No explicit match = denied by default.
     match /{document=**} {

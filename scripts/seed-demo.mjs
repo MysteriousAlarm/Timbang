@@ -47,4 +47,37 @@ for (const [id, name, municipality, type] of markets) {
 }
 await batch.commit();
 console.log(`Seeded ${commodities.length} demo commodities and ${markets.length} demo markets.`);
+
+// Illustrative price reports (isDemo). With the Functions emulator running, the
+// onPriceReportCreated trigger turns these into price_board entries (also isDemo).
+const H = 60 * 60 * 1000;
+const now = Date.now();
+// [commodity, market, price, source, hoursAgo]
+const reports = [
+  ['kamatis', 'bayombong-public-market', 58, 'reporter', 30],
+  ['kamatis', 'bayombong-public-market', 60, 'reporter', 26],
+  ['kamatis', 'bayombong-public-market', 64, 'reporter', 3],
+  ['kamatis', 'bayombong-public-market', 66, 'community', 2],
+  ['kamatis', 'bayombong-public-market', 63, 'community', 1],
+  ['repolyo', 'bayombong-public-market', 45, 'reporter', 29],
+  ['repolyo', 'bayombong-public-market', 44, 'reporter', 5],
+  ['sitaw', 'bayombong-public-market', 30, 'community', 4],
+  ['karot', 'bayombong-public-market', 70, 'reporter', 31],
+  ['karot', 'bayombong-public-market', 62, 'reporter', 6],
+  ['talong', 'bayombong-public-market', 55, 'reporter', 7],
+  ['kamatis', 'solano-public-market', 61, 'community', 8],
+  ['kamatis', 'nvat-bambang', 52, 'reporter', 9],
+  ['repolyo', 'nvat-bambang', 38, 'reporter', 10],
+  ['karot', 'solano-public-market', 68, 'reporter', 40],
+];
+const units = Object.fromEntries(commodities.map(([id, , , unit]) => [id, unit]));
+// Older reports first so each trigger sees the history it needs for the trend.
+for (const [commodityId, marketId, price, source, hoursAgo] of reports.sort((a, b) => b[4] - a[4])) {
+  await db.collection('price_reports').add({
+    commodityId, marketId, price, unit: units[commodityId],
+    reporterId: 'demo-seed', reporterRole: 'demo', source, status: 'valid', isDemo: true,
+    timestamp: new Date(now - hoursAgo * H),
+  });
+}
+console.log(`Seeded ${reports.length} demo price reports (needs the Functions emulator for the board).`);
 process.exit(0);

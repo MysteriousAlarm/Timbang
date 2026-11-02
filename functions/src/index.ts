@@ -1,11 +1,19 @@
 import { onCall } from 'firebase-functions/v2/https';
+import { onDocumentCreated } from 'firebase-functions/v2/firestore';
 import { setGlobalOptions } from 'firebase-functions/v2';
-import { FieldValue } from 'firebase-admin/firestore';
+import { FieldValue, Timestamp } from 'firebase-admin/firestore';
 import { REGION } from './config';
 import { auth, db, writeAudit } from './firebase';
 import { setUserRoleHandler, RoleDeps } from './roles';
 import { deleteMyAccountHandler } from './account';
 import { CatalogDeps, clearDemoCatalogHandler, upsertCatalogHandler } from './catalog';
+import { CalcReport } from './confidence';
+import {
+  PriceStore,
+  importOfficialPricesHandler,
+  onReportCreated,
+  submitPriceReportHandler,
+} from './priceReports';
 
 setGlobalOptions({ region: REGION, maxInstances: 5 });
 
@@ -86,3 +94,124 @@ export const upsertCatalog = onCall((req) =>
 export const clearDemoCatalog = onCall((req) =>
   clearDemoCatalogHandler(caller(req.auth), req.data, catalogDeps),
 );
+
+const priceStore: PriceStore = {
+  now: () => Date.now(),
+  async getCommodity(id) {
+    const d = (await db.doc(`commodities/${id}`).get()).data();
+    return d ? { unit: String(d.unit), active: d.active !== false } : null;
+  },
+  async getMarket(id) {
+    const d = (await db.doc(`markets/${id}`).get()).data();
+    return d ? { active: d.active !== false } : null;
+  },
+  async getUser(uid) {
+    const d = (await db.doc(`users/${uid}`).get()).data();
+    return d
+      ? { status: String(d.status ?? 'active'), assignedMarketIds: d.assignedMarketIds ?? [] }
+      : null;
+  },
+  async reportsByUserSince(uid, sinceMs) {
+    const snap = await db
+      .collection('price_reports')
+      .where('reporterId', '==', uid)
+      .where('timestamp', '>', Timestamp.fromMillis(sinceMs))
+      .get();
+    return snap.docs.map((d) => ({
+      commodityId: d.get('commodityId'),
+      marketId: d.get('marketId'),
+      timestamp: (d.get('timestamp') as Timestamp).toMillis(),
+    }));
+  },
+  async addReports(reports) {
+    const ids: string[] = [];
+    for (let i = 0; i < reports.length; i += 450) {
+      const batch = db.batch();
+      for (const r of reports.slice(i, i + 450)) {
+        const ref = db.collection('price_reports').doc();
+        ids.push(ref.id);
+        batch.set(ref, { ...r, timestamp: Timestamp.fromMillis(r.timestamp) });
+      }
+      await batch.commit();
+    }
+    return ids;
+  },
+  async reportsForPairSince(commodityId, marketId, sinceMs) {
+    const snap = await db
+      .collection('price_reports')
+      .where('commodityId', '==', commodityId)
+      .where('marketId', '==', marketId)
+      .where('timestamp', '>', Timestamp.fromMillis(sinceMs))
+      .get();
+    return snap.docs.map((d): CalcReport => ({
+      id: d.id,
+      price: d.get('price'),
+      source: d.get('source'),
+      status: d.get('status'),
+      timestamp: (d.get('timestamp') as Timestamp).toMillis(),
+      isDemo: d.get('isDemo') === true,
+    }));
+  },
+  async saveBoard(commodityId, marketId, unit, b) {
+    const batch = db.batch();
+    batch.set(db.doc(`price_board/${commodityId}_${marketId}`), {
+      commodityId,
+      marketId,
+      unit,
+      medianPrice: b.medianPrice,
+      confidence: b.confidence,
+      reportCount: b.reportCount,
+      trend: b.trend,
+      previousMedian: b.previousMedian,
+      sources: b.sources,
+      isDemo: b.isDemo,
+      latestReportAt: Timestamp.fromMillis(b.latestReportAt),
+      updatedAt: FieldValue.serverTimestamp(),
+    });
+    for (const u of b.statusUpdates) {
+      batch.update(db.doc(`price_reports/${u.id}`), { status: u.status });
+    }
+    await batch.commit();
+  },
+  async bumpReporterScore(uid, update) {
+    const ref = db.doc(`users/${uid}`);
+    await db.runTransaction(async (tx) => {
+      const snap = await tx.get(ref);
+      if (!snap.exists) return;
+      const next = update(snap.get('reportsScored') ?? 0, snap.get('reportsNearMedian') ?? 0);
+      tx.update(ref, {
+        reportsScored: next.scored,
+        reportsNearMedian: next.near,
+        reporterScore: next.score,
+      });
+    });
+  },
+  audit: writeAudit,
+};
+
+/** Any signed-in user submits a price report; the source tier comes from the role claim. */
+export const submitPriceReport = onCall((req) =>
+  submitPriceReportHandler(caller(req.auth), req.data, priceStore),
+);
+
+/** Admin-only: import official DA / DAR / NVAT prices. */
+export const importOfficialPrices = onCall({ timeoutSeconds: 120 }, (req) =>
+  importOfficialPricesHandler(caller(req.auth), req.data, priceStore),
+);
+
+/** Recomputes median, confidence and trend for the report's commodity + market. */
+export const onPriceReportCreated = onDocumentCreated('price_reports/{id}', async (event) => {
+  const d = event.data?.data();
+  if (!d) return;
+  await onReportCreated(
+    {
+      commodityId: d.commodityId,
+      marketId: d.marketId,
+      price: d.price,
+      source: d.source,
+      reporterId: d.reporterId,
+      batchId: d.batchId,
+    },
+    priceStore,
+  );
+});
