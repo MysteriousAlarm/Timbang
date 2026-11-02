@@ -57,6 +57,16 @@ void main() {
       (SharedTokens.onConfidenceLow, SharedTokens.confidenceLow),
       (SharedTokens.onError, SharedTokens.error),
       (SharedTokens.error, HarvestEarthTokens.surface),
+      // Derived tints and shades.
+      (HarvestEarthTokens.onPrimary, HarvestEarthTokens.primaryDark),
+      (HarvestEarthTokens.text, HarvestEarthTokens.primaryTint),
+      (HarvestEarthTokens.textMuted, HarvestEarthTokens.surfaceMuted),
+      (HarvestEarthTokens.primary, HarvestEarthTokens.primaryTint),
+      (ForestGoldTokens.onPrimary, ForestGoldTokens.primaryDark),
+      (ForestGoldTokens.text, ForestGoldTokens.primaryTint),
+      (ForestGoldTokens.textMuted, ForestGoldTokens.surfaceMuted),
+      (ForestGoldTokens.primary, ForestGoldTokens.primaryTint),
+      (SharedTokens.onNotice, SharedTokens.notice),
     ];
     for (final (fg, bg) in pairs) {
       expect(contrast(fg, bg), greaterThanOrEqualTo(4.5), reason: '$fg on $bg');

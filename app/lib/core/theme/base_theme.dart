@@ -4,29 +4,40 @@ import 'timbang_colors.dart';
 import 'tokens.dart';
 import 'typography.dart';
 
-/// Builds a ThemeData from a palette. Shapes, spacing, sizes and typography are shared.
+/// Builds a ThemeData from a palette. Shapes, spacing, sizes and typography are shared,
+/// so both themes read as one family: flat surfaces, 1px rules, no drop shadows.
 ThemeData buildTimbangTheme({
   required ColorScheme scheme,
   required TimbangColors colors,
   required Color text,
 }) {
-  final shape = RoundedRectangleBorder(borderRadius: BorderRadius.circular(SharedTokens.radius));
-  const minSize = Size(SharedTokens.minTouchTarget, SharedTokens.minTouchTarget + 4);
-  const padding = EdgeInsets.symmetric(horizontal: 20, vertical: 14);
+  final radius = BorderRadius.circular(SharedTokens.radius);
+  final shape = RoundedRectangleBorder(borderRadius: radius);
+  const minSize = Size(SharedTokens.minTouchTarget, 52);
+  const padding = EdgeInsets.symmetric(horizontal: 22, vertical: 14);
   final textTheme = timbangTextTheme(text, colors.textMuted);
+  OutlineInputBorder outline(Color c, [double w = 1.2]) => OutlineInputBorder(
+    borderRadius: radius,
+    borderSide: BorderSide(color: c, width: w),
+  );
 
   return ThemeData(
     useMaterial3: true,
+    fontFamily: kFontFamily,
     colorScheme: scheme,
     scaffoldBackgroundColor: colors.canvas,
     textTheme: textTheme,
     extensions: [colors],
     materialTapTargetSize: MaterialTapTargetSize.padded,
     visualDensity: VisualDensity.standard,
+    splashFactory: InkSparkle.splashFactory,
     appBarTheme: AppBarTheme(
       backgroundColor: scheme.primary,
       foregroundColor: scheme.onPrimary,
+      elevation: 0,
+      scrolledUnderElevation: 0,
       centerTitle: false,
+      titleSpacing: SharedTokens.space4,
       titleTextStyle: textTheme.titleLarge?.copyWith(color: scheme.onPrimary),
     ),
     cardTheme: CardThemeData(
@@ -34,7 +45,7 @@ ThemeData buildTimbangTheme({
       elevation: 0,
       margin: EdgeInsets.zero,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(SharedTokens.radius),
+        borderRadius: radius,
         side: BorderSide(color: colors.border),
       ),
     ),
@@ -58,38 +69,101 @@ ThemeData buildTimbangTheme({
     ),
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
-        minimumSize: minSize,
+        minimumSize: const Size(SharedTokens.minTouchTarget, SharedTokens.minTouchTarget),
         foregroundColor: colors.info,
         textStyle: textTheme.labelLarge,
+        shape: shape,
+      ),
+    ),
+    iconButtonTheme: IconButtonThemeData(
+      style: IconButton.styleFrom(
+        minimumSize: const Size(SharedTokens.minTouchTarget, SharedTokens.minTouchTarget),
       ),
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: scheme.surface,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(SharedTokens.radius),
-        borderSide: BorderSide(color: colors.textMuted),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(SharedTokens.radius),
-        borderSide: BorderSide(color: colors.textMuted),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(SharedTokens.radius),
-        borderSide: BorderSide(color: scheme.primary, width: 2),
-      ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+      border: outline(colors.textMuted),
+      enabledBorder: outline(colors.textMuted),
+      focusedBorder: outline(scheme.primary, 2.2),
+      errorBorder: outline(scheme.error, 1.5),
+      focusedErrorBorder: outline(scheme.error, 2.2),
       labelStyle: textTheme.bodyLarge?.copyWith(color: colors.textMuted),
+      floatingLabelStyle: textTheme.labelLarge?.copyWith(color: scheme.primary),
+      prefixIconColor: colors.textMuted,
     ),
     navigationBarTheme: NavigationBarThemeData(
       backgroundColor: scheme.surface,
-      indicatorColor: scheme.primaryContainer,
-      height: 72,
+      surfaceTintColor: Colors.transparent,
+      indicatorColor: colors.primaryTint,
+      height: 74,
       labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
-      labelTextStyle: WidgetStatePropertyAll(textTheme.labelMedium),
+      iconTheme: WidgetStateProperty.resolveWith(
+        (s) => IconThemeData(
+          color: s.contains(WidgetState.selected) ? scheme.primary : colors.textMuted,
+          size: 26,
+        ),
+      ),
+      labelTextStyle: WidgetStateProperty.resolveWith(
+        (s) => textTheme.labelMedium?.copyWith(
+          color: s.contains(WidgetState.selected) ? scheme.primary : colors.textMuted,
+          fontWeight: s.contains(WidgetState.selected) ? FontWeight.w800 : FontWeight.w600,
+        ),
+      ),
     ),
-    snackBarTheme: const SnackBarThemeData(behavior: SnackBarBehavior.floating),
-    dividerTheme: DividerThemeData(color: colors.border, thickness: 1),
+    navigationRailTheme: NavigationRailThemeData(
+      backgroundColor: scheme.surface,
+      indicatorColor: colors.primaryTint,
+      selectedIconTheme: IconThemeData(color: scheme.primary),
+      unselectedIconTheme: IconThemeData(color: colors.textMuted),
+      selectedLabelTextStyle: textTheme.labelLarge?.copyWith(color: scheme.primary),
+      unselectedLabelTextStyle: textTheme.labelLarge?.copyWith(color: colors.textMuted),
+    ),
+    dataTableTheme: DataTableThemeData(
+      headingRowColor: WidgetStatePropertyAll(colors.surfaceMuted),
+      headingTextStyle: textTheme.labelMedium?.copyWith(color: text, fontWeight: FontWeight.w800),
+      dataTextStyle: textTheme.bodyMedium,
+      dividerThickness: 1,
+      headingRowHeight: 52,
+      dataRowMinHeight: 56,
+      dataRowMaxHeight: 64,
+    ),
+    dialogTheme: DialogThemeData(
+      backgroundColor: scheme.surface,
+      surfaceTintColor: Colors.transparent,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(SharedTokens.radiusLarge)),
+      titleTextStyle: textTheme.titleLarge,
+    ),
+    bottomSheetTheme: BottomSheetThemeData(
+      backgroundColor: scheme.surface,
+      surfaceTintColor: Colors.transparent,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(SharedTokens.radiusLarge)),
+      ),
+    ),
+    checkboxTheme: CheckboxThemeData(
+      side: BorderSide(color: colors.textMuted, width: 2),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+    ),
+    switchTheme: SwitchThemeData(trackOutlineColor: WidgetStatePropertyAll(colors.textMuted)),
+    snackBarTheme: SnackBarThemeData(
+      behavior: SnackBarBehavior.floating,
+      backgroundColor: text,
+      contentTextStyle: textTheme.bodyMedium?.copyWith(color: scheme.surface),
+      shape: shape,
+    ),
+    tooltipTheme: TooltipThemeData(
+      decoration: BoxDecoration(color: text, borderRadius: BorderRadius.circular(6)),
+      textStyle: textTheme.labelMedium?.copyWith(color: scheme.surface),
+    ),
+    dividerTheme: DividerThemeData(color: colors.border, thickness: 1, space: 1),
+    listTileTheme: ListTileThemeData(
+      minVerticalPadding: 12,
+      iconColor: colors.textMuted,
+      titleTextStyle: textTheme.titleSmall,
+      subtitleTextStyle: textTheme.bodySmall,
+    ),
   );
 }
 
@@ -115,5 +189,6 @@ ColorScheme timbangScheme({
     onError: SharedTokens.onError,
     surface: surface,
     onSurface: text,
+    surfaceTint: Colors.transparent,
   );
 }

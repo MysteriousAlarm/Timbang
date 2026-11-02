@@ -13,7 +13,7 @@ final ThemeData harvestEarthTheme = buildTimbangTheme(
     onSecondary: HarvestEarthTokens.onSecondary,
     surface: HarvestEarthTokens.surface,
     text: HarvestEarthTokens.text,
-    primaryContainer: HarvestEarthTokens.canvas,
+    primaryContainer: HarvestEarthTokens.primaryTint,
     onPrimaryContainer: HarvestEarthTokens.text,
   ),
   colors: const TimbangColors(
@@ -25,6 +25,9 @@ final ThemeData harvestEarthTheme = buildTimbangTheme(
     border: HarvestEarthTokens.border,
     highlight: HarvestEarthTokens.cta,
     onHighlight: HarvestEarthTokens.onCta,
+    primaryDark: HarvestEarthTokens.primaryDark,
+    primaryTint: HarvestEarthTokens.primaryTint,
+    surfaceMuted: HarvestEarthTokens.surfaceMuted,
     confidenceHigh: SharedTokens.confidenceHigh,
     onConfidenceHigh: SharedTokens.onConfidenceHigh,
     confidenceMedium: SharedTokens.confidenceMedium,

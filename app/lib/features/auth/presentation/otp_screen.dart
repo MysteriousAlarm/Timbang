@@ -52,15 +52,15 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
     }
     final controller = ref.read(phoneAuthControllerProvider.notifier);
     return AuthScaffold(
+      step: l10n.stepOf(2, 3),
       title: l10n.otpTitle,
+      subtitle: l10n.otpSentTo(formatPhMobile(phone)),
       leading: IconButton(
         tooltip: l10n.changeNumber,
         icon: const Icon(Icons.arrow_back),
         onPressed: _changeNumber,
       ),
       children: [
-        Text(l10n.otpSentTo(formatPhMobile(phone)), style: Theme.of(context).textTheme.bodyLarge),
-        const SizedBox(height: SharedTokens.space4),
         if (state.error != null) ErrorBanner(authErrorText(l10n, state.error!)),
         TextField(
           key: const Key('otpField'),

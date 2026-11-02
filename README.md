@@ -37,8 +37,23 @@ OTP codes are shown in the Emulator UI (Authentication tab) and in the emulator 
 ```bash
 npm run test:rules                   # Firestore + Storage rules tests (starts emulators)
 npm --prefix functions test          # Cloud Functions unit tests (Jest)
+npm run test:integration             # callable functions against Auth/Firestore/Functions emulators
 cd app && flutter analyze && flutter test
 ```
+
+Typeface: Public Sans (SIL Open Font License), bundled in `app/assets/fonts` so it works offline.
+
+## Demo data and the official lists
+
+The official commodity / market lists (DA, DAR, NVAT via the Governor's office) are pending.
+Until then, seed illustrative items (all marked `isDemo`, shown with a DEMO badge):
+
+```bash
+FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 npm run seed:demo
+```
+
+When the official lists arrive: Admin dashboard → Mga bilihin / Mga palengke → **I-import ang CSV**
+(templates in `docs/templates/`), then **Alisin ang demo data**. No code changes needed.
 
 ## First admin
 

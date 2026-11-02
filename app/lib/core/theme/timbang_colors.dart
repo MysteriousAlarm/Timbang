@@ -12,6 +12,9 @@ class TimbangColors extends ThemeExtension<TimbangColors> {
     required this.border,
     required this.highlight,
     required this.onHighlight,
+    required this.primaryDark,
+    required this.primaryTint,
+    required this.surfaceMuted,
     required this.confidenceHigh,
     required this.onConfidenceHigh,
     required this.confidenceMedium,
@@ -31,6 +34,15 @@ class TimbangColors extends ThemeExtension<TimbangColors> {
   /// Badge/highlight fill (gold on web, harvest on mobile). Always paired with [onHighlight].
   final Color highlight;
   final Color onHighlight;
+
+  /// Darker band for top strips/footers (white text on it).
+  final Color primaryDark;
+
+  /// Soft tint for selected states and section headers (body text on it).
+  final Color primaryTint;
+
+  /// Table headers and grouped-list backgrounds.
+  final Color surfaceMuted;
 
   final Color confidenceHigh;
   final Color onConfidenceHigh;

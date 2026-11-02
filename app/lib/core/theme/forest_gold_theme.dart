@@ -13,7 +13,7 @@ final ThemeData forestGoldTheme = buildTimbangTheme(
     onSecondary: ForestGoldTokens.onAccent,
     surface: ForestGoldTokens.surface,
     text: ForestGoldTokens.text,
-    primaryContainer: ForestGoldTokens.canvas,
+    primaryContainer: ForestGoldTokens.primaryTint,
     onPrimaryContainer: ForestGoldTokens.text,
   ),
   colors: const TimbangColors(
@@ -26,6 +26,9 @@ final ThemeData forestGoldTheme = buildTimbangTheme(
     border: ForestGoldTokens.border,
     highlight: ForestGoldTokens.gold,
     onHighlight: ForestGoldTokens.onGold,
+    primaryDark: ForestGoldTokens.primaryDark,
+    primaryTint: ForestGoldTokens.primaryTint,
+    surfaceMuted: ForestGoldTokens.surfaceMuted,
     confidenceHigh: SharedTokens.confidenceHigh,
     onConfidenceHigh: SharedTokens.onConfidenceHigh,
     confidenceMedium: SharedTokens.confidenceMedium,

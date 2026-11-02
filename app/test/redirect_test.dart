@@ -53,5 +53,7 @@ void main() {
     expect(resolveRedirect(_farmer, Routes.admin, w), Routes.prices);
     expect(resolveRedirect(_admin, Routes.admin, w), isNull);
     expect(resolveRedirect(_admin, Routes.admin, m), Routes.prices);
+    expect(resolveRedirect(_farmer, Routes.adminCommodities, w), Routes.prices);
+    expect(resolveRedirect(_admin, Routes.adminMarkets, w), isNull);
   });
 }

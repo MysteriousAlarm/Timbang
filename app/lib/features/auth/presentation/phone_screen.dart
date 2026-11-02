@@ -36,7 +36,9 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen> {
     final l10n = AppLocalizations.of(context);
     final state = ref.watch(phoneAuthControllerProvider);
     return AuthScaffold(
+      step: l10n.stepOf(1, 3),
       title: l10n.loginTitle,
+      subtitle: l10n.phoneHelp,
       children: [
         if (state.error != null) ErrorBanner(authErrorText(l10n, state.error!)),
         TextField(
@@ -56,8 +58,6 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen> {
           ),
           onSubmitted: (_) => _submit(),
         ),
-        const SizedBox(height: SharedTokens.space2),
-        Text(l10n.phoneHelp, style: Theme.of(context).textTheme.bodySmall),
         const SizedBox(height: SharedTokens.space5),
         CtaButton(
           key: const Key('sendCode'),

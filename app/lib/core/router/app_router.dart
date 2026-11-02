@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../features/admin/presentation/admin_home.dart';
+import '../../features/admin/presentation/admin_shell.dart';
+import '../../features/admin/presentation/catalog_page.dart';
+import '../../features/admin/presentation/overview_page.dart';
 import '../../features/auth/application/session.dart';
 import '../../features/auth/presentation/otp_screen.dart';
 import '../../features/auth/presentation/phone_screen.dart';
+import '../../features/catalog/domain/catalog_item.dart';
+import '../../features/home/presentation/home_page.dart';
 import '../../features/home/presentation/home_shell.dart';
 import '../../features/home/presentation/placeholder_tabs.dart';
 import '../../features/landing/presentation/landing_page.dart';
@@ -49,14 +53,28 @@ final routerProvider = Provider<GoRouter>((ref) {
       StatefulShellRoute.indexedStack(
         builder: (_, _, shell) => _farmerTheme(HomeShell(shell: shell)),
         branches: [
-          _tab(Routes.prices, const PriceBoardPlaceholder()),
+          _tab(Routes.prices, const HomePage()),
           _tab(Routes.listings, const ComingSoonTab(icon: Icons.storefront_outlined)),
           _tab(Routes.inquiries, const ComingSoonTab(icon: Icons.forum_outlined)),
           _tab(Routes.alerts, const ComingSoonTab(icon: Icons.notifications_outlined)),
           _tab(Routes.profile, const ProfileScreen()),
         ],
       ),
-      GoRoute(path: Routes.admin, builder: (_, _) => _webTheme(const AdminHome())),
+      ShellRoute(
+        builder: (_, state, child) =>
+            _webTheme(AdminShell(location: state.matchedLocation, child: child)),
+        routes: [
+          GoRoute(path: Routes.admin, builder: (_, _) => const AdminOverviewPage()),
+          GoRoute(
+            path: Routes.adminCommodities,
+            builder: (_, _) => const CatalogPage(kind: CatalogKind.commodities),
+          ),
+          GoRoute(
+            path: Routes.adminMarkets,
+            builder: (_, _) => const CatalogPage(kind: CatalogKind.markets),
+          ),
+        ],
+      ),
     ],
   );
 });

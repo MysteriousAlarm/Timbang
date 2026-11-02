@@ -1,20 +1,37 @@
 import 'package:flutter/material.dart';
 
+/// Bundled typeface shared by both themes (Public Sans, SIL OFL).
+const kFontFamily = 'PublicSans';
+
 /// Shared typography for both themes: large, high-contrast, low-end Android friendly.
-/// Uses the platform font (Roboto on Android) so nothing is downloaded.
 TextTheme timbangTextTheme(Color text, Color muted) {
+  TextStyle s(double size, FontWeight w, {Color? color, double? height, double? spacing}) =>
+      TextStyle(
+        fontFamily: kFontFamily,
+        fontSize: size,
+        fontWeight: w,
+        color: color,
+        height: height,
+        letterSpacing: spacing,
+      );
   return TextTheme(
-    displaySmall: TextStyle(fontSize: 34, fontWeight: FontWeight.w800, color: text, height: 1.15),
-    headlineMedium: TextStyle(fontSize: 28, fontWeight: FontWeight.w700, color: text),
-    headlineSmall: TextStyle(fontSize: 24, fontWeight: FontWeight.w700, color: text),
-    titleLarge: TextStyle(fontSize: 22, fontWeight: FontWeight.w700, color: text),
-    titleMedium: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: text),
-    titleSmall: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: text),
-    bodyLarge: TextStyle(fontSize: 18, color: text, height: 1.4),
-    bodyMedium: TextStyle(fontSize: 16, color: text, height: 1.4),
-    bodySmall: TextStyle(fontSize: 14, color: muted, height: 1.35),
-    labelLarge: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
-    labelMedium: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
-    labelSmall: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+    displaySmall: s(36, FontWeight.w800, color: text, height: 1.12, spacing: -0.5),
+    headlineMedium: s(28, FontWeight.w800, color: text, height: 1.2, spacing: -0.25),
+    headlineSmall: s(24, FontWeight.w700, color: text, height: 1.25),
+    titleLarge: s(21, FontWeight.w700, color: text, height: 1.3),
+    titleMedium: s(18, FontWeight.w600, color: text, height: 1.3),
+    titleSmall: s(16, FontWeight.w600, color: text, height: 1.3),
+    bodyLarge: s(17, FontWeight.w400, color: text, height: 1.5),
+    bodyMedium: s(16, FontWeight.w400, color: text, height: 1.5),
+    bodySmall: s(14, FontWeight.w400, color: muted, height: 1.45),
+    labelLarge: s(16, FontWeight.w700, spacing: 0.2),
+    labelMedium: s(14, FontWeight.w600, spacing: 0.2),
+    labelSmall: s(13, FontWeight.w700, color: muted, spacing: 1.1),
   );
 }
+
+/// Section kicker above a title, e.g. "PRESYO NGAYON".
+TextStyle overline(BuildContext context) => Theme.of(context).textTheme.labelSmall!;
+
+/// Prices and counts: tabular digits so columns line up.
+const tabularFigures = [FontFeature.tabularFigures()];

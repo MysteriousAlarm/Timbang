@@ -16,8 +16,11 @@ abstract final class HarvestEarthTokens {
   static const text = Color(0xFF2B2118);
   static const textMuted = Color(0xFF6B5A48);
   static const info = Color(0xFF2A6F97);
-  // Derived from textMuted for dividers/outlines (UI component, 3:1 not required for decoration).
-  static const border = Color(0xFFE4D9C6);
+  // Derived tints/shades of the palette above (contrast-checked in test/theme_test.dart).
+  static const border = Color(0xFFE4D9C6); // card outlines, decoration only
+  static const primaryDark = Color(0xFF235229); // header bands, top strip
+  static const primaryTint = Color(0xFFE7F0E8); // selected rows, soft headers
+  static const surfaceMuted = Color(0xFFF5EEE1); // table headers, grouped list bg
 }
 
 /// Forest and Gold: website (landing page + admin dashboard).
@@ -33,6 +36,10 @@ abstract final class ForestGoldTokens {
   static const text = Color(0xFF1B2A21);
   static const textMuted = Color(0xFF4A6B57);
   static const border = Color(0xFFD5E0D6);
+  // Derived tints/shades (contrast-checked in test/theme_test.dart).
+  static const primaryDark = Color(0xFF163A20); // top utility strip, footer
+  static const primaryTint = Color(0xFFE6EFE8); // selected nav, soft headers
+  static const surfaceMuted = Color(0xFFEEF3EC); // table headers
 }
 
 /// Shared across both themes so the product feels like one family.
@@ -46,6 +53,11 @@ abstract final class SharedTokens {
   static const error = Color(0xFFB3261E);
   static const onError = Color(0xFFFFFFFF);
 
+  /// Notices such as the "demo data" banner: pale gold fill, dark text, gold rule.
+  static const notice = Color(0xFFFFF4D6);
+  static const onNotice = Color(0xFF1B2A21);
+  static const noticeRule = Color(0xFFC9A227);
+
   // Spacing (dp) and shape.
   static const space1 = 4.0;
   static const space2 = 8.0;
@@ -53,8 +65,8 @@ abstract final class SharedTokens {
   static const space4 = 16.0;
   static const space5 = 24.0;
   static const space6 = 32.0;
-  static const radius = 12.0;
-  static const radiusLarge = 20.0;
+  static const radius = 10.0;
+  static const radiusLarge = 16.0;
 
   /// Minimum touch target (WCAG / Material): 48x48 dp.
   static const minTouchTarget = 48.0;

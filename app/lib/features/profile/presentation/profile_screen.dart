@@ -5,7 +5,9 @@ import '../../../core/l10n/generated/app_localizations.dart';
 import '../../../core/theme/timbang_colors.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../shared/utils/phone.dart';
+import '../../../shared/widgets/sections.dart';
 import '../../auth/application/session.dart';
+import '../../home/presentation/home_shell.dart' show initials;
 import '../application/profile_controller.dart';
 import '../domain/user_profile.dart';
 import 'municipality_field.dart';
@@ -25,17 +27,93 @@ class ProfileScreen extends ConsumerWidget {
     final controller = ref.read(profileControllerProvider);
 
     return ListView(
-      padding: const EdgeInsets.all(SharedTokens.space4),
+      padding: const EdgeInsets.fromLTRB(
+        SharedTokens.space4,
+        SharedTokens.space5,
+        SharedTokens.space4,
+        SharedTokens.space6,
+      ),
       children: [
-        Card(
-          child: Padding(
-            padding: const EdgeInsets.all(SharedTokens.space4),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
+        PanelCard(
+          padding: EdgeInsets.zero,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Container(
+                color: c.primaryTint,
+                padding: const EdgeInsets.all(SharedTokens.space4),
+                child: Row(
                   children: [
-                    Expanded(child: Text(p.name, style: t.headlineSmall)),
+                    Container(
+                      width: 64,
+                      height: 64,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.primary,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: c.highlight, width: 3),
+                      ),
+                      child: Text(
+                        initials(p.name),
+                        style: t.titleLarge?.copyWith(
+                          color: Theme.of(context).colorScheme.onPrimary,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: SharedTokens.space4),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(p.name, style: t.titleLarge),
+                          const SizedBox(height: SharedTokens.space2),
+                          Wrap(
+                            spacing: SharedTokens.space2,
+                            runSpacing: SharedTokens.space2,
+                            children: [
+                              _Badge(
+                                icon: Icons.badge_outlined,
+                                label: roleLabel(l10n, session.role),
+                                fill: Theme.of(context).colorScheme.secondary,
+                                onFill: Theme.of(context).colorScheme.onSecondary,
+                              ),
+                              if (p.verified)
+                                _Badge(
+                                  icon: Icons.verified,
+                                  label: l10n.verifiedBadge,
+                                  fill: c.confidenceHigh,
+                                  onFill: c.onConfidenceHigh,
+                                ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  SharedTokens.space4,
+                  SharedTokens.space2,
+                  SharedTokens.space4,
+                  SharedTokens.space4,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    _InfoRow(
+                      icon: Icons.phone_android,
+                      label: l10n.phoneReadOnly,
+                      value: formatPhMobile(p.phone),
+                    ),
+                    const Divider(),
+                    _InfoRow(
+                      icon: Icons.location_on_outlined,
+                      label: l10n.municipalityLabel,
+                      value: '${p.municipality}, Nueva Vizcaya',
+                    ),
+                    const SizedBox(height: SharedTokens.space3),
                     OutlinedButton.icon(
                       key: const Key('editProfile'),
                       onPressed: () => _edit(context, ref, p),
@@ -44,59 +122,21 @@ class ProfileScreen extends ConsumerWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: SharedTokens.space3),
-                Wrap(
-                  spacing: SharedTokens.space2,
-                  runSpacing: SharedTokens.space2,
-                  children: [
-                    _Badge(
-                      icon: Icons.badge_outlined,
-                      label: roleLabel(l10n, session.role),
-                      fill: Theme.of(context).colorScheme.secondary,
-                      onFill: Theme.of(context).colorScheme.onSecondary,
-                    ),
-                    if (p.verified)
-                      _Badge(
-                        icon: Icons.verified,
-                        label: l10n.verifiedBadge,
-                        fill: c.confidenceHigh,
-                        onFill: c.onConfidenceHigh,
-                      ),
-                  ],
-                ),
-                const Divider(height: SharedTokens.space6),
-                _InfoRow(
-                  icon: Icons.phone_android,
-                  label: l10n.phoneReadOnly,
-                  value: formatPhMobile(p.phone),
-                ),
-                _InfoRow(
-                  icon: Icons.location_on_outlined,
-                  label: l10n.municipalityLabel,
-                  value: p.municipality,
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
-        const SizedBox(height: SharedTokens.space4),
-        Card(
-          child: Padding(
-            padding: const EdgeInsets.all(SharedTokens.space4),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Icon(Icons.privacy_tip_outlined, color: c.info),
-                    const SizedBox(width: SharedTokens.space2),
-                    Text(l10n.myData, style: t.titleMedium),
-                  ],
-                ),
-                const SizedBox(height: SharedTokens.space2),
-                Text(l10n.myDataBody, style: t.bodyMedium),
-              ],
-            ),
+        const SizedBox(height: SharedTokens.space5),
+        SectionHeader(kicker: 'RA 10173', title: l10n.myData),
+        const SizedBox(height: SharedTokens.space3),
+        PanelCard(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(Icons.privacy_tip_outlined, color: c.info),
+              const SizedBox(width: SharedTokens.space3),
+              Expanded(child: Text(l10n.myDataBody, style: t.bodyMedium)),
+            ],
           ),
         ),
         const SizedBox(height: SharedTokens.space5),

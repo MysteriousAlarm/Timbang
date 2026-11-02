@@ -6,6 +6,7 @@ import '../../../core/l10n/generated/app_localizations.dart';
 import '../../../core/theme/timbang_colors.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../shared/models/role.dart';
+import '../../../shared/widgets/sections.dart';
 import '../../../shared/widgets/state_views.dart';
 import '../../auth/presentation/auth_scaffold.dart';
 import '../application/profile_controller.dart';
@@ -60,7 +61,9 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     final l10n = AppLocalizations.of(context);
     final t = Theme.of(context).textTheme;
     return AuthScaffold(
+      step: l10n.stepOf(3, 3),
       title: l10n.setupTitle,
+      subtitle: l10n.setupSubtitle,
       children: [
         if (_error != null) ErrorBanner(profileErrorText(l10n, _error!)),
         TextField(
@@ -81,7 +84,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
           onChanged: (v) => setState(() => _municipality = v),
         ),
         const SizedBox(height: SharedTokens.space5),
-        Text(l10n.roleQuestion, style: t.titleMedium),
+        Text(l10n.roleQuestion.toUpperCase(), style: t.labelSmall),
         const SizedBox(height: SharedTokens.space2),
         // Only farmer and buyer can be self-selected.
         for (final r in Role.selfSignup) ...[
@@ -123,7 +126,7 @@ class _RoleCard extends StatelessWidget {
       button: true,
       selected: selected,
       child: Material(
-        color: scheme.surface,
+        color: selected ? c.primaryTint : scheme.surface,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(SharedTokens.radius),
           side: BorderSide(color: selected ? scheme.primary : c.border, width: selected ? 3 : 1.5),
@@ -136,7 +139,15 @@ class _RoleCard extends StatelessWidget {
             padding: const EdgeInsets.all(SharedTokens.space4),
             child: Row(
               children: [
-                Icon(icon, size: 36, color: scheme.primary),
+                Container(
+                  width: 52,
+                  height: 52,
+                  decoration: BoxDecoration(
+                    color: selected ? scheme.primary : c.primaryTint,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(icon, size: 28, color: selected ? scheme.onPrimary : scheme.primary),
+                ),
                 const SizedBox(width: SharedTokens.space4),
                 Expanded(
                   child: Column(
@@ -170,31 +181,29 @@ class _ConsentCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final t = Theme.of(context).textTheme;
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(SharedTokens.space4),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(Icons.privacy_tip_outlined, color: TimbangColors.of(context).info),
-                const SizedBox(width: SharedTokens.space2),
-                Expanded(child: Text(l10n.consentTitle, style: t.titleSmall)),
-              ],
-            ),
-            const SizedBox(height: SharedTokens.space2),
-            Text(l10n.consentBody, style: t.bodyMedium),
-            CheckboxListTile(
-              key: const Key('consentCheckbox'),
-              contentPadding: EdgeInsets.zero,
-              controlAffinity: ListTileControlAffinity.leading,
-              value: value,
-              onChanged: (v) => onChanged(v ?? false),
-              title: Text(l10n.consentCheckbox, style: t.titleSmall),
-            ),
-          ],
-        ),
+    return PanelCard(
+      accent: true,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.privacy_tip_outlined, color: TimbangColors.of(context).info),
+              const SizedBox(width: SharedTokens.space2),
+              Expanded(child: Text(l10n.consentTitle, style: t.titleSmall)),
+            ],
+          ),
+          const SizedBox(height: SharedTokens.space2),
+          Text(l10n.consentBody, style: t.bodyMedium),
+          CheckboxListTile(
+            key: const Key('consentCheckbox'),
+            contentPadding: EdgeInsets.zero,
+            controlAffinity: ListTileControlAffinity.leading,
+            value: value,
+            onChanged: (v) => onChanged(v ?? false),
+            title: Text(l10n.consentCheckbox, style: t.titleSmall),
+          ),
+        ],
       ),
     );
   }
