@@ -1,5 +1,6 @@
 import { onCall } from 'firebase-functions/v2/https';
 import { onDocumentCreated } from 'firebase-functions/v2/firestore';
+import { onSchedule } from 'firebase-functions/v2/scheduler';
 import { setGlobalOptions } from 'firebase-functions/v2';
 import { FieldValue, Timestamp } from 'firebase-admin/firestore';
 import { REGION } from './config';
@@ -8,6 +9,7 @@ import { setUserRoleHandler, RoleDeps } from './roles';
 import { deleteMyAccountHandler } from './account';
 import { CatalogDeps, clearDemoCatalogHandler, upsertCatalogHandler } from './catalog';
 import { CalcReport } from './confidence';
+import { expireListings } from './listings';
 import {
   PriceStore,
   importOfficialPricesHandler,
@@ -215,3 +217,33 @@ export const onPriceReportCreated = onDocumentCreated('price_reports/{id}', asyn
     priceStore,
   );
 });
+
+/** Hourly: mark active listings past expiresAt as expired. */
+export const expireListingsJob = onSchedule(
+  { schedule: 'every 60 minutes', timeZone: 'Asia/Manila' },
+  async () => {
+    const n = await expireListings({
+      now: () => Date.now(),
+      async activeExpiredIds(beforeMs, limit) {
+        const snap = await db
+          .collection('listings')
+          .where('status', '==', 'active')
+          .where('expiresAt', '<', Timestamp.fromMillis(beforeMs))
+          .limit(limit)
+          .get();
+        return snap.docs.map((d) => d.id);
+      },
+      async markExpired(ids) {
+        const batch = db.batch();
+        ids.forEach((id) =>
+          batch.update(db.doc(`listings/${id}`), {
+            status: 'expired',
+            updatedAt: FieldValue.serverTimestamp(),
+          }),
+        );
+        await batch.commit();
+      },
+    });
+    if (n) console.log(`Expired ${n} listing(s).`);
+  },
+);

@@ -50,3 +50,6 @@ export const REPORTS_PER_HOUR = 20;
 /** Same user + commodity + market may report again only after this many minutes. */
 export const DUPLICATE_REPORT_MINUTES = 10;
 export const OFFICIAL_IMPORT_MAX_ROWS = 500;
+
+// Listings (Step 5).
+export const LISTING_DAYS = 14;

@@ -12,7 +12,7 @@ rules enforce it. Update it whenever the model or rules change.
 | `audit_logs/{id}` | live | admin (claim) | **none** (Cloud Functions only) |
 | `commodities`, `markets` | Step 2, live | any signed-in user | **none** (`upsertCatalog` / `clearDemoCatalog`, admin only) |
 | `price_reports` | Step 3, live | admin; reporter reads own | **none** (`submitPriceReport` / `importOfficialPrices`) |
-| `listings` | locked until Step 5 | none | none |
+| `listings` | Step 5, live | any signed-in user | active farmer: create/update own (validated); no deletes |
 | `inquiries` | locked until Step 6 | none | none |
 | `alerts` | locked until Step 7 | none | none |
 | `abuse_reports` | locked until Step 8 | none | none |
@@ -80,6 +80,21 @@ Computed by `functions/src/confidence.ts` (pure, unit-tested) on every new repor
 4. Trend vs the previous 24 h median; within ±3% is flat.
 5. No reports in 24 h: the entry is left as is; the UI shows it as stale with its age.
 6. `users.reporterScore` = share of a reporter's reports within 15% of the median.
+
+## `listings/{id}` (Step 5)
+
+`farmerId`, `farmerName`, `farmerPhone` (must equal the farmer's own profile), `commodityId`
+(must exist), `quantity` (0-100000), `unit`, `askingPrice` (0.01-100000), `municipality`,
+`harvestDate`, `photoUrls` (max 3), optional `note` (max 280), `status`
+(active | sold | expired | removed), `createdAt` (server time), `expiresAt` (max 31 days ahead;
+the app uses 14), `updatedAt`, `moderatedAt` (admin removal; owner can no longer edit).
+
+- Written directly by the farmer so posting works offline (Firestore queues the write).
+  Photos (Storage `listings/{uid}/{listingId}/`, images under 1 MB, compressed on the phone)
+  need a connection; if they fail the listing is still posted.
+- Only signed-in users can read listings, so contact numbers are never public.
+- `expireListingsJob` (hourly) marks overdue active listings `expired`; the app also hides them
+  immediately.
 
 ## `audit_logs/{id}`
 

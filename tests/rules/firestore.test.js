@@ -246,8 +246,100 @@ describe('price_reports (functions-only writes)', () => {
   });
 });
 
+describe('listings (Step 5)', () => {
+  const DAY = 24 * 60 * 60 * 1000;
+  async function seedWorld({ role = 'farmer', status = 'active' } = {}) {
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      const db = ctx.firestore();
+      await setDoc(doc(db, 'users', FARMER_UID), {
+        name: 'Juan Dela Cruz', phone: FARMER_PHONE, municipality: 'Bayombong',
+        role, verified: false, status, createdAt: new Date(), consentAt: new Date(),
+      });
+      await setDoc(doc(db, 'commodities', 'kamatis'), { nameFil: 'Kamatis', unit: 'kg', active: true });
+    });
+  }
+  function listing(over = {}) {
+    return {
+      farmerId: FARMER_UID, farmerName: 'Juan Dela Cruz', farmerPhone: FARMER_PHONE,
+      commodityId: 'kamatis', quantity: 50, unit: 'kg', askingPrice: 55, municipality: 'Bayombong',
+      harvestDate: new Date(), photoUrls: [], status: 'active',
+      createdAt: serverTimestamp(), expiresAt: new Date(Date.now() + 14 * DAY), ...over,
+    };
+  }
+  async function seedListing(over = {}) {
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      await setDoc(doc(ctx.firestore(), 'listings', 'L1'), {
+        ...listing(), createdAt: new Date(), ...over,
+      });
+    });
+  }
+
+  test('active farmer can post a valid listing', async () => {
+    await seedWorld();
+    await assertSucceeds(setDoc(doc(farmerCtx(), 'listings', 'L1'), listing()));
+  });
+  test('buyers cannot post listings', async () => {
+    await seedWorld({ role: 'buyer' });
+    await assertFails(setDoc(doc(farmerCtx(), 'listings', 'L1'), listing()));
+  });
+  test('suspended farmer cannot post', async () => {
+    await seedWorld({ status: 'suspended' });
+    await assertFails(setDoc(doc(farmerCtx(), 'listings', 'L1'), listing()));
+  });
+  test.each([
+    ['someone else as farmer', { farmerId: 'other1' }],
+    ['fake contact phone', { farmerPhone: '+639990000000' }],
+    ['fake name', { farmerName: 'Iba' }],
+    ['unknown commodity', { commodityId: 'ginto' }],
+    ['zero quantity', { quantity: 0 }],
+    ['negative price', { askingPrice: -1 }],
+    ['bad unit', { unit: 'sako' }],
+    ['outside Nueva Vizcaya', { municipality: 'Makati' }],
+    ['too many photos', { photoUrls: ['a', 'b', 'c', 'd'] }],
+    ['not active', { status: 'sold' }],
+    ['expiry too far', { expiresAt: new Date(Date.now() + 60 * DAY) }],
+    ['expiry in the past', { expiresAt: new Date(Date.now() - DAY) }],
+    ['extra field', { verified: true }],
+    ['long note', { note: 'x'.repeat(281) }],
+  ])('rejects %s', async (_name, over) => {
+    await seedWorld();
+    await assertFails(setDoc(doc(farmerCtx(), 'listings', 'L1'), listing(over)));
+  });
+  test('signed-in users can read listings; anonymous cannot', async () => {
+    await seedWorld(); await seedListing();
+    await assertSucceeds(getDoc(doc(otherCtx(), 'listings', 'L1')));
+    await assertFails(getDoc(doc(anonCtx(), 'listings', 'L1')));
+  });
+  test('owner can mark sold and edit price', async () => {
+    await seedWorld(); await seedListing();
+    await assertSucceeds(updateDoc(doc(farmerCtx(), 'listings', 'L1'), {
+      status: 'sold', askingPrice: 50, updatedAt: serverTimestamp(),
+    }));
+  });
+  test('owner cannot change commodity or owner, others cannot edit', async () => {
+    await seedWorld(); await seedListing();
+    await assertFails(updateDoc(doc(farmerCtx(), 'listings', 'L1'), { commodityId: 'kamatis', farmerId: 'x', updatedAt: serverTimestamp() }));
+    await assertFails(updateDoc(doc(otherCtx(), 'listings', 'L1'), { status: 'sold', updatedAt: serverTimestamp() }));
+  });
+  test('moderated listing cannot be revived by the owner', async () => {
+    await seedWorld(); await seedListing({ status: 'removed', moderatedAt: new Date() });
+    await assertFails(updateDoc(doc(farmerCtx(), 'listings', 'L1'), { status: 'active', updatedAt: serverTimestamp() }));
+  });
+  test('renewing an expired listing needs a new valid expiry', async () => {
+    await seedWorld(); await seedListing({ status: 'expired', expiresAt: new Date(Date.now() - DAY) });
+    await assertFails(updateDoc(doc(farmerCtx(), 'listings', 'L1'), { status: 'active', updatedAt: serverTimestamp() }));
+    await assertSucceeds(updateDoc(doc(farmerCtx(), 'listings', 'L1'), {
+      status: 'active', expiresAt: new Date(Date.now() + 14 * DAY), updatedAt: serverTimestamp(),
+    }));
+  });
+  test('no deletes', async () => {
+    await seedWorld(); await seedListing();
+    await assertFails(deleteDoc(doc(farmerCtx(), 'listings', 'L1')));
+  });
+});
+
 describe('locked collections (until their build step)', () => {
-  const locked = [ 'listings', 'inquiries', 'alerts',
+  const locked = [ 'inquiries', 'alerts',
     'abuse_reports', 'random_collection',
   ];
   test.each(locked)('%s: no client read or write', async (name) => {

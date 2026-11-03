@@ -110,8 +110,66 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    // ---------- listings (Step 5) ----------
+    // Written directly by the farmer (works offline: the write syncs later) and fully
+    // validated here. Contact name/phone must equal the farmer's own profile.
+    function profile() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+    function isActiveFarmer() {
+      return signedIn() && profile().role == 'farmer' && profile().status == 'active';
+    }
+    function validListing(d) {
+      return d.commodityId is string
+        && exists(/databases/$(database)/documents/commodities/$(d.commodityId))
+        && d.quantity is number && d.quantity > 0 && d.quantity <= 100000
+        && d.unit in ['kg', 'bundle', 'piece']
+        && d.askingPrice is number && d.askingPrice >= 0.01 && d.askingPrice <= 100000
+        && validMunicipality(d.municipality)
+        && d.harvestDate is timestamp
+        && d.photoUrls is list && d.photoUrls.size() <= 3
+        && (!('note' in d) || (d.note is string && d.note.size() <= 280));
+    }
+    function validExpiry(t) {
+      return t is timestamp && t > request.time && t <= request.time + duration.value(31, 'd');
+    }
+    match /listings/{id} {
+      allow read: if signedIn();
+      allow create: if isActiveFarmer()
+        && request.resource.data.keys().hasOnly(
+             ['farmerId', 'farmerName', 'farmerPhone', 'commodityId', 'quantity', 'unit',
+              'askingPrice', 'municipality', 'harvestDate', 'photoUrls', 'note', 'status',
+              'createdAt', 'expiresAt'])
+        && request.resource.data.keys().hasAll(
+             ['farmerId', 'farmerName', 'farmerPhone', 'commodityId', 'quantity', 'unit',
+              'askingPrice', 'municipality', 'harvestDate', 'photoUrls', 'status',
+              'createdAt', 'expiresAt'])
+        && request.resource.data.farmerId == request.auth.uid
+        && request.resource.data.farmerName == profile().name
+        && request.resource.data.farmerPhone == profile().phone
+        && validListing(request.resource.data)
+        && request.resource.data.status == 'active'
+        && request.resource.data.createdAt == request.time
+        && validExpiry(request.resource.data.expiresAt);
+      // Owner edits, marks sold/removed, or renews. A listing removed by moderation is final.
+      allow update: if isActiveFarmer()
+        && resource.data.farmerId == request.auth.uid
+        && !('moderatedAt' in resource.data)
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(
+             ['quantity', 'askingPrice', 'harvestDate', 'photoUrls', 'note', 'status',
+              'expiresAt', 'updatedAt'])
+        && validListing(request.resource.data)
+        && request.resource.data.status in ['active', 'sold', 'removed']
+        && (request.resource.data.status != 'active'
+            || request.resource.data.expiresAt > request.time)
+        && (!('expiresAt' in request.resource.data.diff(resource.data).affectedKeys())
+            || validExpiry(request.resource.data.expiresAt))
+        && request.resource.data.updatedAt == request.time;
+      allow delete: if false;
+    }
+
     // ---------- locked until their build step (Section 13) ----------
-    // listings (Step 5),
+    //
     // inquiries (Step 6), alerts (Step 7), abuse_reports (Step 8).
     // No explicit match = denied by default.
     match /{document=**} {
