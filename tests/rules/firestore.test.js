@@ -338,8 +338,40 @@ describe('listings (Step 5)', () => {
   });
 });
 
+describe('inquiries (Step 6)', () => {
+  beforeEach(async () => {
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      await setDoc(doc(ctx.firestore(), 'inquiries', 'Q1'), {
+        listingId: 'L1', farmerId: FARMER_UID, buyerId: 'other1', buyerName: 'Bea',
+        buyerPhone: '+639170000000', message: 'Available pa?', status: 'new', createdAt: new Date(),
+      });
+    });
+  });
+  const strangerCtx = () => env.authenticatedContext('stranger').firestore();
+  test('farmer, buyer and admin can read; strangers cannot', async () => {
+    await assertSucceeds(getDoc(doc(farmerCtx(), 'inquiries', 'Q1')));
+    await assertSucceeds(getDoc(doc(otherCtx(), 'inquiries', 'Q1')));
+    await assertSucceeds(getDoc(doc(adminCtx(), 'inquiries', 'Q1')));
+    await assertFails(getDoc(doc(strangerCtx(), 'inquiries', 'Q1')));
+    await assertFails(getDoc(doc(anonCtx(), 'inquiries', 'Q1')));
+  });
+  test('farmer marks read or closed', async () => {
+    await assertSucceeds(updateDoc(doc(farmerCtx(), 'inquiries', 'Q1'), { status: 'read', updatedAt: serverTimestamp() }));
+  });
+  test('buyer can only close', async () => {
+    await assertFails(updateDoc(doc(otherCtx(), 'inquiries', 'Q1'), { status: 'read', updatedAt: serverTimestamp() }));
+    await assertSucceeds(updateDoc(doc(otherCtx(), 'inquiries', 'Q1'), { status: 'closed', updatedAt: serverTimestamp() }));
+  });
+  test('nobody edits the message or contact; no client creates/deletes', async () => {
+    await assertFails(updateDoc(doc(farmerCtx(), 'inquiries', 'Q1'), { message: 'x', updatedAt: serverTimestamp() }));
+    await assertFails(updateDoc(doc(otherCtx(), 'inquiries', 'Q1'), { buyerPhone: '+639999999999', updatedAt: serverTimestamp() }));
+    await assertFails(setDoc(doc(otherCtx(), 'inquiries', 'Q2'), { farmerId: FARMER_UID, buyerId: 'other1', message: 'x' }));
+    await assertFails(deleteDoc(doc(farmerCtx(), 'inquiries', 'Q1')));
+  });
+});
+
 describe('locked collections (until their build step)', () => {
-  const locked = [ 'inquiries', 'alerts',
+  const locked = [ 'alerts',
     'abuse_reports', 'random_collection',
   ];
   test.each(locked)('%s: no client read or write', async (name) => {

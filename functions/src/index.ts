@@ -10,6 +10,9 @@ import { deleteMyAccountHandler } from './account';
 import { CatalogDeps, clearDemoCatalogHandler, upsertCatalogHandler } from './catalog';
 import { CalcReport } from './confidence';
 import { expireListings } from './listings';
+import { sendInquiryHandler } from './inquiries';
+import { Notifier, PushMessage } from './notify';
+import { getMessaging } from 'firebase-admin/messaging';
 import {
   PriceStore,
   importOfficialPricesHandler,
@@ -246,4 +249,82 @@ export const expireListingsJob = onSchedule(
     });
     if (n) console.log(`Expired ${n} listing(s).`);
   },
+);
+
+/** FCM sender. In the emulator FCM is not available, so messages are only logged. */
+const notifier: Notifier = {
+  async sendToUser(uid: string, msg: PushMessage) {
+    const tokens: string[] = (await db.doc(`users/${uid}`).get()).get('fcmTokens') ?? [];
+    if (process.env.FUNCTIONS_EMULATOR === 'true') {
+      console.log(`[push:emulator] to ${uid} (${tokens.length} token(s)): ${msg.title}`);
+      return;
+    }
+    if (tokens.length === 0) return;
+    const res = await getMessaging().sendEachForMulticast({
+      tokens,
+      notification: { title: msg.title, body: msg.body },
+      data: msg.data,
+      android: { priority: 'high', notification: { channelId: 'timbang_default' } },
+    });
+    // Drop tokens FCM says are dead.
+    const dead = res.responses
+      .map((r, i) =>
+        !r.success && /registration-token-not-registered|invalid-argument/.test(r.error?.code ?? '')
+          ? tokens[i]
+          : null,
+      )
+      .filter((t): t is string => t !== null);
+    if (dead.length) {
+      await db.doc(`users/${uid}`).update({ fcmTokens: FieldValue.arrayRemove(...dead) });
+    }
+  },
+};
+
+/** Buyer asks about a listing; the farmer gets a push notification. */
+export const sendInquiry = onCall((req) =>
+  sendInquiryHandler(
+    req.auth ? { uid: req.auth.uid } : undefined,
+    req.data,
+    {
+      now: () => Date.now(),
+      async getUser(uid) {
+        const d = (await db.doc(`users/${uid}`).get()).data();
+        return d
+          ? { name: String(d.name), phone: String(d.phone), status: String(d.status ?? 'active') }
+          : null;
+      },
+      async getListing(id) {
+        const d = (await db.doc(`listings/${id}`).get()).data();
+        return d
+          ? {
+              farmerId: d.farmerId,
+              commodityId: d.commodityId,
+              status: d.status,
+              expiresAt: (d.expiresAt as Timestamp).toMillis(),
+            }
+          : null;
+      },
+      async getCommodityName(id) {
+        return ((await db.doc(`commodities/${id}`).get()).get('nameFil') as string) ?? null;
+      },
+      async inquiriesByBuyerSince(uid, sinceMs) {
+        const snap = await db
+          .collection('inquiries')
+          .where('buyerId', '==', uid)
+          .where('createdAt', '>', Timestamp.fromMillis(sinceMs))
+          .get();
+        return snap.docs.map((d) => ({
+          listingId: d.get('listingId'),
+          createdAt: (d.get('createdAt') as Timestamp).toMillis(),
+        }));
+      },
+      async addInquiry(i) {
+        const ref = await db
+          .collection('inquiries')
+          .add({ ...i, createdAt: Timestamp.fromMillis(i.createdAt) });
+        return ref.id;
+      },
+    },
+    notifier,
+  ),
 );

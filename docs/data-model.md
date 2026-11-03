@@ -13,7 +13,7 @@ rules enforce it. Update it whenever the model or rules change.
 | `commodities`, `markets` | Step 2, live | any signed-in user | **none** (`upsertCatalog` / `clearDemoCatalog`, admin only) |
 | `price_reports` | Step 3, live | admin; reporter reads own | **none** (`submitPriceReport` / `importOfficialPrices`) |
 | `listings` | Step 5, live | any signed-in user | active farmer: create/update own (validated); no deletes |
-| `inquiries` | locked until Step 6 | none | none |
+| `inquiries` | Step 6, live | the farmer, the buyer, admin | **create via `sendInquiry` only**; farmer: read/closed, buyer: closed |
 | `alerts` | locked until Step 7 | none | none |
 | `abuse_reports` | locked until Step 8 | none | none |
 
@@ -95,6 +95,18 @@ the app uses 14), `updatedAt`, `moderatedAt` (admin removal; owner can no longer
 - Only signed-in users can read listings, so contact numbers are never public.
 - `expireListingsJob` (hourly) marks overdue active listings `expired`; the app also hides them
   immediately.
+
+## `inquiries/{id}` (Step 6)
+
+`listingId`, `farmerId`, `buyerId`, `buyerName`, `buyerPhone`, `commodityId`, `message` (1-500),
+`status` (new | read | closed), `createdAt`, `updatedAt`.
+
+- Created by `sendInquiry`: the listing must be live and not the buyer's own; 10 per buyer per
+  hour, one per listing per 6 hours. The farmer gets an FCM push (no phone numbers in the push).
+- One message per inquiry (no chat, Section 5). Follow-up is by call or text; both parties see
+  each other's number, signed-in only.
+- Push tokens: `users.fcmTokens` (one device per user in the pilot). FCM is not emulated: the
+  emulator only logs pushes. Web push needs `--dart-define=FCM_VAPID_KEY=...`.
 
 ## `audit_logs/{id}`
 

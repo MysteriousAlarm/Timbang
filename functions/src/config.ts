@@ -53,3 +53,9 @@ export const OFFICIAL_IMPORT_MAX_ROWS = 500;
 
 // Listings (Step 5).
 export const LISTING_DAYS = 14;
+
+// Inquiries (Step 6).
+export const INQUIRY_MESSAGE_MAX = 500;
+export const INQUIRIES_PER_HOUR = 10;
+/** One inquiry per buyer per listing within this many hours. */
+export const INQUIRY_REPEAT_HOURS = 6;

@@ -168,9 +168,25 @@ service cloud.firestore {
       allow delete: if false;
     }
 
+    // ---------- inquiries (Step 6) ----------
+    // Created only by `sendInquiry` (rate-limited, notifies the farmer). Visible to the two
+    // parties and admins. The farmer marks it read/closed; the buyer can close it.
+    match /inquiries/{id} {
+      allow read: if isAdmin() || (signedIn()
+        && (resource.data.farmerId == request.auth.uid || resource.data.buyerId == request.auth.uid));
+      allow update: if signedIn()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'updatedAt'])
+        && request.resource.data.updatedAt == request.time
+        && ((resource.data.farmerId == request.auth.uid
+              && request.resource.data.status in ['read', 'closed'])
+            || (resource.data.buyerId == request.auth.uid
+              && request.resource.data.status == 'closed'));
+      allow create, delete: if false;
+    }
+
     // ---------- locked until their build step (Section 13) ----------
     //
-    // inquiries (Step 6), alerts (Step 7), abuse_reports (Step 8).
+    // alerts (Step 7), abuse_reports (Step 8).
     // No explicit match = denied by default.
     match /{document=**} {
       allow read, write: if false;
