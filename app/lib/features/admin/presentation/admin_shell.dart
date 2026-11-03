@@ -25,6 +25,7 @@ class AdminShell extends ConsumerWidget {
     Routes.adminPrices,
     Routes.adminUsers,
     Routes.adminModeration,
+    Routes.adminSms,
     Routes.adminAudit,
   ];
 
@@ -128,6 +129,11 @@ class AdminShell extends ConsumerWidget {
                 ),
                 selectedIcon: const Icon(Icons.shield),
                 label: Text(l10n.adminModeration),
+              ),
+              NavigationRailDestination(
+                icon: const Icon(Icons.sms_outlined),
+                selectedIcon: const Icon(Icons.sms),
+                label: Text(l10n.adminSms),
               ),
               NavigationRailDestination(
                 icon: const Icon(Icons.receipt_long_outlined),

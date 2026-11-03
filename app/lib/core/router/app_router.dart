@@ -8,6 +8,7 @@ import '../../features/admin/presentation/catalog_page.dart';
 import '../../features/admin/presentation/moderation_page.dart';
 import '../../features/admin/presentation/overview_page.dart';
 import '../../features/admin/presentation/prices_page.dart';
+import '../../features/admin/presentation/sms_page.dart';
 import '../../features/admin/presentation/users_page.dart';
 import '../../features/alerts/presentation/alerts_tab.dart';
 import '../../features/auth/application/session.dart';
@@ -102,6 +103,7 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(path: Routes.adminUsers, builder: (_, _) => const AdminUsersPage()),
           GoRoute(path: Routes.adminModeration, builder: (_, _) => const AdminModerationPage()),
           GoRoute(path: Routes.adminAudit, builder: (_, _) => const AdminAuditPage()),
+          GoRoute(path: Routes.adminSms, builder: (_, _) => const AdminSmsPage()),
         ],
       ),
     ],

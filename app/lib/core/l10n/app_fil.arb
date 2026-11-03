@@ -883,5 +883,13 @@
   },
   "metricEntries": "Presyo",
   "metricMedianAge": "Median na edad",
-  "metricFresh": "Sariwa (≤24h)"
+  "metricFresh": "Sariwa (≤24h)",
+  "smsKicker": "SMS",
+  "adminSms": "SMS na presyo",
+  "adminSmsDesc": "Para sa may basic na cellphone: i-text ang PRESYO <gulay> <bayan> para malaman ang median, kumpiyansa at edad ng presyo.",
+  "smsGatewayNote": "Subukan dito nang walang gastos. Kapag napili na ang SMS gateway (Semaphore o Globe Labs), ito rin ang sagot na matatanggap ng mga user.",
+  "smsPhoneTitle": "Simulator ng text",
+  "smsTryHint": "I-type ang mensahe sa ibaba at pindutin ang Ipadala.",
+  "smsInputLabel": "Mensahe",
+  "smsExamples": "Halimbawa: PRESYO KAMATIS BAYOMBONG · PRESYO REPOLYO · TULONG"
 }

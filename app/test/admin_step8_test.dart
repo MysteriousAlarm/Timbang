@@ -4,6 +4,7 @@ import 'package:timbang/core/theme/forest_gold_theme.dart';
 import 'package:timbang/core/theme/harvest_earth_theme.dart';
 import 'package:timbang/features/admin/data/admin_repository.dart';
 import 'package:timbang/features/admin/presentation/moderation_page.dart';
+import 'package:timbang/features/admin/presentation/sms_page.dart';
 import 'package:timbang/features/admin/presentation/users_page.dart';
 import 'package:timbang/features/auth/data/auth_repository.dart';
 import 'package:timbang/features/catalog/data/catalog_providers.dart';
@@ -35,6 +36,8 @@ class FakeAdmin implements AdminRepository {
       calls.add('abuse:$id:$resolved');
   @override
   Future<Map<String, dynamic>> metrics() async => {};
+  @override
+  Future<String> simulateSms(String text) async => 'TIMBANG: reply to $text';
   @override
   Stream<List<AdminUser>> watchUsers() => const Stream.empty();
   @override
@@ -236,5 +239,12 @@ void main() {
     await tester.tap(find.byKey(const Key('flagSend')));
     await tester.pumpAndSettle();
     expect(abuse.last, ('listing', 'L9', 'spam'));
+  });
+
+  testWidgets('SMS simulator shows the reply', (tester) async {
+    await pump(tester, const AdminSmsPage());
+    await tester.tap(find.byKey(const Key('smsSend')));
+    await tester.pumpAndSettle();
+    expect(find.text('TIMBANG: reply to PRESYO KAMATIS BAYOMBONG'), findsOneWidget);
   });
 }

@@ -166,6 +166,8 @@ class AdminRepository {
     {'id': id, 'resolution': resolved ? 'resolved' : 'dismissed', 'note': note},
   );
   Future<Map<String, dynamic>> metrics() => _call('getPilotMetrics', {});
+  Future<String> simulateSms(String text) async =>
+      '${(await _call('simulateSms', {'text': text}))['reply'] ?? ''}';
 }
 
 final adminRepositoryProvider = Provider<AdminRepository>(

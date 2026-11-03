@@ -477,5 +477,13 @@
   "metricReports7d": "Reports in 7 days: {official} official · {reporter} reporter · {community} community",
   "metricEntries": "Prices",
   "metricMedianAge": "Median age",
-  "metricFresh": "Fresh (≤24h)"
+  "metricFresh": "Fresh (≤24h)",
+  "smsKicker": "SMS",
+  "adminSms": "SMS prices",
+  "adminSmsDesc": "For basic phones: text PRESYO <vegetable> <town> to get the median, confidence and age of the price.",
+  "smsGatewayNote": "Try it here at no cost. Once the SMS gateway (Semaphore or Globe Labs) is chosen, users get exactly this reply.",
+  "smsPhoneTitle": "Text simulator",
+  "smsTryHint": "Type a message below and press Send.",
+  "smsInputLabel": "Message",
+  "smsExamples": "Examples: PRESYO KAMATIS BAYOMBONG · PRESYO REPOLYO · TULONG"
 }
