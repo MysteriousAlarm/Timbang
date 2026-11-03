@@ -11,6 +11,7 @@ import '../../../shared/widgets/sections.dart';
 import '../../../shared/widgets/source_tag.dart';
 import '../../../shared/widgets/state_views.dart';
 import '../../admin/presentation/admin_labels.dart';
+import '../../alerts/presentation/alert_sheet.dart';
 import '../../auth/application/session.dart';
 import '../../catalog/data/catalog_providers.dart';
 import '../../catalog/domain/catalog_item.dart';
@@ -149,6 +150,14 @@ class _Body extends ConsumerWidget {
             const SizedBox(height: SharedTokens.space3),
           ],
         const SizedBox(height: SharedTokens.space3),
+        OutlinedButton.icon(
+          key: const Key('setAlert'),
+          onPressed: () =>
+              showAlertSheet(context, commodityId: commodity.id, marketId: selected?.id),
+          icon: const Icon(Icons.notifications_active_outlined),
+          label: Text(l10n.setAlertHere),
+        ),
+        const SizedBox(height: SharedTokens.space2),
         OutlinedButton.icon(
           onPressed: () => context.push(Routes.report),
           icon: const Icon(Icons.edit_note),

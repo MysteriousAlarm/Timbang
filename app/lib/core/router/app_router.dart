@@ -6,13 +6,13 @@ import '../../features/admin/presentation/admin_shell.dart';
 import '../../features/admin/presentation/catalog_page.dart';
 import '../../features/admin/presentation/overview_page.dart';
 import '../../features/admin/presentation/prices_page.dart';
+import '../../features/alerts/presentation/alerts_tab.dart';
 import '../../features/auth/application/session.dart';
 import '../../features/auth/presentation/otp_screen.dart';
 import '../../features/auth/presentation/phone_screen.dart';
 import '../../features/catalog/domain/catalog_item.dart';
 import '../../features/home/presentation/home_page.dart';
 import '../../features/home/presentation/home_shell.dart';
-import '../../features/home/presentation/placeholder_tabs.dart';
 import '../../features/inquiries/presentation/inbox_tab.dart';
 import '../../features/landing/presentation/landing_page.dart';
 import '../../features/listings/presentation/create_listing_screen.dart';
@@ -78,7 +78,7 @@ final routerProvider = Provider<GoRouter>((ref) {
           _tab(Routes.prices, const HomePage()),
           _tab(Routes.listings, const ListingsTab()),
           _tab(Routes.inquiries, const InboxTab()),
-          _tab(Routes.alerts, const ComingSoonTab(icon: Icons.notifications_outlined)),
+          _tab(Routes.alerts, const AlertsTab()),
           _tab(Routes.profile, const ProfileScreen()),
         ],
       ),

@@ -697,5 +697,63 @@
   },
   "markRead": "Markahang nabasa",
   "viewListing": "Tingnan ang ani",
-  "closeInquiry": "Isara"
+  "closeInquiry": "Isara",
+  "alertsKicker": "Alerto sa presyo",
+  "alertsTitle": "Abisuhan ako kapag gumalaw ang presyo",
+  "alertsHelp": "Makakatanggap ka ng notification kapag ang median ay lumampas o bumaba sa presyong itinakda mo.",
+  "alertsEmptyTitle": "Wala ka pang alerto",
+  "alertsEmptyBody": "Magdagdag ng alerto para sa bilihin at palengkeng binabantayan mo.",
+  "addAlert": "Magdagdag ng alerto",
+  "newAlertTitle": "Bagong alerto",
+  "newAlertHelp": "Isang abiso lamang sa bawat paglampas, hindi sa bawat ulat.",
+  "alertAbove": "Tumaas sa",
+  "alertBelow": "Bumaba sa",
+  "alertThreshold": "Presyo ng alerto",
+  "alertSave": "I-save ang alerto",
+  "alertSaved": "Na-save ang alerto.",
+  "alertsLimit": "Hanggang {max} na alerto lamang.",
+  "@alertsLimit": {
+    "placeholders": {
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "alertWhenAbove": "Kapag umabot o lumampas sa {amount}",
+  "@alertWhenAbove": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "alertWhenBelow": "Kapag bumaba sa {amount} o mas mababa",
+  "@alertWhenBelow": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "currentMedian": "Median ngayon: {amount}",
+  "@currentMedian": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "alertLastTriggered": "Huling abiso: {amount}, {age}",
+  "@alertLastTriggered": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "age": {
+        "type": "String"
+      }
+    }
+  },
+  "alertPaused": "Naka-pause",
+  "setAlertHere": "Mag-set ng alerto sa presyo nito"
 }
