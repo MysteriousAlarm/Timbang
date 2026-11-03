@@ -6,6 +6,7 @@ import '../../../core/l10n/generated/app_localizations.dart';
 import '../../../core/router/redirect.dart';
 import '../../../core/theme/timbang_colors.dart';
 import '../../../core/theme/tokens.dart';
+import '../../../shared/models/role.dart';
 import '../../../shared/widgets/brand.dart';
 import '../../../shared/widgets/sections.dart';
 import '../../auth/application/session.dart';
@@ -26,9 +27,16 @@ class HomeShell extends ConsumerWidget {
     final unread = ref.watch(newInquiryCountProvider);
     return Scaffold(
       appBar: AppBar(
-        toolbarHeight: 68,
-        title: const TimbangWordmark(size: 36, onDark: true),
+        toolbarHeight: 60,
+        title: const TimbangWordmark(size: 32, onDark: true),
         actions: [
+          if (signedIn?.isAdmin ?? false)
+            IconButton(
+              key: const Key('appBarAdmin'),
+              tooltip: l10n.openAdminDashboard,
+              icon: const Icon(Icons.admin_panel_settings_outlined),
+              onPressed: () => context.go(Routes.admin),
+            ),
           if (signedIn != null)
             Padding(
               padding: const EdgeInsets.only(right: SharedTokens.space3),
@@ -39,11 +47,19 @@ class HomeShell extends ConsumerWidget {
               ),
             ),
         ],
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(4),
-          child: Container(height: 4, color: c.highlight),
-        ),
       ),
+      // Farmers: the one main action, on the price board only.
+      floatingActionButton: shell.currentIndex == 0 && signedIn?.role == Role.farmer
+          ? FloatingActionButton.extended(
+              key: const Key('fabPost'),
+              backgroundColor: c.cta,
+              foregroundColor: c.onCta,
+              elevation: 2,
+              onPressed: () => context.push(Routes.newListing),
+              icon: const Icon(Icons.add),
+              label: Text(l10n.actionPostProduce),
+            )
+          : null,
       body: Column(
         children: [
           if (signedIn?.profile.isSuspended ?? false)
@@ -60,8 +76,8 @@ class HomeShell extends ConsumerWidget {
           onDestinationSelected: (i) => shell.goBranch(i, initialLocation: i == shell.currentIndex),
           destinations: [
             NavigationDestination(
-              icon: const Icon(Icons.home_outlined),
-              selectedIcon: const Icon(Icons.home),
+              icon: const Icon(Icons.receipt_long_outlined),
+              selectedIcon: const Icon(Icons.receipt_long),
               label: l10n.navHome,
             ),
             NavigationDestination(
@@ -110,14 +126,10 @@ class _Avatar extends StatelessWidget {
         onTap: onTap,
         radius: 28,
         child: Container(
-          width: 44,
-          height: 44,
+          width: 40,
+          height: 40,
           alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: scheme.onPrimary,
-            shape: BoxShape.circle,
-            border: Border.all(color: TimbangColors.of(context).highlight, width: 2.5),
-          ),
+          decoration: BoxDecoration(color: scheme.onPrimary, shape: BoxShape.circle),
           child: Text(
             initials(name),
             style: TextStyle(color: scheme.primary, fontWeight: FontWeight.w800, fontSize: 16),

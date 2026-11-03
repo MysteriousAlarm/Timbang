@@ -42,6 +42,16 @@ class ProfileScreen extends ConsumerWidget {
         SharedTokens.space6,
       ),
       children: [
+        // Admins: the dashboard entry comes first, above the profile card.
+        if (session.isAdmin) ...[
+          FilledButton.icon(
+            key: const Key('openAdmin'),
+            onPressed: () => context.go(Routes.admin),
+            icon: const Icon(Icons.admin_panel_settings_outlined),
+            label: Text(l10n.openAdminDashboard),
+          ),
+          const SizedBox(height: SharedTokens.space4),
+        ],
         PanelCard(
           padding: EdgeInsets.zero,
           child: Column(
@@ -59,7 +69,6 @@ class ProfileScreen extends ConsumerWidget {
                       decoration: BoxDecoration(
                         color: Theme.of(context).colorScheme.primary,
                         shape: BoxShape.circle,
-                        border: Border.all(color: c.highlight, width: 3),
                       ),
                       child: Text(
                         initials(p.name),
@@ -141,15 +150,6 @@ class ProfileScreen extends ConsumerWidget {
           NoticeBanner(
             icon: Icons.info_outline,
             message: l10n.roleNotActive(roleLabel(l10n, p.role)),
-          ),
-        ],
-        if (session.isAdmin) ...[
-          const SizedBox(height: SharedTokens.space4),
-          FilledButton.icon(
-            key: const Key('openAdmin'),
-            onPressed: () => context.go(Routes.admin),
-            icon: const Icon(Icons.admin_panel_settings_outlined),
-            label: Text(l10n.openAdminDashboard),
           ),
         ],
         const SizedBox(height: SharedTokens.space5),
