@@ -66,7 +66,7 @@
   "myDataBody": "Ito lang ang hawak naming personal na data mo: pangalan, numero, at bayan.",
   "deleteAccount": "Burahin ang account",
   "deleteAccountConfirmTitle": "Burahin ang account?",
-  "deleteAccountConfirmBody": "Mabubura ang iyong profile at hindi na ito maibabalik.",
+  "deleteAccountConfirmBody": "Mabubura ang iyong profile, mga listing, alerto at tanong. Mananatili ang mga naiulat mong presyo pero hindi na naka-link sa iyo. Hindi na ito maibabalik.",
   "cancel": "Kanselahin",
   "delete": "Burahin",
   "suspendedNotice": "Naka-suspend ang iyong account. Makipag-ugnayan sa admin.",
@@ -891,5 +891,7 @@
   "smsPhoneTitle": "Simulator ng text",
   "smsTryHint": "I-type ang mensahe sa ibaba at pindutin ang Ipadala.",
   "smsInputLabel": "Mensahe",
-  "smsExamples": "Halimbawa: PRESYO KAMATIS BAYOMBONG · PRESYO REPOLYO · TULONG"
+  "smsExamples": "Halimbawa: PRESYO KAMATIS BAYOMBONG · PRESYO REPOLYO · TULONG",
+  "exportMyData": "Tingnan / kopyahin ang aking data (RA 10173)",
+  "close": "Isara"
 }

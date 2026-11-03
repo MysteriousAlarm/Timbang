@@ -36,7 +36,13 @@ class SourceTag extends StatelessWidget {
         children: [
           Icon(icon, size: 16, color: Theme.of(context).colorScheme.onSurface),
           const SizedBox(width: 4),
-          Text(label, style: Theme.of(context).textTheme.labelMedium),
+          Flexible(
+            child: Text(
+              label,
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(context).textTheme.labelMedium,
+            ),
+          ),
         ],
       ),
     );

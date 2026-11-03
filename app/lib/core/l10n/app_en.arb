@@ -59,7 +59,7 @@
   "myDataBody": "This is the only personal data we hold about you: name, phone, and municipality.",
   "deleteAccount": "Delete account",
   "deleteAccountConfirmTitle": "Delete account?",
-  "deleteAccountConfirmBody": "Your profile will be deleted and cannot be recovered.",
+  "deleteAccountConfirmBody": "Your profile, listings, alerts and inquiries will be deleted. Prices you reported stay but are no longer linked to you. This cannot be undone.",
   "cancel": "Cancel",
   "delete": "Delete",
   "suspendedNotice": "Your account is suspended. Please contact an admin.",
@@ -485,5 +485,7 @@
   "smsPhoneTitle": "Text simulator",
   "smsTryHint": "Type a message below and press Send.",
   "smsInputLabel": "Message",
-  "smsExamples": "Examples: PRESYO KAMATIS BAYOMBONG · PRESYO REPOLYO · TULONG"
+  "smsExamples": "Examples: PRESYO KAMATIS BAYOMBONG · PRESYO REPOLYO · TULONG",
+  "exportMyData": "View / copy my data (RA 10173)",
+  "close": "Close"
 }

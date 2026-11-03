@@ -92,6 +92,11 @@ class FakeProfileRepository implements ProfileRepository {
 
   @override
   Future<void> deleteMyAccount() async {}
+
+  @override
+  Future<Map<String, dynamic>> exportMyData() async => {
+    'profile': {'name': current?.name},
+  };
 }
 
 List<Override> fakeOverrides(FakeAuthRepository auth, FakeProfileRepository profiles) => [

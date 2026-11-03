@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/l10n/generated/app_localizations.dart';
@@ -139,6 +142,13 @@ class ProfileScreen extends ConsumerWidget {
             ],
           ),
         ),
+        const SizedBox(height: SharedTokens.space2),
+        OutlinedButton.icon(
+          key: const Key('exportData'),
+          onPressed: () => _export(context, ref),
+          icon: const Icon(Icons.download_outlined),
+          label: Text(l10n.exportMyData),
+        ),
         const SizedBox(height: SharedTokens.space5),
         OutlinedButton.icon(
           key: const Key('signOut'),
@@ -165,6 +175,44 @@ class ProfileScreen extends ConsumerWidget {
       showDragHandle: true,
       builder: (_) => _EditSheet(profile: p),
     );
+  }
+
+  Future<void> _export(BuildContext context, WidgetRef ref) async {
+    final l10n = AppLocalizations.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    try {
+      final data = await ref.read(profileRepositoryProvider).exportMyData();
+      final text = const JsonEncoder.withIndent('  ').convert(data);
+      if (!context.mounted) return;
+      await showDialog<void>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Text(l10n.exportMyData),
+          content: SizedBox(
+            width: 560,
+            child: SingleChildScrollView(
+              child: SelectableText(
+                text,
+                style: const TextStyle(fontFamily: 'monospace', fontSize: 13),
+              ),
+            ),
+          ),
+          actions: [
+            TextButton.icon(
+              onPressed: () {
+                Clipboard.setData(ClipboardData(text: text));
+                messenger.showSnackBar(SnackBar(content: Text(l10n.copied)));
+              },
+              icon: const Icon(Icons.copy),
+              label: Text(l10n.copy),
+            ),
+            FilledButton(onPressed: () => Navigator.pop(ctx), child: Text(l10n.close)),
+          ],
+        ),
+      );
+    } catch (_) {
+      messenger.showSnackBar(SnackBar(content: Text(l10n.errNetwork)));
+    }
   }
 
   Future<void> _confirmDelete(BuildContext context, WidgetRef ref) async {

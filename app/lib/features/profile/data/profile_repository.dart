@@ -10,6 +10,9 @@ abstract class ProfileRepository {
 
   /// RA 10173 erasure, via the `deleteMyAccount` Cloud Function.
   Future<void> deleteMyAccount();
+
+  /// RA 10173 access: all data held about the user, as JSON (via `exportMyData`).
+  Future<Map<String, dynamic>> exportMyData();
 }
 
 class FirestoreProfileRepository implements ProfileRepository {
@@ -42,6 +45,12 @@ class FirestoreProfileRepository implements ProfileRepository {
         'municipality': municipality,
         'updatedAt': FieldValue.serverTimestamp(),
       });
+
+  @override
+  Future<Map<String, dynamic>> exportMyData() async {
+    final res = await _functions.httpsCallable('exportMyData').call<Object?>({});
+    return Map<String, dynamic>.from(res.data! as Map);
+  }
 
   @override
   Future<void> deleteMyAccount() async {

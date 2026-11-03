@@ -46,7 +46,13 @@ class ConfidenceChip extends StatelessWidget {
           children: [
             Icon(icon, size: 18, color: onFill),
             const SizedBox(width: 6),
-            Text(label, style: Theme.of(context).textTheme.labelMedium?.copyWith(color: onFill)),
+            Flexible(
+              child: Text(
+                label,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(color: onFill),
+              ),
+            ),
           ],
         ),
       ),

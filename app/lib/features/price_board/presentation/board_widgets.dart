@@ -48,7 +48,13 @@ class TrendLabel extends StatelessWidget {
         children: [
           Icon(icon, size: 18, color: color),
           const SizedBox(width: 2),
-          Text(label, style: Theme.of(context).textTheme.labelMedium?.copyWith(color: color)),
+          Flexible(
+            child: Text(
+              label,
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(context).textTheme.labelMedium?.copyWith(color: color),
+            ),
+          ),
         ],
       ),
     );
@@ -74,9 +80,12 @@ class StaleTag extends StatelessWidget {
         children: [
           Icon(Icons.history, size: 16, color: c.textMuted),
           const SizedBox(width: 4),
-          Text(
-            l10n.staleTag,
-            style: Theme.of(context).textTheme.labelMedium?.copyWith(color: c.textMuted),
+          Flexible(
+            child: Text(
+              l10n.staleTag,
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(context).textTheme.labelMedium?.copyWith(color: c.textMuted),
+            ),
           ),
         ],
       ),
@@ -212,11 +221,13 @@ class PriceRowCard extends StatelessWidget {
                     children: [
                       Icon(Icons.schedule, size: 15, color: c.textMuted),
                       const SizedBox(width: 3),
-                      Text(
-                        l10n.updatedAgo(ageLabel(l10n, now, entry.latestReportAt)),
-                        style: t.bodySmall?.copyWith(
-                          fontWeight: stale ? FontWeight.w700 : null,
-                          color: stale ? scheme.onSurface : null,
+                      Flexible(
+                        child: Text(
+                          l10n.updatedAgo(ageLabel(l10n, now, entry.latestReportAt)),
+                          style: t.bodySmall?.copyWith(
+                            fontWeight: stale ? FontWeight.w700 : null,
+                            color: stale ? scheme.onSurface : null,
+                          ),
                         ),
                       ),
                     ],
