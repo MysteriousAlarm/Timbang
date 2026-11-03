@@ -67,7 +67,9 @@ first admin locally (emulator):
 FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099 npm run seed:admin -- +639171234567
 ```
 
-## Connecting a real Firebase project (later)
+## Connecting a real Firebase project
+
+Full step-by-step guide: **[docs/BUILD.md](docs/BUILD.md)**. Short version:
 
 1. Create the project, upgrade to Blaze, enable Phone Auth, Firestore (location
    `asia-southeast1`, to match the functions region), Storage.

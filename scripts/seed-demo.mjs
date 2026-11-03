@@ -1,17 +1,22 @@
 #!/usr/bin/env node
-// EMULATOR ONLY: seeds illustrative commodities and markets, all marked isDemo: true.
-// These are placeholders until the official DA / DAR / NVAT lists arrive. Replace them
-// from the admin dashboard (CSV import), then use "Remove demo data".
+// Seeds illustrative commodities, markets and price reports, ALL marked isDemo: true
+// (shown with DEMO badges and a "not real prices" banner). Placeholders until the official
+// DA / DAR / NVAT lists arrive: replace them via the admin dashboard, then "Remove demo data".
 //
-//   FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 npm run seed:demo
+// Emulator:      FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 npm run seed:demo
+// Real project (for a prototype demo, explicit opt-in):
+//   GOOGLE_APPLICATION_CREDENTIALS=/path/outside/repo/sa.json \
+//   SEED_REAL_PROJECT=<project-id> npm run seed:demo
 import { initializeApp } from 'firebase-admin/app';
 import { getFirestore, FieldValue } from 'firebase-admin/firestore';
 
-if (!process.env.FIRESTORE_EMULATOR_HOST) {
-  console.error('Refusing to run: set FIRESTORE_EMULATOR_HOST (emulator only).');
+const real = process.env.SEED_REAL_PROJECT;
+if (!process.env.FIRESTORE_EMULATOR_HOST && !real) {
+  console.error('Set FIRESTORE_EMULATOR_HOST (emulator) or SEED_REAL_PROJECT=<project-id>.');
   process.exit(1);
 }
-initializeApp({ projectId: 'demo-timbang' });
+if (real) console.log(`Seeding DEMO data into REAL project "${real}" (all items isDemo: true).`);
+initializeApp({ projectId: real || 'demo-timbang' });
 const db = getFirestore();
 
 const commodities = [
