@@ -152,7 +152,7 @@
   "issueBadBool": "use true or false",
   "issueDuplicate": "duplicated in the file",
   "issueMissingColumn": "column is missing",
-  "demoDataBanner": "{count} demo item(s). These are placeholders until the official lists arrive. Not real data.",
+  "demoDataBanner": "{count, plural, =1{1 demo item. It is a placeholder until the official lists arrive. Not real data.} other{{count} demo items. These are placeholders until the official lists arrive. Not real data.}}",
   "kpiActiveCommodities": "Active commodities",
   "kpiActiveMarkets": "Active markets",
   "kpiDemoItems": "Demo items",
@@ -163,9 +163,9 @@
   "importCommoditiesCsv": "Import commodities (CSV)",
   "importMarketsCsv": "Import markets (CSV)",
   "clearDemoTitle": "Remove demo data?",
-  "clearDemoBody": "This deletes {count} demo item(s) from this list. Imported official data is not touched.",
+  "clearDemoBody": "{count, plural, =1{This deletes 1 demo item from this list. Imported official data is not touched.} other{This deletes {count} demo items from this list. Imported official data is not touched.}}",
   "clearDemo": "Remove demo data",
-  "clearedDemo": "Removed {count} demo item(s).",
+  "clearedDemo": "{count, plural, =1{Removed 1 demo item.} other{Removed {count} demo items.}}",
   "commoditiesDesc": "Vegetables and other produce whose prices are tracked.",
   "marketsDesc": "Markets, trading posts and farmgate areas where prices are reported.",
   "importCsv": "Import CSV",
@@ -197,7 +197,7 @@
   "fieldCategoryHelp": "e.g. Lowland vegetables, Highland vegetables, Fruits",
   "activeHelp": "Inactive items are hidden in the app but not deleted.",
   "save": "Save",
-  "importedCount": "Imported {count} item(s).",
+  "importedCount": "{count, plural, =1{Imported 1 item.} other{Imported {count} items.}}",
   "lineError": "Line {line}: {message}",
   "headerError": "Header: {message}",
   "importTitle": "Import {what}",
@@ -212,8 +212,8 @@
   "csvAllowedMarket": "municipality: one of the 15 Nueva Vizcaya towns · type: public_market, trading_post, farmgate_area · active: true or false (optional)",
   "importTooMany": "Too many rows. Up to {max} per file.",
   "importNoRows": "No rows found.",
-  "importSummary": "{valid} valid row(s) · {errors} with errors",
-  "moreErrors": "and {count} more error(s)",
+  "importSummary": "{valid} valid · {errors} with errors",
+  "moreErrors": "{count, plural, =1{and 1 more error} other{and {count} more errors}}",
   "preview": "Preview",
   "kpiDemoNote": "remove once official data arrives",
   "sourceOfficial": "Official",
@@ -251,7 +251,7 @@
   "officialSourceHelp": "e.g. DA Bantay Presyo, November 3, 2026",
   "officialCsvColumns": "commodityId and marketId: IDs from the lists · price: e.g. 60 or 60.50 · date: YYYY-MM-DD (optional, today if empty)",
   "officialFieldInvalid": "invalid or unknown",
-  "importedPrices": "Imported {count} official price(s).",
+  "importedPrices": "{count, plural, =1{Imported 1 official price.} other{Imported {count} official prices.}}",
   "recentReportsKicker": "Latest",
   "recentReportsTitle": "Recent price reports",
   "noReportsTitle": "No reports yet",
@@ -268,9 +268,9 @@
   "agoJustNow": "just now",
   "agoMinutes": "{n} min ago",
   "agoHours": "{n} h ago",
-  "agoDays": "{n} day(s) ago",
+  "agoDays": "{n, plural, =1{1 day ago} other{{n} days ago}}",
   "updatedAgo": "Updated {age}",
-  "reportCount": "{n} report(s)",
+  "reportCount": "{n, plural, =1{1 report} other{{n} reports}}",
   "perUnit": "per {unit}",
   "trendSemantics": "Price trend: {label}",
   "staleTag": "Stale",
@@ -429,7 +429,7 @@
   "assignMarketsFor": "Markets for {name}",
   "assignMarketsHelp": "If none is chosen, they can report for any market.",
   "anyMarket": "Any market",
-  "marketsCount": "{n} market(s)",
+  "marketsCount": "{n, plural, =1{1 market} other{{n} markets}}",
   "reporterScore": "Accuracy {pct}%",
   "suspend": "Suspend",
   "reactivate": "Reactivate",
@@ -523,5 +523,80 @@
   "privacyAgreedStatus": "You agreed to the Privacy Notice.",
   "privacyReadAgain": "Read the Privacy Notice",
   "catalogEmptyAdmin": "There are no commodities or markets yet. As an admin, add them (one by one or from Excel) or load the demo data.",
-  "catalogEmptyAdminButton": "Add the list"
+  "catalogEmptyAdminButton": "Add the list",
+  "boardColItem": "Commodity",
+  "boardColMarket": "Market",
+  "boardColPrice": "Median price",
+  "asOf": "As of {time}",
+  "@asOf": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "quickTools": "Tools",
+  "@demoDataBanner": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@clearDemoBody": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@clearedDemo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@importedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@moreErrors": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@importedPrices": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@agoDays": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "@reportCount": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "@marketsCount": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  }
 }

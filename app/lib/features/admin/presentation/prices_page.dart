@@ -112,7 +112,7 @@ class _ReportsTable extends ConsumerWidget {
       };
       return Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-        decoration: BoxDecoration(color: fill, borderRadius: BorderRadius.circular(999)),
+        decoration: BoxDecoration(color: fill, borderRadius: BorderRadius.circular(4)),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [

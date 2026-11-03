@@ -15,6 +15,7 @@ import '../../alerts/presentation/alert_sheet.dart';
 import '../../auth/application/session.dart';
 import '../../catalog/data/catalog_providers.dart';
 import '../../catalog/domain/catalog_item.dart';
+import '../../catalog/presentation/commodity_names.dart';
 import '../../moderation/presentation/flag_sheet.dart';
 import '../application/board_providers.dart';
 import '../domain/board_entry.dart';
@@ -40,7 +41,7 @@ class CommodityDetailScreen extends ConsumerWidget {
         leading: BackButton(
           onPressed: () => context.canPop() ? context.pop() : context.go(Routes.prices),
         ),
-        title: Text(commodity?.nameFil ?? l10n.navPrices),
+        title: Text(commodity?.nameIn(context) ?? l10n.navPrices),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(4),
           child: Container(height: 4, color: c.highlight),
@@ -105,7 +106,7 @@ class _Body extends ConsumerWidget {
       ),
       children: [
         Text(commodity.category.toUpperCase(), style: t.labelSmall),
-        Text('${commodity.nameFil} · ${commodity.nameEn}', style: t.headlineSmall),
+        Text(commodity.labelIn(context), style: t.headlineSmall),
         Text(l10n.perUnit(unitShort(l10n, commodity.unit)), style: t.bodyMedium),
         const SizedBox(height: SharedTokens.space4),
         if (snap.fromCache) ...[
@@ -138,30 +139,34 @@ class _Body extends ConsumerWidget {
             child: Text(l10n.compareEmpty, style: t.bodyMedium, textAlign: TextAlign.center),
           )
         else
-          for (final r in rows) ...[
-            PriceRowCard(
-              key: Key('cmp_${r.market.id}'),
-              title: r.market.name,
-              subtitle: '${r.market.municipality} · ${marketTypeLabel(l10n, r.market.type)}',
-              entry: r.entry,
-              now: now,
-              badge: Wrap(
-                spacing: SharedTokens.space2,
-                children: [
-                  if (r.ownTown) _Tag(icon: Icons.home_outlined, label: l10n.ownTownTag),
-                  if (r.market.id == cheapest && rows.length > 1)
-                    _Tag(icon: Icons.south, label: l10n.cheapestTag, strong: true),
-                  if (mine != null && r.market.id != selected?.id)
-                    _Tag(
-                      icon: r.entry.medianPrice >= mine.medianPrice ? Icons.add : Icons.remove,
-                      label: _diff(l10n, r.entry.medianPrice - mine.medianPrice),
-                    ),
-                ],
-              ),
-            ),
-            const SizedBox(height: SharedTokens.space3),
-          ],
-        const SizedBox(height: SharedTokens.space3),
+          PriceLedger(
+            leftLabel: l10n.boardColMarket,
+            rightLabel: l10n.boardColPrice,
+            rows: [
+              for (final r in rows)
+                PriceRowCard(
+                  key: Key('cmp_${r.market.id}'),
+                  title: r.market.name,
+                  subtitle: '${r.market.municipality} · ${marketTypeLabel(l10n, r.market.type)}',
+                  entry: r.entry,
+                  now: now,
+                  badge: Wrap(
+                    spacing: SharedTokens.space2,
+                    children: [
+                      if (r.ownTown) _Tag(icon: Icons.home_outlined, label: l10n.ownTownTag),
+                      if (r.market.id == cheapest && rows.length > 1)
+                        _Tag(icon: Icons.south, label: l10n.cheapestTag, strong: true),
+                      if (mine != null && r.market.id != selected?.id)
+                        _Tag(
+                          icon: r.entry.medianPrice >= mine.medianPrice ? Icons.add : Icons.remove,
+                          label: _diff(l10n, r.entry.medianPrice - mine.medianPrice),
+                        ),
+                    ],
+                  ),
+                ),
+            ],
+          ),
+        const SizedBox(height: SharedTokens.space5),
         OutlinedButton.icon(
           key: const Key('setAlert'),
           onPressed: () =>
@@ -270,11 +275,11 @@ class _Tag extends StatelessWidget {
     final c = TimbangColors.of(context);
     final fill = strong ? c.primaryTint : c.surfaceMuted;
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsets.fromLTRB(6, 2, 8, 2),
       decoration: BoxDecoration(
         color: fill,
         border: Border.all(color: strong ? Theme.of(context).colorScheme.primary : c.border),
-        borderRadius: BorderRadius.circular(999),
+        borderRadius: BorderRadius.circular(4),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

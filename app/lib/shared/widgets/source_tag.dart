@@ -54,3 +54,10 @@ String sourceLabel(AppLocalizations l10n, PriceSource s) => switch (s) {
   PriceSource.reporter => l10n.sourceReporter,
   PriceSource.community => l10n.sourceCommunity,
 };
+
+/// One-word source label for dense rows ("Reporter", not "Verified reporter").
+String sourceLabelShort(AppLocalizations l10n, PriceSource s) => switch (s) {
+  PriceSource.official => l10n.sourceOfficial,
+  PriceSource.reporter => l10n.sourceReporterShort,
+  PriceSource.community => l10n.sourceCommunity,
+};

@@ -23,35 +23,47 @@ class LanguageScreen extends ConsumerWidget {
             child: TerracePattern(
               child: SafeArea(
                 bottom: false,
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(24, 28, 24, 36),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const TimbangWordmark(size: 44, onDark: true),
-                      const SizedBox(height: 28),
-                      Text(
-                        'Choose your language',
-                        style: t.headlineSmall?.copyWith(color: scheme.onPrimary),
+                child: Align(
+                  alignment: Alignment.topCenter,
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 520),
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(24, 28, 24, 36),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const TimbangWordmark(size: 44, onDark: true),
+                          const SizedBox(height: 28),
+                          Text(
+                            'Choose your language',
+                            style: t.headlineSmall?.copyWith(color: scheme.onPrimary),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Piliin ang iyong wika',
+                            style: t.titleMedium?.copyWith(color: scheme.onPrimary),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Piliin ang iyong wika',
-                        style: t.titleMedium?.copyWith(color: scheme.onPrimary),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
               ),
             ),
           ),
           Expanded(
-            child: Center(
+            child: Align(
+              alignment: Alignment.topCenter,
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 520),
                 child: ListView(
                   shrinkWrap: true,
-                  padding: const EdgeInsets.all(SharedTokens.space5),
+                  padding: const EdgeInsets.fromLTRB(
+                    SharedTokens.space5,
+                    SharedTokens.space6,
+                    SharedTokens.space5,
+                    SharedTokens.space5,
+                  ),
                   children: [
                     _LanguageCard(
                       key: const Key('lang_en'),

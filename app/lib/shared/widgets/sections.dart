@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../../core/theme/timbang_colors.dart';
 import '../../core/theme/tokens.dart';
-import '../../core/theme/typography.dart';
 
-/// Kicker (small caps) + title, with an optional trailing action.
+/// Section title with an optional trailing action. [kicker] is read by screen readers
+/// as context but not drawn: a small-caps label over every title is visual noise.
 class SectionHeader extends StatelessWidget {
   const SectionHeader({super.key, required this.kicker, required this.title, this.trailing});
 
@@ -14,21 +14,21 @@ class SectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(kicker.toUpperCase(), style: overline(context)),
-              const SizedBox(height: 2),
-              Text(title, style: Theme.of(context).textTheme.titleLarge),
-            ],
+    return Semantics(
+      header: true,
+      hint: kicker,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [Text(title, style: Theme.of(context).textTheme.titleLarge)],
+            ),
           ),
-        ),
-        ?trailing,
-      ],
+          ?trailing,
+        ],
+      ),
     );
   }
 }
@@ -97,7 +97,7 @@ class PanelCard extends StatelessWidget {
   final Widget child;
   final EdgeInsetsGeometry? padding;
 
-  /// Draws a primary-colored rule on the left edge for emphasis.
+  /// Primary-colored outline for the one panel that matters most on a screen.
   final bool accent;
 
   @override
@@ -110,17 +110,9 @@ class PanelCard extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(SharedTokens.radius),
-        side: BorderSide(color: c.border),
+        side: accent ? BorderSide(color: scheme.primary, width: 1.5) : BorderSide(color: c.border),
       ),
-      child: Container(
-        decoration: accent
-            ? BoxDecoration(
-                border: Border(left: BorderSide(color: scheme.primary, width: 4)),
-              )
-            : null,
-        padding: padding ?? const EdgeInsets.all(SharedTokens.space4),
-        child: child,
-      ),
+      child: Padding(padding: padding ?? const EdgeInsets.all(SharedTokens.space4), child: child),
     );
   }
 }

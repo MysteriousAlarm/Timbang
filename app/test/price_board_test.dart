@@ -173,9 +173,9 @@ void main() {
       expect(find.text('Tumaas'), findsNWidgets(2));
       // The 30-hour-old entry is still shown, marked stale with its age.
       expect(find.text('Luma na'), findsOneWidget);
-      expect(find.text('Na-update 1 araw na ang nakalipas'), findsOneWidget);
-      expect(find.text('Na-update 2 oras na ang nakalipas'), findsOneWidget);
-      expect(find.text('Tagapag-ulat'), findsNWidgets(2));
+      expect(find.textContaining('Na-update 1 araw na ang nakalipas'), findsOneWidget);
+      expect(find.textContaining('Na-update 2 oras na ang nakalipas'), findsOneWidget);
+      expect(find.textContaining('Tagapag-ulat'), findsNWidgets(2));
     });
 
     testWidgets('offline and demo banners', (tester) async {

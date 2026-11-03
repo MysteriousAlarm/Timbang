@@ -7,9 +7,12 @@ import '../models/confidence.dart';
 /// Shared across both themes. Always icon + word, never color alone.
 /// Low is gray (not red): it is not an error.
 class ConfidenceChip extends StatelessWidget {
-  const ConfidenceChip({super.key, required this.confidence});
+  const ConfidenceChip({super.key, required this.confidence, this.compact = false});
 
   final Confidence confidence;
+
+  /// Smaller tag for table rows.
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
@@ -39,18 +42,24 @@ class ConfidenceChip extends StatelessWidget {
       label: l10n.confidenceSemantics(label),
       excludeSemantics: true,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-        decoration: BoxDecoration(color: fill, borderRadius: BorderRadius.circular(999)),
+        padding: compact
+            ? const EdgeInsets.fromLTRB(6, 3, 8, 3)
+            : const EdgeInsets.fromLTRB(8, 5, 10, 5),
+        decoration: BoxDecoration(color: fill, borderRadius: BorderRadius.circular(4)),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 18, color: onFill),
-            const SizedBox(width: 6),
+            Icon(icon, size: compact ? 15 : 18, color: onFill),
+            SizedBox(width: compact ? 4 : 6),
             Flexible(
               child: Text(
                 label,
                 overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.labelMedium?.copyWith(color: onFill),
+                style:
+                    (compact
+                            ? Theme.of(context).textTheme.labelSmall
+                            : Theme.of(context).textTheme.labelMedium)
+                        ?.copyWith(color: onFill, letterSpacing: 0.2),
               ),
             ),
           ],

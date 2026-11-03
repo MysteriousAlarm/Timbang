@@ -8,14 +8,13 @@ import '../../../core/router/redirect.dart';
 import '../../../core/theme/timbang_colors.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../shared/models/role.dart';
-import '../../../shared/widgets/sections.dart';
 import '../../auth/application/session.dart';
 import '../../catalog/data/catalog_providers.dart';
 import '../../catalog/domain/catalog_item.dart';
+import '../../catalog/presentation/commodity_names.dart';
 import '../../price_board/presentation/price_board_section.dart';
 
-/// Home: greeting, my town, quick actions, today's prices.
-/// The live price board replaces the empty panel in Step 4.
+/// Home: greeting and town, the one main action, three tools, then today's price bulletin.
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
 
@@ -26,7 +25,6 @@ class HomePage extends ConsumerWidget {
     if (session is! SignedIn) return const SizedBox.shrink();
     final t = Theme.of(context).textTheme;
     final c = TimbangColors.of(context);
-    final scheme = Theme.of(context).colorScheme;
     final locale = Localizations.localeOf(context).toLanguageTag();
     final today = DateFormat.yMMMMEEEEd(locale).format(DateTime.now());
     final firstName = session.profile.name.trim().split(RegExp(r'\s+')).first;
@@ -40,59 +38,49 @@ class HomePage extends ConsumerWidget {
         SharedTokens.space6,
       ),
       children: [
-        Text(today.toUpperCase(), style: t.labelSmall),
-        const SizedBox(height: SharedTokens.space1),
+        Text(today, style: t.bodySmall),
+        const SizedBox(height: 2),
         Text(l10n.greeting(firstName), style: t.headlineSmall),
-        const SizedBox(height: SharedTokens.space4),
-        PanelCard(
-          accent: true,
-          child: Row(
-            children: [
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(color: c.primaryTint, shape: BoxShape.circle),
-                child: Icon(Icons.location_on, color: scheme.primary),
+        const SizedBox(height: SharedTokens.space1),
+        Row(
+          children: [
+            Icon(Icons.place_outlined, size: 18, color: c.textMuted),
+            const SizedBox(width: SharedTokens.space1),
+            Expanded(
+              child: Semantics(
+                label: '${l10n.myTown}: ${session.profile.municipality}',
+                excludeSemantics: true,
+                child: Text('${session.profile.municipality}, Nueva Vizcaya', style: t.bodyMedium),
               ),
-              const SizedBox(width: SharedTokens.space3),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(l10n.myTown.toUpperCase(), style: t.labelSmall),
-                    Text('${session.profile.municipality}, Nueva Vizcaya', style: t.titleMedium),
-                  ],
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
         const SizedBox(height: SharedTokens.space5),
-        GridView.count(
-          crossAxisCount: 2,
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          mainAxisSpacing: SharedTokens.space3,
-          crossAxisSpacing: SharedTokens.space3,
-          childAspectRatio: 1.45,
-          children: [
-            _ActionTile(
-              icon: isFarmer ? Icons.add_business_outlined : Icons.search,
-              label: isFarmer ? l10n.actionPostProduce : l10n.actionFindProduce,
-              cta: true,
-              onTap: () => isFarmer ? context.push(Routes.newListing) : context.go(Routes.listings),
-            ),
-            _ActionTile(
+        FilledButton.icon(
+          key: const Key('primaryAction'),
+          style: FilledButton.styleFrom(
+            backgroundColor: c.cta,
+            foregroundColor: c.onCta,
+            minimumSize: const Size.fromHeight(56),
+          ),
+          onPressed: () => isFarmer ? context.push(Routes.newListing) : context.go(Routes.listings),
+          icon: Icon(isFarmer ? Icons.add_business_outlined : Icons.search),
+          label: Text(isFarmer ? l10n.actionPostProduce : l10n.actionFindProduce),
+        ),
+        const SizedBox(height: SharedTokens.space3),
+        _ToolStrip(
+          tools: [
+            _Tool(
               icon: Icons.compare_arrows,
               label: l10n.actionCompareMarkets,
               onTap: () => _pickCommodity(context, ref),
             ),
-            _ActionTile(
+            _Tool(
               icon: Icons.notifications_active_outlined,
               label: l10n.actionPriceAlerts,
               onTap: () => context.go(Routes.alerts),
             ),
-            _ActionTile(
+            _Tool(
               key: const Key('tileReport'),
               icon: Icons.edit_note,
               label: l10n.actionReportPrice,
@@ -130,8 +118,8 @@ Future<void> _pickCommodity(BuildContext context, WidgetRef ref) async {
             for (final c in items)
               ListTile(
                 leading: const Icon(Icons.eco_outlined),
-                title: Text(c.nameFil),
-                subtitle: Text(c.nameEn),
+                title: Text(c.nameIn(context)),
+                subtitle: Text(c.altNameIn(context)),
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () => Navigator.pop(ctx, c.id),
               ),
@@ -143,52 +131,66 @@ Future<void> _pickCommodity(BuildContext context, WidgetRef ref) async {
   if (id != null && context.mounted) await context.push(Routes.commodity(id));
 }
 
-class _ActionTile extends StatelessWidget {
-  const _ActionTile({
-    super.key,
-    required this.icon,
-    required this.label,
-    required this.onTap,
-    this.cta = false,
-  });
+/// Three secondary tools in one ruled strip, so they read as a toolbar, not as tiles.
+class _ToolStrip extends StatelessWidget {
+  const _ToolStrip({required this.tools});
+  final List<_Tool> tools;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = TimbangColors.of(context);
+    return Material(
+      color: Theme.of(context).colorScheme.surface,
+      clipBehavior: Clip.antiAlias,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(SharedTokens.radiusSmall),
+        side: BorderSide(color: c.border),
+      ),
+      child: IntrinsicHeight(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            for (var i = 0; i < tools.length; i++) ...[
+              if (i > 0) VerticalDivider(width: 1, color: c.border),
+              Expanded(child: tools[i]),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _Tool extends StatelessWidget {
+  const _Tool({super.key, required this.icon, required this.label, required this.onTap});
 
   final IconData icon;
   final String label;
   final VoidCallback onTap;
 
-  /// The ONE cta-colored action on the screen.
-  final bool cta;
-
   @override
   Widget build(BuildContext context) {
-    final c = TimbangColors.of(context);
     final scheme = Theme.of(context).colorScheme;
-    final fill = cta ? c.cta : scheme.surface;
-    final fg = cta ? c.onCta : scheme.onSurface;
-    return Material(
-      color: fill,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(SharedTokens.radius),
-        side: cta ? BorderSide.none : BorderSide(color: c.border),
-      ),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(SharedTokens.radius),
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.all(SharedTokens.space4),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Icon(icon, size: 30, color: cta ? fg : scheme.primary),
-              Text(
-                label,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.titleSmall?.copyWith(color: fg),
-              ),
-            ],
-          ),
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: SharedTokens.space2,
+          vertical: SharedTokens.space3,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 24, color: scheme.primary),
+            const SizedBox(height: SharedTokens.space1),
+            Text(
+              label,
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(context).textTheme.labelMedium?.copyWith(color: scheme.onSurface),
+            ),
+          ],
         ),
       ),
     );

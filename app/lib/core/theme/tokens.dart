@@ -65,6 +65,7 @@ abstract final class SharedTokens {
   static const space4 = 16.0;
   static const space5 = 24.0;
   static const space6 = 32.0;
+  static const radiusSmall = 6.0;
   static const radius = 10.0;
   static const radiusLarge = 16.0;
 

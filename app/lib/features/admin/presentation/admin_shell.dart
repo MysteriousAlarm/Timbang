@@ -211,7 +211,7 @@ class AdminPage extends StatelessWidget {
     final heading = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(kicker.toUpperCase(), style: t.labelSmall),
+        Text(kicker, style: t.labelMedium?.copyWith(color: TimbangColors.of(context).textMuted)),
         const SizedBox(height: 2),
         Text(title, style: t.headlineMedium),
         if (description != null) ...[

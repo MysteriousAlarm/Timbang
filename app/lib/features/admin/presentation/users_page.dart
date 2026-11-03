@@ -297,7 +297,7 @@ class _Pill extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-    decoration: BoxDecoration(color: fill, borderRadius: BorderRadius.circular(999)),
+    decoration: BoxDecoration(color: fill, borderRadius: BorderRadius.circular(4)),
     child: Text(label, style: Theme.of(context).textTheme.labelMedium?.copyWith(color: on)),
   );
 }

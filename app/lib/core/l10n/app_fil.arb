@@ -936,5 +936,17 @@
   "privacyAgreedStatus": "Sumang-ayon ka sa Paunawa sa Privacy.",
   "privacyReadAgain": "Basahin ang Paunawa sa Privacy",
   "catalogEmptyAdmin": "Wala pang listahan ng bilihin at palengke. Bilang admin, idagdag ang mga ito (isa-isa o mula sa Excel) o i-load ang demo data.",
-  "catalogEmptyAdminButton": "Idagdag ang listahan"
+  "catalogEmptyAdminButton": "Idagdag ang listahan",
+  "boardColItem": "Paninda",
+  "boardColMarket": "Palengke",
+  "boardColPrice": "Median na presyo",
+  "asOf": "Hanggang {time}",
+  "@asOf": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "quickTools": "Mga gamit"
 }

@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/l10n/generated/app_localizations.dart';
-import '../../../core/theme/timbang_colors.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../core/theme/typography.dart';
 import '../../../shared/widgets/sections.dart';
+import '../../../shared/widgets/stat_grid.dart';
 import '../data/admin_repository.dart';
 
 /// Section 12 pilot metrics: price age per market, active farmers, listings, inquiries per listing.
@@ -41,44 +41,32 @@ class PilotMetricsSection extends ConsumerWidget {
           data: (m) {
             final perMarket = (m['perMarket'] as List?) ?? const [];
             final reports = Map<String, dynamic>.from((m['reports7d'] as Map?) ?? const {});
-            final tiles = [
-              _Metric(
-                label: l10n.metricPriceAge,
-                value: fmt(m['medianPriceAgeHours'], ' h'),
-                note: l10n.metricPriceAgeNote,
-              ),
-              _Metric(
-                label: l10n.metricActiveFarmers,
-                value: fmt(m['activeFarmers30d']),
-                note: l10n.metricOfFarmers(fmt(m['farmersTotal'])),
-              ),
-              _Metric(
-                label: l10n.metricListings,
-                value: fmt(m['listings30d']),
-                note: l10n.metricLast30,
-              ),
-              _Metric(
-                label: l10n.metricInquiriesPerListing,
-                value: fmt(m['inquiriesPerListing']),
-                note: l10n.metricInquiries(fmt(m['inquiries30d'])),
-              ),
-            ];
             return Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                LayoutBuilder(
-                  builder: (context, box) {
-                    final cols = box.maxWidth >= 900 ? 4 : 2;
-                    return GridView.count(
-                      crossAxisCount: cols,
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      crossAxisSpacing: SharedTokens.space3,
-                      mainAxisSpacing: SharedTokens.space3,
-                      childAspectRatio: cols == 4 ? 1.9 : 1.6,
-                      children: tiles,
-                    );
-                  },
+                StatGrid(
+                  stats: [
+                    Stat(
+                      label: l10n.metricPriceAge,
+                      value: fmt(m['medianPriceAgeHours'], ' h'),
+                      note: l10n.metricPriceAgeNote,
+                    ),
+                    Stat(
+                      label: l10n.metricActiveFarmers,
+                      value: fmt(m['activeFarmers30d']),
+                      note: l10n.metricOfFarmers(fmt(m['farmersTotal'])),
+                    ),
+                    Stat(
+                      label: l10n.metricListings,
+                      value: fmt(m['listings30d']),
+                      note: l10n.metricLast30,
+                    ),
+                    Stat(
+                      label: l10n.metricInquiriesPerListing,
+                      value: fmt(m['inquiriesPerListing']),
+                      note: l10n.metricInquiries(fmt(m['inquiries30d'])),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: SharedTokens.space3),
                 Text(
@@ -91,80 +79,78 @@ class PilotMetricsSection extends ConsumerWidget {
                 ),
                 const SizedBox(height: SharedTokens.space3),
                 if (perMarket.isNotEmpty)
-                  PanelCard(
-                    padding: EdgeInsets.zero,
-                    child: DataTable(
-                      columns: [
-                        DataColumn(label: Text(l10n.colMarket.toUpperCase())),
-                        DataColumn(numeric: true, label: Text(l10n.metricEntries.toUpperCase())),
-                        DataColumn(numeric: true, label: Text(l10n.metricMedianAge.toUpperCase())),
-                        DataColumn(numeric: true, label: Text(l10n.metricFresh.toUpperCase())),
-                      ],
-                      rows: [
-                        for (final raw in perMarket)
-                          () {
-                            final r = Map<String, dynamic>.from(raw as Map);
-                            return DataRow(
-                              cells: [
-                                DataCell(Text('${r['name']}')),
-                                DataCell(
-                                  Text(
-                                    '${r['entries']}',
-                                    style: const TextStyle(fontFeatures: tabularFigures),
+                  LayoutBuilder(
+                    builder: (context, box) {
+                      final rows = [
+                        for (final raw in perMarket) Map<String, dynamic>.from(raw as Map),
+                      ];
+                      if (box.maxWidth < 600) {
+                        return PanelCard(
+                          padding: EdgeInsets.zero,
+                          child: Column(
+                            children: [
+                              for (var i = 0; i < rows.length; i++) ...[
+                                if (i > 0) const Divider(height: 1),
+                                ListTile(
+                                  title: Text('${rows[i]['name']}'),
+                                  subtitle: Text(
+                                    '${l10n.metricEntries}: ${rows[i]['entries']} · '
+                                    '${l10n.metricFresh}: ${fmt(rows[i]['freshShare'], '%')}',
                                   ),
-                                ),
-                                DataCell(
-                                  Text(
-                                    fmt(r['medianAgeHours'], ' h'),
-                                    style: const TextStyle(fontFeatures: tabularFigures),
-                                  ),
-                                ),
-                                DataCell(
-                                  Text(
-                                    fmt(r['freshShare'], '%'),
-                                    style: const TextStyle(fontFeatures: tabularFigures),
+                                  trailing: Text(
+                                    fmt(rows[i]['medianAgeHours'], ' h'),
+                                    style: t.titleMedium?.copyWith(fontFeatures: tabularFigures),
                                   ),
                                 ),
                               ],
-                            );
-                          }(),
-                      ],
-                    ),
+                            ],
+                          ),
+                        );
+                      }
+                      return PanelCard(
+                        padding: EdgeInsets.zero,
+                        child: DataTable(
+                          columns: [
+                            DataColumn(label: Text(l10n.colMarket)),
+                            DataColumn(numeric: true, label: Text(l10n.metricEntries)),
+                            DataColumn(numeric: true, label: Text(l10n.metricMedianAge)),
+                            DataColumn(numeric: true, label: Text(l10n.metricFresh)),
+                          ],
+                          rows: [
+                            for (final r in rows)
+                              DataRow(
+                                cells: [
+                                  DataCell(Text('${r['name']}')),
+                                  DataCell(
+                                    Text(
+                                      '${r['entries']}',
+                                      style: const TextStyle(fontFeatures: tabularFigures),
+                                    ),
+                                  ),
+                                  DataCell(
+                                    Text(
+                                      fmt(r['medianAgeHours'], ' h'),
+                                      style: const TextStyle(fontFeatures: tabularFigures),
+                                    ),
+                                  ),
+                                  DataCell(
+                                    Text(
+                                      fmt(r['freshShare'], '%'),
+                                      style: const TextStyle(fontFeatures: tabularFigures),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                          ],
+                        ),
+                      );
+                    },
                   ),
               ],
             );
           },
         ),
       ],
-    );
-  }
-}
-
-class _Metric extends StatelessWidget {
-  const _Metric({required this.label, required this.value, required this.note});
-  final String label;
-  final String value;
-  final String note;
-
-  @override
-  Widget build(BuildContext context) {
-    final t = Theme.of(context).textTheme;
-    return Container(
-      padding: const EdgeInsets.all(SharedTokens.space4),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(SharedTokens.radius),
-        border: Border.all(color: TimbangColors.of(context).border),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(label.toUpperCase(), style: t.labelSmall, maxLines: 2),
-          Text(value, style: t.headlineMedium?.copyWith(fontFeatures: tabularFigures)),
-          Text(note, style: t.bodySmall, maxLines: 2, overflow: TextOverflow.ellipsis),
-        ],
-      ),
     );
   }
 }

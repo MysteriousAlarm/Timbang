@@ -175,9 +175,7 @@ class _Hero extends StatelessWidget {
     final copy = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(height: 4, width: 72, color: c.highlight),
-        const SizedBox(height: SharedTokens.space4),
-        Text(l10n.heroKicker.toUpperCase(), style: t.labelSmall?.copyWith(color: scheme.onPrimary)),
+        Text(l10n.heroKicker, style: t.labelLarge?.copyWith(color: scheme.onPrimary)),
         const SizedBox(height: SharedTokens.space3),
         Text(
           l10n.tagline,
@@ -382,16 +380,10 @@ class _Section extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Container(width: 28, height: 3, color: c.highlight),
-                const SizedBox(width: SharedTokens.space2),
-                Text(kicker.toUpperCase(), style: t.labelSmall),
-              ],
-            ),
-            const SizedBox(height: SharedTokens.space2),
+            Text(kicker, style: t.labelLarge?.copyWith(color: c.textMuted)),
+            const SizedBox(height: SharedTokens.space1),
             Text(title, style: t.headlineMedium),
-            const SizedBox(height: SharedTokens.space5),
+            const SizedBox(height: SharedTokens.space6),
             child,
           ],
         ),
@@ -413,7 +405,7 @@ class _Responsive extends StatelessWidget {
         children: [
           for (final ch in children)
             Padding(
-              padding: const EdgeInsets.only(bottom: SharedTokens.space3),
+              padding: const EdgeInsets.only(bottom: SharedTokens.space5),
               child: ch,
             ),
         ],
@@ -424,7 +416,7 @@ class _Responsive extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           for (var i = 0; i < children.length; i++) ...[
-            if (i > 0) const SizedBox(width: SharedTokens.space4),
+            if (i > 0) const SizedBox(width: SharedTokens.space6),
             Expanded(child: children[i]),
           ],
         ],
@@ -433,6 +425,7 @@ class _Responsive extends StatelessWidget {
   }
 }
 
+/// A column of text under a rule, like a section of a printed brief. No box, no icon tile.
 class _InfoCard extends StatelessWidget {
   const _InfoCard({required this.leading, required this.title, required this.body});
   final Widget leading;
@@ -442,21 +435,24 @@ class _InfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = Theme.of(context).textTheme;
+    final c = TimbangColors.of(context);
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(SharedTokens.radius),
-        border: Border.all(color: TimbangColors.of(context).border),
+        border: Border(top: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2)),
       ),
-      padding: const EdgeInsets.all(SharedTokens.space5),
+      padding: const EdgeInsets.only(top: SharedTokens.space4),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          leading,
-          const SizedBox(height: SharedTokens.space4),
-          Text(title, style: t.titleMedium),
+          Row(
+            children: [
+              leading,
+              const SizedBox(width: SharedTokens.space3),
+              Expanded(child: Text(title, style: t.titleMedium)),
+            ],
+          ),
           const SizedBox(height: SharedTokens.space2),
-          Text(body, style: t.bodyMedium?.copyWith(color: TimbangColors.of(context).textMuted)),
+          Text(body, style: t.bodyMedium?.copyWith(color: c.textMuted)),
         ],
       ),
     );
@@ -468,15 +464,8 @@ class _IconBadge extends StatelessWidget {
   final IconData icon;
 
   @override
-  Widget build(BuildContext context) => Container(
-    width: 52,
-    height: 52,
-    decoration: BoxDecoration(
-      color: TimbangColors.of(context).primaryTint,
-      borderRadius: BorderRadius.circular(SharedTokens.radius),
-    ),
-    child: Icon(icon, color: Theme.of(context).colorScheme.primary, size: 28),
-  );
+  Widget build(BuildContext context) =>
+      Icon(icon, color: Theme.of(context).colorScheme.primary, size: 24);
 }
 
 class _Principles extends StatelessWidget {
@@ -521,21 +510,12 @@ class _Steps extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    Widget number(int n) => Container(
-      width: 44,
-      height: 44,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
+    Widget number(int n) => Text(
+      '$n',
+      style: Theme.of(context).textTheme.headlineMedium?.copyWith(
         color: Theme.of(context).colorScheme.primary,
-        shape: BoxShape.circle,
-      ),
-      child: Text(
-        '$n',
-        style: TextStyle(
-          color: Theme.of(context).colorScheme.onPrimary,
-          fontWeight: FontWeight.w800,
-          fontSize: 18,
-        ),
+        fontFeatures: const [FontFeature.tabularFigures()],
+        height: 1,
       ),
     );
     return _Responsive(
@@ -549,6 +529,7 @@ class _Steps extends StatelessWidget {
   }
 }
 
+/// The confidence key as a ruled legend table: label, then what it means.
 class _ConfidenceLegend extends StatelessWidget {
   const _ConfidenceLegend({required this.wide});
   final bool wide;
@@ -556,25 +537,60 @@ class _ConfidenceLegend extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return _Responsive(
-      wide: wide,
+    final t = Theme.of(context).textTheme;
+    final c = TimbangColors.of(context);
+    final rows = [
+      (Confidence.high, l10n.legendHighTitle, l10n.legendHighBody),
+      (Confidence.medium, l10n.legendMediumTitle, l10n.legendMediumBody),
+      (Confidence.low, l10n.legendLowTitle, l10n.legendLowBody),
+    ];
+    Widget text(String title, String body) => Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _InfoCard(
-          leading: const ConfidenceChip(confidence: Confidence.high),
-          title: l10n.legendHighTitle,
-          body: l10n.legendHighBody,
-        ),
-        _InfoCard(
-          leading: const ConfidenceChip(confidence: Confidence.medium),
-          title: l10n.legendMediumTitle,
-          body: l10n.legendMediumBody,
-        ),
-        _InfoCard(
-          leading: const ConfidenceChip(confidence: Confidence.low),
-          title: l10n.legendLowTitle,
-          body: l10n.legendLowBody,
-        ),
+        Text(title, style: t.titleSmall),
+        const SizedBox(height: 2),
+        Text(body, style: t.bodyMedium?.copyWith(color: c.textMuted)),
       ],
+    );
+    return Material(
+      color: Theme.of(context).colorScheme.surface,
+      clipBehavior: Clip.antiAlias,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(SharedTokens.radiusSmall),
+        side: BorderSide(color: c.border),
+      ),
+      child: Column(
+        children: [
+          for (var i = 0; i < rows.length; i++) ...[
+            if (i > 0) Divider(height: 1, color: c.border),
+            Padding(
+              padding: const EdgeInsets.all(SharedTokens.space4),
+              child: wide
+                  ? Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          width: 180,
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: ConfidenceChip(confidence: rows[i].$1),
+                          ),
+                        ),
+                        Expanded(child: text(rows[i].$2, rows[i].$3)),
+                      ],
+                    )
+                  : Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ConfidenceChip(confidence: rows[i].$1),
+                        const SizedBox(height: SharedTokens.space2),
+                        text(rows[i].$2, rows[i].$3),
+                      ],
+                    ),
+            ),
+          ],
+        ],
+      ),
     );
   }
 }

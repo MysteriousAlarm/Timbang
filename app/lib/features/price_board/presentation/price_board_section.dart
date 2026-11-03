@@ -10,6 +10,7 @@ import '../../../shared/widgets/sections.dart';
 import '../../admin/presentation/admin_labels.dart';
 import '../../catalog/data/catalog_providers.dart';
 import '../../catalog/domain/catalog_item.dart';
+import '../../catalog/presentation/commodity_names.dart';
 import '../application/board_providers.dart';
 import 'board_widgets.dart';
 
@@ -91,12 +92,12 @@ class _MarketPicker extends ConsumerWidget {
     return Material(
       color: Theme.of(context).colorScheme.surface,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(SharedTokens.radius),
-        side: BorderSide(color: Theme.of(context).colorScheme.primary, width: 1.5),
+        borderRadius: BorderRadius.circular(SharedTokens.radiusSmall),
+        side: BorderSide(color: c.textMuted),
       ),
       child: InkWell(
         key: const Key('marketPicker'),
-        borderRadius: BorderRadius.circular(SharedTokens.radius),
+        borderRadius: BorderRadius.circular(SharedTokens.radiusSmall),
         onTap: () => _pick(context, ref),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: SharedTokens.space4, vertical: 12),
@@ -108,7 +109,7 @@ class _MarketPicker extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(l10n.marketLabel.toUpperCase(), style: t.labelSmall),
+                    Text(l10n.marketLabel, style: t.bodySmall),
                     Text(market.name, style: t.titleMedium),
                   ],
                 ),
@@ -163,18 +164,22 @@ class _Board extends ConsumerWidget {
             body: l10n.priceBoardEmptyBody,
           )
         else
-          for (final r in rows) ...[
-            PriceRowCard(
-              key: Key('row_${r.commodity.id}'),
-              title: r.commodity.nameFil,
-              subtitle: r.commodity.nameEn,
-              entry: r.entry,
-              now: now,
-              onTap: () => context.push(Routes.commodity(r.commodity.id)),
-            ),
-            const SizedBox(height: SharedTokens.space3),
-          ],
-        Text(l10n.boardFootnote, style: Theme.of(context).textTheme.bodySmall),
+          PriceLedger(
+            leftLabel: l10n.boardColItem,
+            rightLabel: l10n.boardColPrice,
+            caption: l10n.boardFootnote,
+            rows: [
+              for (final r in rows)
+                PriceRowCard(
+                  key: Key('row_${r.commodity.id}'),
+                  title: r.commodity.nameIn(context),
+                  subtitle: r.commodity.altNameIn(context),
+                  entry: r.entry,
+                  now: now,
+                  onTap: () => context.push(Routes.commodity(r.commodity.id)),
+                ),
+            ],
+          ),
       ],
     );
   }
