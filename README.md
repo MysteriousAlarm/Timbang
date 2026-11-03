@@ -220,6 +220,7 @@ and [`docs/APK_BUILD.md`](docs/APK_BUILD.md) (Android APK checklist and troubles
 
 | Document | What it covers |
 |---|---|
+| [`docs/SETUP_CHECKLIST.txt`](docs/SETUP_CHECKLIST.txt) | One-page checklist (Notepad): PC setup → test on your phone → real Firebase project → pilot |
 | [`docs/BUILD.md`](docs/BUILD.md) | Firebase project setup, deploy, website, first admin |
 | [`docs/APK_BUILD.md`](docs/APK_BUILD.md) | Building and installing the Android APK |
 | [`docs/data-model.md`](docs/data-model.md) | Firestore collections, fields and rules |

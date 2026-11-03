@@ -1,0 +1,228 @@
+===============================================================================
+  PROJECT TIMBANG - SETUP CHECKLIST (first build v0.1.0)
+  Alamin ang presyo bago magbenta.
+===============================================================================
+
+Put an X inside [ ] when done.  Example: [X]
+Full details: docs\APK_BUILD.md and docs\BUILD.md in the repo.
+If something fails, copy the last 40 lines of the error and send them to Claude.
+
+
+-------------------------------------------------------------------------------
+PART 1 - PREPARE YOUR PC (once)                                    ~20 minutes
+-------------------------------------------------------------------------------
+Your One Vizcaya setup already has most of this. Just check the versions.
+
+[ ] 1. Open PowerShell and check versions:
+         flutter --version      -> must be 3.47 or newer
+         java -version          -> 17 or 21
+         node -v                -> v22.x
+         firebase --version     -> any recent version
+         git --version          -> any
+
+[ ] 2. If Flutter is older than 3.47:
+         flutter upgrade
+       (One Vizcaya will still build. Run "flutter pub get" there once after.)
+
+[ ] 3. If Firebase CLI is missing or old:
+         npm install -g firebase-tools
+         firebase login
+
+[ ] 4. Android Studio > Settings > Languages & Frameworks > Android SDK:
+         SDK Platforms: Android 16 (API 36) checked
+         SDK Tools: Build-Tools, Command-line Tools, Platform-Tools,
+                    NDK (Side by side), CMake  -> all checked -> Apply
+
+[ ] 5. Accept licenses and check:
+         flutter doctor --android-licenses      (press y to everything)
+         flutter doctor
+       "Flutter" and "Android toolchain" must have a green check.
+
+[ ] 6. Phone: Settings > About phone > tap "Build number" 7 times
+       > Developer options > turn ON "USB debugging".
+       Phone must be Android 7.0 or newer.
+
+
+-------------------------------------------------------------------------------
+PART 2 - GET THE CODE                                              ~10 minutes
+-------------------------------------------------------------------------------
+[ ] 7. On GitHub, open Pull Request #1 and click "Merge pull request"
+       > "Confirm merge" (after the green check appears).
+       https://github.com/MysteriousAlarm/Timbang/pull/1
+
+[ ] 8. GitHub Desktop > File > Clone repository > MysteriousAlarm/Timbang
+       (or in PowerShell: git clone https://github.com/MysteriousAlarm/Timbang.git)
+       Already cloned? Fetch origin > Pull.
+
+[ ] 9. In PowerShell, inside the Timbang folder:
+         npm install
+         npm --prefix functions install
+         cd app
+         flutter pub get
+         flutter test          (should say "All tests passed!")
+         cd ..
+
+
+-------------------------------------------------------------------------------
+PART 3 - TEST ON YOUR PHONE TODAY (no Firebase project needed)     ~20 minutes
+-------------------------------------------------------------------------------
+The phone uses a "fake Firebase" (the emulators) running on your PC over Wi-Fi.
+
+[ ] 10. Phone and PC on the SAME Wi-Fi (not a guest network).
+
+[ ] 11. Find your PC's Wi-Fi IP:  ipconfig  -> "Wireless LAN adapter Wi-Fi"
+        -> IPv4 Address.  Write it here: ____.____.____.____
+
+[ ] 12. Terminal 1 (keep it open the whole time):
+          npm run emulators:lan
+        If Windows Firewall asks: tick "Private networks" > Allow access.
+
+[ ] 13. Terminal 2, load the demo data (all marked DEMO, not real prices):
+          $env:FIRESTORE_EMULATOR_HOST="127.0.0.1:8080"; npm run seed:demo
+
+[ ] 14. Quick check: on the PHONE's browser open  http://<PC IP>:4000
+        If it does not open: firewall or different Wi-Fi.
+
+[ ] 15. Plug the phone into the PC with USB, allow "USB debugging" on the phone, then:
+          cd app
+          flutter run -t lib/main_app.dart --dart-define=EMULATOR_HOST=<PC IP>
+        (First build takes 5-15 minutes. Later runs are fast.)
+        No USB? Build a file instead:
+          flutter build apk --debug -t lib/main_app.dart --dart-define=EMULATOR_HOST=<PC IP>
+          -> app\build\app\outputs\flutter-apk\app-debug.apk  (copy to phone, install)
+
+[ ] 16. Log in on the phone with any number (e.g. 0917 123 4567).
+        The 6-digit code is NOT sent by SMS. Get it from:
+          http://127.0.0.1:4000/auth   (on the PC)
+
+[ ] 17. Test as a farmer AND as a buyer (log out, use a second number):
+        - Price board, Palitan (change market), tap a vegetable -> comparison
+        - Mag-post ng ani (farmer) -> Magtanong sa magsasaka (buyer) -> Tanong tab
+        - Alerto tab, Mag-ulat ng presyo, Profile
+        - Airplane mode: prices still visible with "Offline ka"
+        - Phone font size set to large
+
+[ ] 18. Make yourself ADMIN (to test the website admin dashboard):
+          $env:FIREBASE_AUTH_EMULATOR_HOST="127.0.0.1:9099"; $env:FIRESTORE_EMULATOR_HOST="127.0.0.1:8080"; npm run seed:admin -- +639171234567
+        (use the number you logged in with). Log out and in again. Then on the PC:
+          flutter run -d chrome -t lib/main_web.dart
+
+[ ] 19. Found a bug or UI problem? Screenshot + what you expected -> send to Claude.
+        After a fix: git pull, then press R in the flutter run terminal.
+
+Note: push notifications do not work in this test mode (the inbox still updates).
+
+
+-------------------------------------------------------------------------------
+PART 4 - REAL FIREBASE PROJECT (when you want the "real" app)      ~1-2 hours
+-------------------------------------------------------------------------------
+Go to https://console.firebase.google.com
+
+[ ] 20. Add project (e.g. "timbang-nv"). Google Analytics: OFF.
+
+[ ] 21. Upgrade to the Blaze plan (needed for Cloud Functions).
+        Google Cloud > Billing > Budgets & alerts > create a budget (e.g. PHP 500)
+        so you get an email before any real cost.
+
+[ ] 22. Build > Authentication > Get started > Sign-in method > Phone > Enable.
+        Then "Phone numbers for testing": add e.g.
+          +63 917 000 0001  code 123456
+          +63 917 000 0002  code 123456
+        (use these in class demos: no SMS cost, no waiting)
+
+[ ] 23. Build > Firestore Database > Create database > Production mode
+        > location: asia-southeast1 (Singapore).  MUST be this location.
+
+[ ] 24. Build > Storage > Get started (same location).
+
+[ ] 25. Connect the code (PowerShell, in the Timbang folder):
+          firebase use --add                (choose the project, alias: default)
+          dart pub global activate flutterfire_cli
+          cd app
+          flutterfire configure --project=<project-id> --platforms=android,web --android-package-name=ph.timbang.timbang --out=lib/core/firebase/firebase_options.dart
+          cd ..
+
+[ ] 26. Set the SMS webhook secret (type any long random text when asked):
+          firebase functions:secrets:set SMS_WEBHOOK_SECRET
+
+[ ] 27. Deploy the backend:
+          firebase deploy --only firestore:rules,firestore:indexes,storage,functions
+        (first time: 5-10 minutes; say YES if it asks to enable APIs)
+
+[ ] 28. Phone sign-in fingerprints (sign-in FAILS without this):
+          cd app\android
+          .\gradlew signingReport
+        Copy SHA1 and SHA-256 of "Variant: debug".
+        Firebase > Project settings > Your apps > Android > Add fingerprint (both).
+        Google Cloud console > APIs & Services > enable "Play Integrity API".
+          cd ..\..
+
+[ ] 29. Build the real APK:
+          cd app
+          flutter build apk --release -t lib/main_app.dart
+        -> app\build\app\outputs\flutter-apk\app-release.apk   install on the phone
+
+[ ] 30. Website:
+          flutter build web --release -t lib/main_web.dart
+          cd ..
+          firebase deploy --only hosting
+        -> https://<project-id>.web.app
+
+[ ] 31. First admin on the real project:
+        - Sign in once in the app (real number or test number)
+        - Firebase > Project settings > Service accounts > Generate new private key
+          Save it OUTSIDE the Timbang folder (e.g. C:\keys\timbang-sa.json). NEVER commit it.
+          $env:GOOGLE_APPLICATION_CREDENTIALS="C:\keys\timbang-sa.json"; $env:GCLOUD_PROJECT="<project-id>"; npm run seed:admin -- +639XXXXXXXXX
+        - Log out and in again: the website now shows the Admin dashboard.
+
+[ ] 32. Data for the demo, choose one:
+        a) Demo data (labeled DEMO):
+             $env:GOOGLE_APPLICATION_CREDENTIALS="C:\keys\timbang-sa.json"; $env:SEED_REAL_PROJECT="<project-id>"; npm run seed:demo
+        b) Official lists (when DA / DAR / NVAT send them):
+             Admin > Mga bilihin / Mga palengke > I-import ang CSV
+             Admin > Mga presyo > I-import ang opisyal na presyo
+             then "Alisin ang demo data"
+
+
+-------------------------------------------------------------------------------
+PART 5 - BEFORE THE PILOT / CS PC 7 REVIEW
+-------------------------------------------------------------------------------
+[ ] 33. App Check: Firebase > App Check > register Android (Play Integrity) and
+        web (reCAPTCHA v3). Then in functions\.env set ENFORCE_APP_CHECK=true and:
+          firebase deploy --only functions
+
+[ ] 34. Google Cloud > APIs & Services > Credentials: restrict the API keys
+        (Android key: package ph.timbang.timbang + SHA-1; browser key: your web.app domain).
+
+[ ] 35. Make a real signing key for the APK (ask Claude to wire it in):
+          keytool -genkey -v -keystore C:\keys\timbang-upload.jks -keyalg RSA -keysize 2048 -validity 10000 -alias upload
+        Back it up. Losing it = you cannot update the app.
+
+[ ] 36. Before each new APK: raise the version in app\pubspec.yaml (0.1.0+1 -> 0.1.1+2).
+
+[ ] 37. Read docs\threat-model.md and docs\security-checklist.md (for CS PC 7).
+        Usability test with docs\usability-sus.md (5-8 farmers, 3-5 buyers).
+
+
+-------------------------------------------------------------------------------
+STILL WAITING ON (not you to build)
+-------------------------------------------------------------------------------
+- Official commodity / market / price lists from DA, DAR, NVAT (Governor's office)
+- SMS gateway choice (Semaphore or Globe Labs) and who pays for SMS in the pilot
+- First verified price reporters (cooperative / LGU market monitors)
+
+
+-------------------------------------------------------------------------------
+QUICK FIXES
+-------------------------------------------------------------------------------
+"requires SDK version ^3.13.7"          -> flutter upgrade
+"Android license status unknown"        -> flutter doctor --android-licenses
+"NDK ... source.properties"             -> install NDK in SDK Manager, then flutter clean
+"Could not reserve enough space ..."    -> in app\android\gradle.properties change
+                                           -Xmx8G to -Xmx4G
+Phone stuck loading (test mode)          -> wrong IP / different Wi-Fi / firewall
+"App not authorized" / "missing app identifier" (real mode)
+                                         -> step 28 (fingerprints), wait 5 min, reinstall
+"App not installed"                      -> uninstall the old TIMBANG first
+Price board error right after deploy     -> wait for Firestore indexes to finish building
+===============================================================================
