@@ -78,6 +78,9 @@ Re-run `flutterfire configure` if you added the Android app after step 2.
 
 ## 5. Build
 
+Detailed APK checklist and troubleshooting: **[APK_BUILD.md](APK_BUILD.md)**.
+
+
 ```bash
 cd app
 

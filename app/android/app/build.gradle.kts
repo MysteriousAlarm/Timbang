@@ -19,7 +19,8 @@ android {
         applicationId = "ph.timbang.timbang"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = 23 // firebase_auth requires 23+
+        // Android 7.0+. All Firebase plugins, image_picker and url_launcher require 24.
+        minSdk = 24
         targetSdk = flutter.targetSdkVersion
         // Uses the version code from pubspec.yaml. When using split APKs, 1000 * ABI_VERSION
         // is added automatically by Flutter. (https://developer.android.com/studio/build/configure-apk-splits#configure-APK-versions)

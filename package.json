@@ -7,7 +7,8 @@
     "emulators": "node scripts/ensure-dev-secret.mjs && firebase emulators:start --project demo-timbang --import=./emulator-data --export-on-exit",
     "seed:admin": "node scripts/set-admin.mjs",
     "test:integration": "node scripts/ensure-dev-secret.mjs && npm --prefix functions run build && firebase emulators:exec --only auth,firestore,functions,storage --project demo-timbang \"node --test --test-concurrency=1 tests/integration/*.test.js\"",
-    "seed:demo": "node scripts/seed-demo.mjs"
+    "seed:demo": "node scripts/seed-demo.mjs",
+    "emulators:lan": "node scripts/ensure-dev-secret.mjs && node scripts/emulators-lan.mjs"
   },
   "devDependencies": {
     "@firebase/rules-unit-testing": "^4.0.1",

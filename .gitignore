@@ -25,3 +25,4 @@ emulator-data/
 .idea/
 .vscode/
 !functions/.env
+.firebase.lan.json
