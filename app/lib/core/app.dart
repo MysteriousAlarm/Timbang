@@ -3,6 +3,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'l10n/generated/app_localizations.dart';
+import 'push/push_service.dart';
 import 'router/app_router.dart';
 
 class TimbangApp extends ConsumerWidget {
@@ -13,7 +14,9 @@ class TimbangApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(pushServiceProvider);
     return MaterialApp.router(
+      scaffoldMessengerKey: rootMessengerKey,
       title: 'TIMBANG',
       debugShowCheckedModeBanner: false,
       theme: theme,

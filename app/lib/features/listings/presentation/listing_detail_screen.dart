@@ -16,16 +16,13 @@ import '../../admin/presentation/admin_labels.dart';
 import '../../auth/application/session.dart';
 import '../../catalog/data/catalog_providers.dart';
 import '../../catalog/domain/catalog_item.dart';
+import '../../inquiries/presentation/ask_farmer.dart';
 import '../../price_board/application/board_providers.dart';
 import '../../price_board/domain/board_entry.dart';
 import '../../price_board/presentation/board_widgets.dart';
 import '../application/listing_providers.dart';
 import '../domain/listing.dart';
 import 'listing_card.dart';
-
-/// Extra actions for buyers (inquiry, abuse report) are injected by later steps.
-typedef ListingExtraActions = List<Widget> Function(BuildContext context, Listing listing);
-ListingExtraActions? listingBuyerActions;
 
 class ListingDetailScreen extends ConsumerWidget {
   const ListingDetailScreen({super.key, required this.listingId});
@@ -205,7 +202,10 @@ class _Body extends ConsumerWidget {
           ),
           if (status == ListingStatus.active) ...[
             const SizedBox(height: SharedTokens.space3),
-            ...?listingBuyerActions?.call(context, listing),
+            AskFarmerButton(
+              listing: listing,
+              commodityName: commodity?.nameFil ?? listing.commodityId,
+            ),
           ],
         ],
       ],

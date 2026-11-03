@@ -9,6 +9,7 @@ import '../../../core/theme/tokens.dart';
 import '../../../shared/widgets/brand.dart';
 import '../../../shared/widgets/sections.dart';
 import '../../auth/application/session.dart';
+import '../../inquiries/data/inquiry_repository.dart';
 
 /// Farmer/buyer frame: seal app bar with a highlight rule, labeled bottom navigation.
 class HomeShell extends ConsumerWidget {
@@ -22,6 +23,7 @@ class HomeShell extends ConsumerWidget {
     final session = ref.watch(sessionProvider);
     final signedIn = session is SignedIn ? session : null;
     final c = TimbangColors.of(context);
+    final unread = ref.watch(newInquiryCountProvider);
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 68,
@@ -68,7 +70,11 @@ class HomeShell extends ConsumerWidget {
               label: l10n.navListings,
             ),
             NavigationDestination(
-              icon: const Icon(Icons.forum_outlined),
+              icon: Badge(
+                isLabelVisible: unread > 0,
+                label: Text('$unread'),
+                child: const Icon(Icons.forum_outlined),
+              ),
               selectedIcon: const Icon(Icons.forum),
               label: l10n.navInquiries,
             ),

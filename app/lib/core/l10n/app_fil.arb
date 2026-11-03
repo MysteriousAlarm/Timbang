@@ -635,5 +635,67 @@
   "noMedianYet": "Wala pang median para dito sa ngayon.",
   "knowBeforeSell": "Alamin ang presyo bago magbenta.",
   "farmersOnlyTitle": "Para sa magsasaka lamang",
-  "farmersOnlyBody": "Ang mga magsasaka lamang ang makakapag-post ng ani."
+  "farmersOnlyBody": "Ang mga magsasaka lamang ang makakapag-post ng ani.",
+  "askFarmer": "Magtanong sa magsasaka",
+  "askTitle": "Magtanong kay {name}",
+  "@askTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "askHelp": "Makikita ng magsasaka ang iyong pangalan at numero para makontak ka niya.",
+  "askTemplate": "Magandang araw po! Interesado po ako sa inyong {commodity}. Available pa po ba, at saan po pwedeng kunin?",
+  "@askTemplate": {
+    "placeholders": {
+      "commodity": {
+        "type": "String"
+      }
+    }
+  },
+  "askMessageLabel": "Mensahe",
+  "askSend": "Ipadala ang tanong",
+  "askSent": "Naipadala ang tanong. Aabisuhan ang magsasaka.",
+  "askErrLength": "Isulat ang mensahe (hanggang 500 letra).",
+  "askErrDuplicate": "Nakapagtanong ka na tungkol dito. Hintayin ang sagot o tumawag.",
+  "askErrGone": "Hindi na available ang listing na ito.",
+  "inboxKicker": "Mga tanong",
+  "inboxTitle": "Mga tanong tungkol sa ani",
+  "inboxReceived": "Natanggap",
+  "inboxReceivedCount": "Natanggap ({n})",
+  "@inboxReceivedCount": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "inboxSent": "Ipinadala",
+  "inboxHelp": "Isang mensahe bawat tanong. Mag-usap sa tawag o text para sa detalye.",
+  "inboxEmptyTitle": "Wala pang tanong",
+  "inboxEmptyReceived": "Lalabas dito ang mga tanong ng mamimili tungkol sa iyong ani.",
+  "inboxEmptySent": "Lalabas dito ang mga tanong na ipinadala mo.",
+  "inqNew": "Bago",
+  "inqRead": "Nabasa",
+  "inqClosed": "Sarado",
+  "inqFrom": "Mula kay {name}",
+  "@inqFrom": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "inqAbout": "Tungkol sa {commodity}",
+  "@inqAbout": {
+    "placeholders": {
+      "commodity": {
+        "type": "String"
+      }
+    }
+  },
+  "markRead": "Markahang nabasa",
+  "viewListing": "Tingnan ang ani",
+  "closeInquiry": "Isara"
 }
