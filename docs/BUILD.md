@@ -59,6 +59,7 @@ not secrets. Restrict the API keys later in Google Cloud → Credentials (Step 1
 ## 3. Deploy the backend
 
 ```bash
+firebase functions:secrets:set SMS_WEBHOOK_SECRET   # paste any long random string (SMS webhook signing)
 firebase deploy --only firestore:rules,firestore:indexes,storage,functions
 ```
 

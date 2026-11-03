@@ -1,4 +1,5 @@
-import { onCall } from 'firebase-functions/v2/https';
+import { onCall, onRequest } from 'firebase-functions/v2/https';
+import { defineSecret } from 'firebase-functions/params';
 import { onDocumentCreated } from 'firebase-functions/v2/firestore';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
 import { setGlobalOptions } from 'firebase-functions/v2';
@@ -22,6 +23,8 @@ import {
   setReporterMarketsHandler,
   setUserStatusHandler,
 } from './admin';
+import { MockSmsGateway, SmsGateway } from './sms/gateway';
+import { SmsStore, handleSms } from './sms/service';
 import { Notifier, PushMessage } from './notify';
 import { getMessaging } from 'firebase-admin/messaging';
 import {
@@ -513,4 +516,92 @@ export const getPilotMetrics = onCall({ timeoutSeconds: 60 }, async (req) => {
     reports7d: reports.docs.map((r) => ({ source: r.get('source') })),
     usersByRole,
   });
+});
+
+// ---------- Step 9: SMS price query ----------
+
+/** Shared secret for webhook signatures. Set with: firebase functions:secrets:set SMS_WEBHOOK_SECRET */
+const smsSecret = defineSecret('SMS_WEBHOOK_SECRET');
+
+const smsStore: SmsStore = {
+  now: () => Date.now(),
+  async commodities() {
+    const snap = await db.collection('commodities').where('active', '==', true).get();
+    return snap.docs.map((d) => ({
+      id: d.id,
+      nameFil: d.get('nameFil'),
+      nameEn: d.get('nameEn') ?? '',
+      unit: d.get('unit'),
+    }));
+  },
+  async markets() {
+    const snap = await db.collection('markets').where('active', '==', true).get();
+    return snap.docs.map((d) => ({
+      id: d.id,
+      name: d.get('name'),
+      municipality: d.get('municipality'),
+    }));
+  },
+  async boardsFor(commodityId) {
+    const snap = await db.collection('price_board').where('commodityId', '==', commodityId).get();
+    return snap.docs.map((d) => ({
+      commodityId,
+      marketId: d.get('marketId'),
+      medianPrice: d.get('medianPrice'),
+      confidence: d.get('confidence'),
+      latestReportAt: (d.get('latestReportAt') as Timestamp).toMillis(),
+      isDemo: d.get('isDemo') === true,
+    }));
+  },
+  async hit(key, windowMs) {
+    const ref = db.doc(`sms_rate/${key}`);
+    return db.runTransaction(async (tx) => {
+      const snap = await tx.get(ref);
+      const now = Date.now();
+      const start = snap.exists ? (snap.get('windowStart') as number) : 0;
+      const count = now - start > windowMs ? 1 : (snap.get('count') as number) + 1;
+      tx.set(ref, { windowStart: count === 1 ? now : start, count });
+      return count;
+    });
+  },
+};
+
+/** Provider choice. Only the mock exists until the gateway is chosen (Section 15 #2). */
+function smsGateway(): SmsGateway {
+  // const provider = process.env.SMS_PROVIDER ?? 'mock';  // 'semaphore' | 'globelabs' later
+  return new MockSmsGateway(smsSecret.value());
+}
+
+/** Inbound SMS webhook: verify signature, rate-limit per number, reply with the latest median. */
+export const smsWebhook = onRequest({ secrets: [smsSecret], maxInstances: 3 }, async (req, res) => {
+  if (req.method !== 'POST') {
+    res.status(405).send('Method not allowed');
+    return;
+  }
+  const gateway = smsGateway();
+  const inbound = gateway.verifyWebhook({
+    headers: req.headers as Record<string, unknown>,
+    rawBody: req.rawBody,
+  });
+  if (!inbound) {
+    res.status(401).send('Invalid signature');
+    return;
+  }
+  await handleSms(inbound, smsStore, gateway);
+  // Always 200 for authentic requests so the gateway does not retry.
+  res.status(200).json({ ok: true });
+});
+
+/** Admin demo: run the real SMS parser and reply without a gateway or SMS cost. */
+export const simulateSms = onCall(async (req) => {
+  requireAdmin(caller(req.auth));
+  const text =
+    typeof (req.data as { text?: unknown })?.text === 'string'
+      ? (req.data as { text: string }).text
+      : '';
+  const sink: SmsGateway = { send: async () => {}, verifyWebhook: () => null };
+  const reply = await handleSms({ from: 'admin-simulator', text }, smsStore, sink, {
+    rateLimit: false,
+  });
+  return { reply };
 });

@@ -59,3 +59,7 @@ export const INQUIRY_MESSAGE_MAX = 500;
 export const INQUIRIES_PER_HOUR = 10;
 /** One inquiry per buyer per listing within this many hours. */
 export const INQUIRY_REPEAT_HOURS = 6;
+
+// SMS (Step 9).
+export const SMS_PER_HOUR = 10;
+export const SMS_MAX_INBOUND = 160;
