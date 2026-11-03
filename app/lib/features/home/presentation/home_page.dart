@@ -10,6 +10,9 @@ import '../../../core/theme/tokens.dart';
 import '../../../shared/models/role.dart';
 import '../../../shared/widgets/sections.dart';
 import '../../auth/application/session.dart';
+import '../../catalog/data/catalog_providers.dart';
+import '../../catalog/domain/catalog_item.dart';
+import '../../price_board/presentation/price_board_section.dart';
 
 /// Home: greeting, my town, quick actions, today's prices.
 /// The live price board replaces the empty panel in Step 4.
@@ -82,9 +85,7 @@ class HomePage extends ConsumerWidget {
             _ActionTile(
               icon: Icons.compare_arrows,
               label: l10n.actionCompareMarkets,
-              onTap: () =>
-                  ScaffoldMessenger.of(context)
-                      .showSnackBar(SnackBar(content: Text(l10n.comingSoonBody))),
+              onTap: () => _pickCommodity(context, ref),
             ),
             _ActionTile(
               icon: Icons.notifications_active_outlined,
@@ -100,26 +101,46 @@ class HomePage extends ConsumerWidget {
           ],
         ),
         const SizedBox(height: SharedTokens.space6),
-        SectionHeader(kicker: l10n.pricesKicker, title: l10n.pricesTitle),
-        const SizedBox(height: SharedTokens.space3),
-        PanelCard(
-          padding: const EdgeInsets.symmetric(
-            horizontal: SharedTokens.space5,
-            vertical: SharedTokens.space6,
-          ),
-          child: Column(
-            children: [
-              Icon(Icons.price_change_outlined, size: 48, color: c.textMuted),
-              const SizedBox(height: SharedTokens.space3),
-              Text(l10n.priceBoardEmptyTitle, style: t.titleMedium, textAlign: TextAlign.center),
-              const SizedBox(height: SharedTokens.space1),
-              Text(l10n.priceBoardEmptyBody, style: t.bodyMedium, textAlign: TextAlign.center),
-            ],
-          ),
-        ),
+        const PriceBoardSection(),
       ],
     );
   }
+}
+
+/// "Ihambing ang palengke": choose a commodity, then open its market comparison.
+Future<void> _pickCommodity(BuildContext context, WidgetRef ref) async {
+  final l10n = AppLocalizations.of(context);
+  final items = (ref.read(commoditiesProvider).value ?? const <Commodity>[])
+      .where((c) => c.active)
+      .toList();
+  final id = await showModalBottomSheet<String>(
+    context: context,
+    showDragHandle: true,
+    isScrollControlled: true,
+    builder: (ctx) => SafeArea(
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(ctx).height * 0.7),
+        child: ListView(
+          shrinkWrap: true,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 0, 24, 8),
+              child: Text(l10n.chooseCommodity, style: Theme.of(ctx).textTheme.titleLarge),
+            ),
+            for (final c in items)
+              ListTile(
+                leading: const Icon(Icons.eco_outlined),
+                title: Text(c.nameFil),
+                subtitle: Text(c.nameEn),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => Navigator.pop(ctx, c.id),
+              ),
+          ],
+        ),
+      ),
+    ),
+  );
+  if (id != null && context.mounted) await context.push(Routes.commodity(id));
 }
 
 class _ActionTile extends StatelessWidget {

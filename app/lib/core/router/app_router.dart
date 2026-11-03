@@ -14,6 +14,7 @@ import '../../features/home/presentation/home_page.dart';
 import '../../features/home/presentation/home_shell.dart';
 import '../../features/home/presentation/placeholder_tabs.dart';
 import '../../features/landing/presentation/landing_page.dart';
+import '../../features/price_board/presentation/commodity_detail_screen.dart';
 import '../../features/profile/presentation/profile_screen.dart';
 import '../../features/profile/presentation/profile_setup_screen.dart';
 import '../../features/reports/presentation/report_price_screen.dart';
@@ -50,6 +51,11 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: Routes.login,
         builder: (_, _) => _farmerTheme(const PhoneScreen()),
         routes: [GoRoute(path: 'otp', builder: (_, _) => _farmerTheme(const OtpScreen()))],
+      ),
+      GoRoute(
+        path: '/prices/:id',
+        builder: (_, state) =>
+            _farmerTheme(CommodityDetailScreen(commodityId: state.pathParameters['id']!)),
       ),
       GoRoute(path: Routes.report, builder: (_, _) => _farmerTheme(const ReportPriceScreen())),
       GoRoute(path: Routes.setup, builder: (_, _) => _farmerTheme(const ProfileSetupScreen())),

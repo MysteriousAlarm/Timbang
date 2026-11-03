@@ -9,6 +9,14 @@ String unitLabel(AppLocalizations l10n, String unit) => switch (unit) {
   _ => unit,
 };
 
+/// Lowercase unit for "kada kilo" / "per kg".
+String unitShort(AppLocalizations l10n, String unit) => switch (unit) {
+  'kg' => l10n.unitShortKg,
+  'bundle' => l10n.unitShortBundle,
+  'piece' => l10n.unitShortPiece,
+  _ => unit,
+};
+
 String marketTypeLabel(AppLocalizations l10n, String type) => switch (type) {
   'public_market' => l10n.marketTypePublic,
   'trading_post' => l10n.marketTypeTrading,

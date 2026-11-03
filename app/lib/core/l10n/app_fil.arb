@@ -423,5 +423,127 @@
   "colMarket": "Palengke",
   "colPrice": "Presyo",
   "colSource": "Pinagmulan",
-  "sourceReporterShort": "Tagapag-ulat"
+  "sourceReporterShort": "Tagapag-ulat",
+  "agoJustNow": "ngayon lang",
+  "agoMinutes": "{n} minuto na ang nakalipas",
+  "@agoMinutes": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "agoHours": "{n} oras na ang nakalipas",
+  "@agoHours": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "agoDays": "{n} araw na ang nakalipas",
+  "@agoDays": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "updatedAgo": "Na-update {age}",
+  "@updatedAgo": {
+    "placeholders": {
+      "age": {
+        "type": "String"
+      }
+    }
+  },
+  "reportCount": "{n} ulat",
+  "@reportCount": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "perUnit": "kada {unit}",
+  "@perUnit": {
+    "placeholders": {
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "trendSemantics": "Galaw ng presyo: {label}",
+  "@trendSemantics": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "staleTag": "Luma na",
+  "staleExplain": "Walang bagong ulat sa nakaraang 24 oras. Ipinapakita pa rin ang huling median at kung gaano na ito katagal.",
+  "marketLabel": "Palengke",
+  "change": "Palitan",
+  "chooseMarket": "Pumili ng palengke",
+  "chooseCommodity": "Pumili ng bilihin na ihahambing",
+  "noMarketsTitle": "Wala pang palengke",
+  "noMarketsBody": "Hinihintay pa ang listahan ng palengke mula sa admin.",
+  "boardErrorTitle": "Hindi ma-load ang presyo",
+  "offlineBanner": "Offline ka. Ipinapakita ang huling na-save na presyo; tingnan ang oras ng update.",
+  "demoPricesBanner": "May demo na presyo dito para sa pagsubok. Hindi ito totoong presyo.",
+  "boardFootnote": "Median ng mga ulat sa nakaraang 24 oras. Iniuulat lamang ng TIMBANG ang napansing presyo.",
+  "commodityNotFound": "Hindi makita ang bilihin",
+  "commodityNotFoundBody": "Maaaring inalis na ito sa listahan.",
+  "compareKicker": "Paghahambing",
+  "compareTitle": "Presyo sa ibang palengke",
+  "compareHelp": "Nauuna ang mga palengke sa iyong bayan, pagkatapos ay mula pinakamura.",
+  "compareEmpty": "Wala pang presyo para dito sa alinmang palengke.",
+  "ownTownTag": "Iyong bayan",
+  "cheapestTag": "Pinakamura",
+  "higherBy": "{amount} mas mataas",
+  "@higherBy": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "lowerBy": "{amount} mas mababa",
+  "@lowerBy": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "sameAsYours": "Kapareho",
+  "medianAt": "Median sa {market}",
+  "@medianAt": {
+    "placeholders": {
+      "market": {
+        "type": "String"
+      }
+    }
+  },
+  "noPriceAtMarket": "Wala pang presyo nito sa {market}. Tingnan ang ibang palengke sa ibaba.",
+  "@noPriceAtMarket": {
+    "placeholders": {
+      "market": {
+        "type": "String"
+      }
+    }
+  },
+  "yesterdayMedian": "Kahapon: {amount}",
+  "@yesterdayMedian": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "reportThisPrice": "Mag-ulat ng presyo nito",
+  "unitShortKg": "kilo",
+  "unitShortBundle": "tali",
+  "unitShortPiece": "piraso"
 }

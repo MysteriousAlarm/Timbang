@@ -60,4 +60,7 @@ abstract final class AppConfig {
   static const priceMin = 0.01;
   static const priceMax = 100000.0;
   static const officialImportMaxRows = 500;
+
+  // Price board (Step 4). Must match PRICE_WINDOW_HOURS in functions/src/config.ts.
+  static const priceWindow = Duration(hours: 24);
 }
