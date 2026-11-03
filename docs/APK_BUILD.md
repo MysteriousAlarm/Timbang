@@ -92,6 +92,28 @@ The phone talks to the Firebase emulators running on your PC over Wi-Fi.
 
    Then sign out and in again. Website with admin: `flutter run -d chrome -t lib/main_web.dart`.
 
+### Testing on your own phone: tips for finding bugs and UI/UX issues
+
+- **Best for UI work: run over USB with hot reload.** Plug in the phone (USB debugging on), then:
+  ```bash
+  cd app
+  flutter run -t lib/main_app.dart --dart-define=EMULATOR_HOST=192.168.1.23
+  ```
+  Press `r` in the terminal to reload after pulling changes, `R` to restart. Errors and
+  overflow warnings appear in the terminal. Copy them to Claude together with a screenshot.
+- **Judging smoothness/speed:** debug builds are always slower and can stutter. For a realistic
+  feel, use a profile build (still connects to your PC's emulators):
+  ```bash
+  flutter run --profile -t lib/main_app.dart --dart-define=USE_EMULATORS=true --dart-define=EMULATOR_HOST=192.168.1.23
+  ```
+- **Things to try:** large text (Settings → Display → Font size), outdoor brightness, a slow or
+  no connection (airplane mode: the price board should stay readable with the offline banner),
+  both roles (sign up a second number as a buyer), rotating the phone, the back button.
+- **Two test numbers:** use one number as a farmer and another as a buyer (any PH number works on
+  the emulator) to test listings → inquiries → inbox end to end.
+- **Screenshots for bug reports:** power + volume down on the phone, or
+  `adb exec-out screencap -p > shot.png` on the PC.
+
 Notes: phone and PC must be on the **same Wi-Fi** (not a guest network with client isolation).
 Data is kept when you stop the emulators with Ctrl+C (saved to `emulator-data/`). Push
 notifications don't work on emulators (they are only logged); the inbox still updates.
