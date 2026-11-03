@@ -98,3 +98,21 @@ test('a farmer cannot import official prices', async () => {
   );
   await signOut(auth);
 });
+
+test('a price crossing an alert threshold marks the alert as triggered', async () => {
+  await aDb.doc('commodities/sitaw2').set({ nameFil: 'Sitaw', nameEn: 'String beans', unit: 'bundle', category: 'x', active: true });
+  await aDb.doc('alerts/al-1').set({
+    userId: 'pr-f1', commodityId: 'sitaw2', marketId: 'test-market', threshold: 30,
+    direction: 'above', active: true, createdAt: new Date(),
+  });
+  await signInAs('pr-admin2', { role: 'admin' });
+  await httpsCallable(fns, 'importOfficialPrices')({
+    sourceNote: 'DA test', rows: [{ commodityId: 'sitaw2', marketId: 'test-market', price: 32 }],
+  });
+  const a = await waitFor(async () => {
+    const d = (await aDb.doc('alerts/al-1').get()).data();
+    return d.lastTriggeredMedian ? d : null;
+  });
+  assert.equal(a.lastTriggeredMedian, 32);
+  await signOut(auth);
+});

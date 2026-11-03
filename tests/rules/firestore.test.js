@@ -370,8 +370,46 @@ describe('inquiries (Step 6)', () => {
   });
 });
 
+describe('alerts (Step 7)', () => {
+  beforeEach(async () => {
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      const db = ctx.firestore();
+      await setDoc(doc(db, 'commodities', 'kamatis'), { nameFil: 'Kamatis' });
+      await setDoc(doc(db, 'markets', 'bpm'), { name: 'BPM' });
+      await setDoc(doc(db, 'alerts', 'A1'), {
+        userId: FARMER_UID, commodityId: 'kamatis', marketId: 'bpm', threshold: 60,
+        direction: 'above', active: true, createdAt: new Date(),
+      });
+    });
+  });
+  const alert = (over = {}) => ({
+    userId: FARMER_UID, commodityId: 'kamatis', marketId: 'bpm', threshold: 60,
+    direction: 'above', active: true, createdAt: serverTimestamp(), ...over,
+  });
+  test('user creates own alert', async () => {
+    await assertSucceeds(setDoc(doc(farmerCtx(), 'alerts', 'A2'), alert()));
+  });
+  test.each([
+    ['for someone else', { userId: 'other1' }],
+    ['unknown market', { marketId: 'nope' }],
+    ['bad direction', { direction: 'sideways' }],
+    ['zero threshold', { threshold: 0 }],
+    ['server field', { lastTriggeredMedian: 5 }],
+  ])('rejects %s', async (_n, over) => {
+    await assertFails(setDoc(doc(farmerCtx(), 'alerts', 'A2'), alert(over)));
+  });
+  test('owner reads, edits, deletes; others cannot read', async () => {
+    await assertSucceeds(getDoc(doc(farmerCtx(), 'alerts', 'A1')));
+    await assertFails(getDoc(doc(otherCtx(), 'alerts', 'A1')));
+    await assertSucceeds(updateDoc(doc(farmerCtx(), 'alerts', 'A1'), { active: false, threshold: 70, updatedAt: serverTimestamp() }));
+    await assertFails(updateDoc(doc(farmerCtx(), 'alerts', 'A1'), { lastTriggeredAt: new Date(), updatedAt: serverTimestamp() }));
+    await assertFails(deleteDoc(doc(otherCtx(), 'alerts', 'A1')));
+    await assertSucceeds(deleteDoc(doc(farmerCtx(), 'alerts', 'A1')));
+  });
+});
+
 describe('locked collections (until their build step)', () => {
-  const locked = [ 'alerts',
+  const locked = [
     'abuse_reports', 'random_collection',
   ];
   test.each(locked)('%s: no client read or write', async (name) => {

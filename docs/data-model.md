@@ -14,7 +14,7 @@ rules enforce it. Update it whenever the model or rules change.
 | `price_reports` | Step 3, live | admin; reporter reads own | **none** (`submitPriceReport` / `importOfficialPrices`) |
 | `listings` | Step 5, live | any signed-in user | active farmer: create/update own (validated); no deletes |
 | `inquiries` | Step 6, live | the farmer, the buyer, admin | **create via `sendInquiry` only**; farmer: read/closed, buyer: closed |
-| `alerts` | locked until Step 7 | none | none |
+| `alerts` | Step 7, live | owner, admin | owner create/update/delete (validated); `lastTriggered*` by functions |
 | `abuse_reports` | locked until Step 8 | none | none |
 
 Anything not listed is denied (`match /{document=**}` → false).
@@ -107,6 +107,17 @@ the app uses 14), `updatedAt`, `moderatedAt` (admin removal; owner can no longer
   each other's number, signed-in only.
 - Push tokens: `users.fcmTokens` (one device per user in the pilot). FCM is not emulated: the
   emulator only logs pushes. Web push needs `--dart-define=FCM_VAPID_KEY=...`.
+
+## `alerts/{id}` (Step 7)
+
+`userId`, `commodityId`, `marketId` (both must exist), `threshold` (0.01-100000),
+`direction` (above | below), `active`, `createdAt`, `updatedAt`, and server-only
+`lastTriggeredAt`, `lastTriggeredMedian`.
+
+After every board recompute, `functions/src/alerts.ts` fires an alert only when the median
+**crosses** the threshold (previous < t <= new for "above"; previous > t >= new for "below"),
+so users get one notice per crossing. With no previous median, it fires if the condition already
+holds. The app caps users at 20 alerts.
 
 ## `audit_logs/{id}`
 

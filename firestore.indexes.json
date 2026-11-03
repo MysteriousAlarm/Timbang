@@ -159,6 +159,38 @@
           "order": "DESCENDING"
         }
       ]
+    },
+    {
+      "collectionGroup": "alerts",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "commodityId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "marketId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "active",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "alerts",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "userId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "createdAt",
+          "order": "DESCENDING"
+        }
+      ]
     }
   ],
   "fieldOverrides": []

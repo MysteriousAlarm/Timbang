@@ -11,6 +11,7 @@ import { CatalogDeps, clearDemoCatalogHandler, upsertCatalogHandler } from './ca
 import { CalcReport } from './confidence';
 import { expireListings } from './listings';
 import { sendInquiryHandler } from './inquiries';
+import { Alert, alertText, alertsToFire } from './alerts';
 import { Notifier, PushMessage } from './notify';
 import { getMessaging } from 'firebase-admin/messaging';
 import {
@@ -177,6 +178,51 @@ const priceStore: PriceStore = {
       batch.update(db.doc(`price_reports/${u.id}`), { status: u.status });
     }
     await batch.commit();
+  },
+  async getBoardMedian(commodityId, marketId) {
+    const d = await db.doc(`price_board/${commodityId}_${marketId}`).get();
+    return d.exists ? (d.get('medianPrice') as number) : null;
+  },
+  async boardUpdated(commodityId, marketId, unit, prev, board) {
+    const snap = await db
+      .collection('alerts')
+      .where('commodityId', '==', commodityId)
+      .where('marketId', '==', marketId)
+      .where('active', '==', true)
+      .get();
+    if (snap.empty) return;
+    const alerts: Alert[] = snap.docs.map((d) => ({
+      id: d.id,
+      userId: d.get('userId'),
+      threshold: d.get('threshold'),
+      direction: d.get('direction'),
+    }));
+    const fire = alertsToFire(alerts, prev, board.medianPrice);
+    if (!fire.length) return;
+    const [c, m] = await Promise.all([
+      db.doc(`commodities/${commodityId}`).get(),
+      db.doc(`markets/${marketId}`).get(),
+    ]);
+    const unitWord = unit === 'kg' ? 'kilo' : unit === 'bundle' ? 'tali' : 'piraso';
+    for (const a of fire) {
+      const text = alertText(
+        a,
+        c.get('nameFil') ?? commodityId,
+        m.get('name') ?? marketId,
+        board.medianPrice,
+        unitWord,
+      );
+      await notifier
+        .sendToUser(a.userId, {
+          ...text,
+          data: { type: 'alert', alertId: a.id, commodityId, marketId },
+        })
+        .catch((e) => console.warn('alert push failed', (e as Error).message));
+      await db.doc(`alerts/${a.id}`).update({
+        lastTriggeredAt: FieldValue.serverTimestamp(),
+        lastTriggeredMedian: board.medianPrice,
+      });
+    }
   },
   async bumpReporterScore(uid, update) {
     const ref = db.doc(`users/${uid}`);

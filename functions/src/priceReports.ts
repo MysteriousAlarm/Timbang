@@ -49,6 +49,16 @@ export interface PriceStore {
     sinceMs: number,
   ): Promise<CalcReport[]>;
   saveBoard(commodityId: string, marketId: string, unit: string, board: BoardResult): Promise<void>;
+  /** Current median on the board, before this recompute (null if none). */
+  getBoardMedian(commodityId: string, marketId: string): Promise<number | null>;
+  /** Called after a board entry is saved (price alerts, Step 7). */
+  boardUpdated?(
+    commodityId: string,
+    marketId: string,
+    unit: string,
+    prev: number | null,
+    board: BoardResult,
+  ): Promise<void>;
   bumpReporterScore(
     uid: string,
     update: (scored: number, near: number) => { scored: number; near: number; score: number },
@@ -164,7 +174,16 @@ export async function recomputeBoard(
   const board = computeBoard(reports, now);
   if (!board) return null;
   const commodity = await store.getCommodity(commodityId);
-  await store.saveBoard(commodityId, marketId, commodity?.unit ?? 'kg', board);
+  const unit = commodity?.unit ?? 'kg';
+  const prev = await store.getBoardMedian(commodityId, marketId);
+  await store.saveBoard(commodityId, marketId, unit, board);
+  if (store.boardUpdated) {
+    try {
+      await store.boardUpdated(commodityId, marketId, unit, prev, board);
+    } catch (e) {
+      console.warn('boardUpdated hook failed', (e as Error).message);
+    }
+  }
   return board;
 }
 

@@ -54,6 +54,11 @@ class MemStore implements PriceStore {
     this.boards.set(`${c}_${m}`, { ...b, unit });
     for (const u of b.statusUpdates) this.reports.find((r) => r.id === u.id)!.status = u.status;
   };
+  getBoardMedian = async (c: string, m: string) =>
+    this.boards.get(`${c}_${m}`)?.medianPrice ?? null;
+  hooks: { prev: number | null; next: number }[] = [];
+  boardUpdated = async (_c: string, _m: string, _u: string, prev: number | null, b: BoardResult) =>
+    void this.hooks.push({ prev, next: b.medianPrice });
   bumpReporterScore = async (
     uid: string,
     f: (s: number, n: number) => { scored: number; near: number; score: number },
@@ -187,6 +192,18 @@ describe('onReportCreated', () => {
       reportCount: 1,
     });
     expect(s.scores.get('rep2')).toEqual({ scored: 1, near: 1, score: 1 });
+  });
+  test('alert hook gets previous and new median', async () => {
+    const s = new MemStore();
+    await submit(s, { uid: 'farmer' }, ok);
+    await onReportCreated({ ...s.reports[0] }, s);
+    s.users.f2 = { status: 'active' };
+    await submit(s, { uid: 'f2' }, { ...ok, price: 60.5 });
+    await onReportCreated({ ...s.reports[1] }, s);
+    expect(s.hooks).toEqual([
+      { prev: null, next: 55.5 },
+      { prev: 55.5, next: 58 },
+    ]);
   });
   test('community report: low confidence, no score change', async () => {
     const s = new MemStore();
