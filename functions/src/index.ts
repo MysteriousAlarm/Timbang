@@ -1,4 +1,10 @@
-import { onCall, onRequest } from 'firebase-functions/v2/https';
+import {
+  CallableFunction,
+  CallableOptions,
+  CallableRequest,
+  onCall,
+  onRequest,
+} from 'firebase-functions/v2/https';
 import { defineSecret } from 'firebase-functions/params';
 import { onDocumentCreated } from 'firebase-functions/v2/firestore';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
@@ -7,7 +13,8 @@ import { FieldValue, Timestamp } from 'firebase-admin/firestore';
 import { REGION } from './config';
 import { auth, db, writeAudit } from './firebase';
 import { setUserRoleHandler, RoleDeps } from './roles';
-import { deleteMyAccountHandler } from './account';
+import { deleteMyAccountHandler, exportMyDataHandler } from './account';
+import { getStorage } from 'firebase-admin/storage';
 import { CatalogDeps, clearDemoCatalogHandler, upsertCatalogHandler } from './catalog';
 import { CalcReport } from './confidence';
 import { expireListings } from './listings';
@@ -37,6 +44,23 @@ import {
 
 setGlobalOptions({ region: REGION, maxInstances: 5 });
 
+/**
+ * App Check (Section 10). Off until the apps are registered in Firebase App Check; then set
+ * ENFORCE_APP_CHECK=true in functions/.env and redeploy. Every callable goes through this.
+ */
+const appCheck = { enforceAppCheck: process.env.ENFORCE_APP_CHECK === 'true' };
+type Handler<T> = (req: CallableRequest) => T | Promise<T>;
+function secureCall<T>(handler: Handler<T>): CallableFunction<unknown, Promise<T>>;
+function secureCall<T>(
+  opts: CallableOptions,
+  handler: Handler<T>,
+): CallableFunction<unknown, Promise<T>>;
+function secureCall<T>(a: CallableOptions | Handler<T>, b?: Handler<T>) {
+  return typeof a === 'function'
+    ? onCall(appCheck, a as Handler<T>)
+    : onCall({ ...a, ...appCheck }, b as Handler<T>);
+}
+
 const roleDeps: RoleDeps = {
   async getClaims(uid) {
     try {
@@ -60,7 +84,7 @@ const roleDeps: RoleDeps = {
 };
 
 /** Admin-only callable: set a user's role custom claim. */
-export const setUserRole = onCall((req) =>
+export const setUserRole = secureCall((req) =>
   setUserRoleHandler(
     req.auth ? { uid: req.auth.uid, role: req.auth.token.role } : undefined,
     req.data,
@@ -69,13 +93,50 @@ export const setUserRole = onCall((req) =>
 );
 
 /** Callable: the signed-in user deletes their own account (RA 10173). */
-export const deleteMyAccount = onCall((req) =>
+export const deleteMyAccount = secureCall((req) =>
   deleteMyAccountHandler(req.auth ? { uid: req.auth.uid } : undefined, {
     deleteProfile: async (uid) => {
       await db.collection('users').doc(uid).delete();
     },
     deleteAuthUser: (uid) => auth.deleteUser(uid),
     audit: writeAudit,
+    async cleanup(uid) {
+      const counts: Record<string, number> = {};
+      const [listings, alerts, sent, received, reports] = await Promise.all([
+        db.collection('listings').where('farmerId', '==', uid).get(),
+        db.collection('alerts').where('userId', '==', uid).get(),
+        db.collection('inquiries').where('buyerId', '==', uid).get(),
+        db.collection('inquiries').where('farmerId', '==', uid).get(),
+        db.collection('price_reports').where('reporterId', '==', uid).get(),
+      ]);
+      const writer = db.bulkWriter();
+      listings.docs.forEach((d) =>
+        writer.update(d.ref, {
+          status: 'removed',
+          farmerName: '(binurang account)',
+          farmerPhone: '',
+          photoUrls: [],
+          updatedAt: FieldValue.serverTimestamp(),
+        }),
+      );
+      alerts.docs.forEach((d) => writer.delete(d.ref));
+      [...sent.docs, ...received.docs].forEach((d) => writer.delete(d.ref));
+      // Keep prices (they belong to the market record) but unlink them from the person.
+      reports.docs.forEach((d) => writer.update(d.ref, { reporterId: 'deleted-user' }));
+      await writer.close();
+      try {
+        await getStorage()
+          .bucket()
+          .deleteFiles({ prefix: `listings/${uid}/` });
+      } catch (e) {
+        console.warn('photo cleanup failed', (e as Error).message);
+      }
+      counts.listings = listings.size;
+      counts.alerts = alerts.size;
+      counts.inquiries = sent.size + received.size;
+      counts.reportsAnonymized = reports.size;
+      return counts;
+    },
   }),
 );
 
@@ -106,12 +167,12 @@ const caller = (auth?: { uid: string; token: Record<string, unknown> }) =>
   auth ? { uid: auth.uid, role: auth.token.role } : undefined;
 
 /** Admin-only callable: create/update commodities or markets (form edit or CSV import). */
-export const upsertCatalog = onCall((req) =>
+export const upsertCatalog = secureCall((req) =>
   upsertCatalogHandler(caller(req.auth), req.data, catalogDeps),
 );
 
 /** Admin-only callable: delete seeded demo commodities or markets. */
-export const clearDemoCatalog = onCall((req) =>
+export const clearDemoCatalog = secureCall((req) =>
   clearDemoCatalogHandler(caller(req.auth), req.data, catalogDeps),
 );
 
@@ -255,12 +316,12 @@ const priceStore: PriceStore = {
 };
 
 /** Any signed-in user submits a price report; the source tier comes from the role claim. */
-export const submitPriceReport = onCall((req) =>
+export const submitPriceReport = secureCall((req) =>
   submitPriceReportHandler(caller(req.auth), req.data, priceStore),
 );
 
 /** Admin-only: import official DA / DAR / NVAT prices. */
-export const importOfficialPrices = onCall({ timeoutSeconds: 120 }, (req) =>
+export const importOfficialPrices = secureCall({ timeoutSeconds: 120 }, (req) =>
   importOfficialPricesHandler(caller(req.auth), req.data, priceStore),
 );
 
@@ -341,7 +402,7 @@ const notifier: Notifier = {
 };
 
 /** Buyer asks about a listing; the farmer gets a push notification. */
-export const sendInquiry = onCall((req) =>
+export const sendInquiry = secureCall((req) =>
   sendInquiryHandler(
     req.auth ? { uid: req.auth.uid } : undefined,
     req.data,
@@ -457,24 +518,24 @@ const adminStore: AdminStore = {
   audit: writeAudit,
 };
 
-export const setUserStatus = onCall((req) =>
+export const setUserStatus = secureCall((req) =>
   setUserStatusHandler(caller(req.auth), req.data, adminStore),
 );
-export const setReporterMarkets = onCall((req) =>
+export const setReporterMarkets = secureCall((req) =>
   setReporterMarketsHandler(caller(req.auth), req.data, adminStore),
 );
-export const moderateReport = onCall((req) =>
+export const moderateReport = secureCall((req) =>
   moderateReportHandler(caller(req.auth), req.data, adminStore),
 );
-export const moderateListing = onCall((req) =>
+export const moderateListing = secureCall((req) =>
   moderateListingHandler(caller(req.auth), req.data, adminStore),
 );
-export const resolveAbuseReport = onCall((req) =>
+export const resolveAbuseReport = secureCall((req) =>
   resolveAbuseReportHandler(caller(req.auth), req.data, adminStore),
 );
 
 /** Admin: pilot metrics (Section 12). Aggregates only, no personal data. */
-export const getPilotMetrics = onCall({ timeoutSeconds: 60 }, async (req) => {
+export const getPilotMetrics = secureCall({ timeoutSeconds: 60 }, async (req) => {
   requireAdmin(caller(req.auth));
   const now = Date.now();
   const since30 = Timestamp.fromMillis(now - 30 * 86400_000);
@@ -593,7 +654,7 @@ export const smsWebhook = onRequest({ secrets: [smsSecret], maxInstances: 3 }, a
 });
 
 /** Admin demo: run the real SMS parser and reply without a gateway or SMS cost. */
-export const simulateSms = onCall(async (req) => {
+export const simulateSms = secureCall(async (req) => {
   requireAdmin(caller(req.auth));
   const text =
     typeof (req.data as { text?: unknown })?.text === 'string'
@@ -605,3 +666,39 @@ export const simulateSms = onCall(async (req) => {
   });
   return { reply };
 });
+
+// ---------- Step 10: RA 10173 data access ----------
+
+/** The signed-in user downloads everything TIMBANG holds about them. */
+export const exportMyData = secureCall((req) =>
+  exportMyDataHandler(req.auth ? { uid: req.auth.uid } : undefined, {
+    async collect(uid) {
+      const plain = (d: FirebaseFirestore.DocumentSnapshot) => {
+        const out: Record<string, unknown> = { id: d.id };
+        for (const [k, v] of Object.entries(d.data() ?? {})) {
+          out[k] = v instanceof Timestamp ? v.toDate().toISOString() : v;
+        }
+        return out;
+      };
+      const [profile, listings, alerts, sent, received, reports] = await Promise.all([
+        db.doc(`users/${uid}`).get(),
+        db.collection('listings').where('farmerId', '==', uid).get(),
+        db.collection('alerts').where('userId', '==', uid).get(),
+        db.collection('inquiries').where('buyerId', '==', uid).get(),
+        db.collection('inquiries').where('farmerId', '==', uid).get(),
+        db.collection('price_reports').where('reporterId', '==', uid).get(),
+      ]);
+      const profileData = plain(profile);
+      delete profileData.fcmTokens;
+      return {
+        profile: profileData,
+        listings: listings.docs.map(plain),
+        alerts: alerts.docs.map(plain),
+        inquiriesSent: sent.docs.map(plain),
+        inquiriesReceived: received.docs.map(plain),
+        priceReports: reports.docs.map(plain),
+      };
+    },
+    audit: writeAudit,
+  }),
+);

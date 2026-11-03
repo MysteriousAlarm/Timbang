@@ -6,7 +6,7 @@
     "test:rules": "firebase emulators:exec --only firestore,storage --project demo-timbang \"jest --config tests/rules/jest.config.js --runInBand\"",
     "emulators": "node scripts/ensure-dev-secret.mjs && firebase emulators:start --project demo-timbang --import=./emulator-data --export-on-exit",
     "seed:admin": "node scripts/set-admin.mjs",
-    "test:integration": "node scripts/ensure-dev-secret.mjs && npm --prefix functions run build && firebase emulators:exec --only auth,firestore,functions --project demo-timbang \"node --test --test-concurrency=1 tests/integration/*.test.js\"",
+    "test:integration": "node scripts/ensure-dev-secret.mjs && npm --prefix functions run build && firebase emulators:exec --only auth,firestore,functions,storage --project demo-timbang \"node --test --test-concurrency=1 tests/integration/*.test.js\"",
     "seed:demo": "node scripts/seed-demo.mjs"
   },
   "devDependencies": {

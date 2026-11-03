@@ -24,3 +24,4 @@ emulator-data/
 .DS_Store
 .idea/
 .vscode/
+!functions/.env

@@ -64,3 +64,26 @@ test('a user can delete their own account', async () => {
   assert.equal((await aDb.doc('users/leaver').get()).exists, false);
   await assert.rejects(aAuth.getUser('leaver'));
 });
+
+test('export my data returns own records; deleting the account cleans them up', async () => {
+  await signInAs('dataUser');
+  await aDb.doc('users/dataUser').set({ name: 'Data User', phone: '+639170001111', status: 'active', role: 'farmer', fcmTokens: ['secret-token'] });
+  await aDb.doc('listings/data-L1').set({ farmerId: 'dataUser', farmerName: 'Data User', farmerPhone: '+639170001111', status: 'active', commodityId: 'x', createdAt: new Date() });
+  await aDb.doc('alerts/data-A1').set({ userId: 'dataUser', commodityId: 'x', marketId: 'y', threshold: 1, direction: 'above', active: true });
+  await aDb.doc('price_reports/data-R1').set({ reporterId: 'dataUser', commodityId: 'x', marketId: 'y', price: 1, status: 'valid', timestamp: new Date(), batchId: 'skip' });
+
+  const out = (await httpsCallable(fns, 'exportMyData')({})).data;
+  assert.equal(out.profile.name, 'Data User');
+  assert.equal(out.profile.fcmTokens, undefined);
+  assert.equal(out.listings.length, 1);
+  assert.equal(out.alerts.length, 1);
+  assert.equal(out.priceReports.length, 1);
+
+  await httpsCallable(fns, 'deleteMyAccount')({});
+  const l = (await aDb.doc('listings/data-L1').get()).data();
+  assert.equal(l.status, 'removed');
+  assert.equal(l.farmerPhone, '');
+  assert.equal((await aDb.doc('alerts/data-A1').get()).exists, false);
+  assert.equal((await aDb.doc('price_reports/data-R1').get()).data().reporterId, 'deleted-user');
+  assert.equal((await aDb.doc('users/dataUser').get()).exists, false);
+});
