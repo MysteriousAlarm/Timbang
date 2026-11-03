@@ -14,7 +14,7 @@ Flutter (Android + web) + Firebase. See `CLAUDE.md` for scope and `docs/` for de
 | `firestore.rules`, `storage.rules` | Security rules (deny by default) |
 | `tests/rules/` | Rules tests (`@firebase/rules-unit-testing`) |
 | `scripts/` | Local-only admin scripts (first admin claim) |
-| `docs/` | Data model, threat model, pilot metrics |
+| `docs/` | `BUILD.md` (build & deploy), `data-model.md`, `threat-model.md` (STRIDE), `security-checklist.md` (MASVS), `sms.md`, `pilot-metrics.md`, `usability-sus.md` |
 
 ## Local development (emulators only, project `demo-timbang`)
 

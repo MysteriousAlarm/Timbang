@@ -113,6 +113,18 @@ firebase deploy --only hosting      # -> https://<project-id>.web.app
      ```
      Later: Admin → *Alisin ang demo data*.
 
+## 7. Security switches before the pilot (CS PC 7)
+
+1. **App Check**: Firebase console → App Check → register the Android app (Play Integrity) and
+   the web app (reCAPTCHA v3; build the web with `--dart-define=RECAPTCHA_SITE_KEY=<site key>`).
+   For debug builds, register the debug token printed in the device log.
+   Then set `ENFORCE_APP_CHECK=true` in `functions/.env` and `firebase deploy --only functions`.
+2. **Web push** (optional): Project settings → Cloud Messaging → Web push certificates →
+   build the web with `--dart-define=FCM_VAPID_KEY=<key>`. Android push works without this.
+3. **API key restrictions** (Google Cloud → Credentials): Android key → package
+   `ph.timbang.timbang` + SHA-1; browser key → your hosting domains.
+4. Review `docs/security-checklist.md` and `docs/threat-model.md`.
+
 ## Day-to-day development (no real project needed)
 
 ```bash
