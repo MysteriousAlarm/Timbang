@@ -14,6 +14,9 @@ import '../../features/home/presentation/home_page.dart';
 import '../../features/home/presentation/home_shell.dart';
 import '../../features/home/presentation/placeholder_tabs.dart';
 import '../../features/landing/presentation/landing_page.dart';
+import '../../features/listings/presentation/create_listing_screen.dart';
+import '../../features/listings/presentation/listing_detail_screen.dart';
+import '../../features/listings/presentation/listings_tab.dart';
 import '../../features/price_board/presentation/commodity_detail_screen.dart';
 import '../../features/profile/presentation/profile_screen.dart';
 import '../../features/profile/presentation/profile_setup_screen.dart';
@@ -57,13 +60,22 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (_, state) =>
             _farmerTheme(CommodityDetailScreen(commodityId: state.pathParameters['id']!)),
       ),
+      GoRoute(
+        path: Routes.newListing,
+        builder: (_, _) => _farmerTheme(const CreateListingScreen()),
+      ),
+      GoRoute(
+        path: '/listings/:id',
+        builder: (_, state) =>
+            _farmerTheme(ListingDetailScreen(listingId: state.pathParameters['id']!)),
+      ),
       GoRoute(path: Routes.report, builder: (_, _) => _farmerTheme(const ReportPriceScreen())),
       GoRoute(path: Routes.setup, builder: (_, _) => _farmerTheme(const ProfileSetupScreen())),
       StatefulShellRoute.indexedStack(
         builder: (_, _, shell) => _farmerTheme(HomeShell(shell: shell)),
         branches: [
           _tab(Routes.prices, const HomePage()),
-          _tab(Routes.listings, const ComingSoonTab(icon: Icons.storefront_outlined)),
+          _tab(Routes.listings, const ListingsTab()),
           _tab(Routes.inquiries, const ComingSoonTab(icon: Icons.forum_outlined)),
           _tab(Routes.alerts, const ComingSoonTab(icon: Icons.notifications_outlined)),
           _tab(Routes.profile, const ProfileScreen()),

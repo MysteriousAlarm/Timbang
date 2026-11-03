@@ -80,7 +80,7 @@ class HomePage extends ConsumerWidget {
               icon: isFarmer ? Icons.add_business_outlined : Icons.search,
               label: isFarmer ? l10n.actionPostProduce : l10n.actionFindProduce,
               cta: true,
-              onTap: () => context.go(Routes.listings),
+              onTap: () => isFarmer ? context.push(Routes.newListing) : context.go(Routes.listings),
             ),
             _ActionTile(
               icon: Icons.compare_arrows,

@@ -63,4 +63,13 @@ abstract final class AppConfig {
 
   // Price board (Step 4). Must match PRICE_WINDOW_HOURS in functions/src/config.ts.
   static const priceWindow = Duration(hours: 24);
+
+  // Listings (Step 5). Keep in sync with firestore.rules and storage.rules.
+  static const listingDays = 14;
+  static const listingMaxPhotos = 3;
+  static const listingMaxPhotoBytes = 1024 * 1024;
+  static const listingPhotoMaxSide = 1280.0;
+  static const listingPhotoQuality = 70;
+  static const listingNoteMax = 280;
+  static const quantityMax = 100000.0;
 }

@@ -545,5 +545,95 @@
   "reportThisPrice": "Mag-ulat ng presyo nito",
   "unitShortKg": "kilo",
   "unitShortBundle": "tali",
-  "unitShortPiece": "piraso"
+  "unitShortPiece": "piraso",
+  "listingsKicker": "Ani na binebenta",
+  "listingsTitle": "Maghanap o mag-post ng ani",
+  "listingsAll": "Lahat",
+  "listingsMine": "Aking ani",
+  "sortNewest": "Pinakabago",
+  "sortCheapest": "Pinakamura",
+  "listingsEmptyTitle": "Walang ani na tugma",
+  "listingsEmptyBody": "Subukang baguhin ang bilihin o bayan.",
+  "myListingsEmptyTitle": "Wala ka pang na-post",
+  "myListingsEmptyBody": "I-post ang iyong ani para makontak ka ng mamimili.",
+  "listingActive": "Aktibo",
+  "listingSold": "Nabenta",
+  "listingExpired": "Nag-expire",
+  "listingRemoved": "Inalis",
+  "postedAgo": "Na-post {age}",
+  "@postedAgo": {
+    "placeholders": {
+      "age": {
+        "type": "String"
+      }
+    }
+  },
+  "postedLabel": "Na-post",
+  "listingDetailTitle": "Detalye ng ani",
+  "listingNotFound": "Hindi makita ang ani",
+  "listingNotFoundBody": "Maaaring inalis na ito.",
+  "fieldQuantity": "Dami",
+  "fieldAskingPrice": "Hinihinging presyo",
+  "fieldHarvestDate": "Petsa ng ani",
+  "fieldNote": "Paalala",
+  "fieldNoteOptional": "Paalala (opsyonal), hal. kalidad, kung saan kukunin",
+  "contactKicker": "Makipag-ugnayan sa magsasaka",
+  "contactPrivacyNote": "Nakikita lamang ang numero ng mga naka-log in na user. Gamitin lamang para sa pagbili.",
+  "call": "Tumawag",
+  "text": "Mag-text",
+  "askingSameAsMedian": "Kapareho ng median sa palengke.",
+  "askingAboveMedian": "{amount} mas mataas sa median sa palengke.",
+  "@askingAboveMedian": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "askingBelowMedian": "{amount} mas mababa sa median sa palengke.",
+  "@askingBelowMedian": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "ownerKicker": "Iyong listing",
+  "ownerTitle": "Pamahalaan ang ani",
+  "markSold": "Nabenta na",
+  "editListing": "I-edit ang dami at presyo",
+  "renewListing": "I-post ulit (14 na araw)",
+  "removeListing": "Alisin ang listing",
+  "listingModerated": "Inalis ng admin ang listing na ito dahil sa paglabag sa patakaran.",
+  "newListingKicker": "Bagong listing",
+  "newListingTitle": "Ano ang ibebenta mo?",
+  "newListingHelp": "Makikita ito ng mga mamimili kasama ang iyong pangalan at numero.",
+  "errQuantity": "Ilagay ang dami (hal. 50).",
+  "errHarvestDate": "Pumili ng petsa sa loob ng 60 araw.",
+  "photosLabel": "Mga larawan (hanggang {max})",
+  "@photosLabel": {
+    "placeholders": {
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "photosHelp": "Pinaliliit ang larawan bago i-upload. Kailangan ng internet para sa larawan.",
+  "photoTooLarge": "Masyadong malaki ang larawan. Pumili ng iba.",
+  "postListing": "I-post ang ani",
+  "listingExpiryNote": "Awtomatikong mag-e-expire ang listing pagkalipas ng {days} araw.",
+  "@listingExpiryNote": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "listingPosted": "Na-post ang iyong ani.",
+  "listingQueued": "Offline ka: naka-save sa phone at ipo-post kapag may internet na.",
+  "listingPhotosFailed": "Na-post, pero hindi na-upload ang ilang larawan.",
+  "noMedianYet": "Wala pang median para dito sa ngayon.",
+  "knowBeforeSell": "Alamin ang presyo bago magbenta.",
+  "farmersOnlyTitle": "Para sa magsasaka lamang",
+  "farmersOnlyBody": "Ang mga magsasaka lamang ang makakapag-post ng ani."
 }

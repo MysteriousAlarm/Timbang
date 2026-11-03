@@ -20,6 +20,8 @@ abstract final class Routes {
   static const adminPrices = '/admin/prices';
   static const report = '/report';
   static String commodity(String id) => '/prices/$id';
+  static const newListing = '/listings/new';
+  static String listing(String id) => '/listings/$id';
 }
 
 /// Pure redirect logic (unit tested). Returns null to stay on [location].
