@@ -13,6 +13,7 @@ import '../../../shared/widgets/state_views.dart';
 import '../../auth/application/session.dart';
 import '../../catalog/data/catalog_providers.dart';
 import '../../catalog/domain/catalog_item.dart';
+import '../../catalog/presentation/commodity_names.dart';
 import '../../price_board/application/board_providers.dart';
 import '../application/listing_providers.dart';
 import '../data/listing_repository.dart';
@@ -125,7 +126,7 @@ class _Filters extends ConsumerWidget {
                 items: [
                   DropdownMenuItem(value: null, child: Text(l10n.filterAll)),
                   for (final x in commodities)
-                    DropdownMenuItem(value: x.id, child: Text(x.nameFil)),
+                    DropdownMenuItem(value: x.id, child: Text(x.nameIn(context))),
                 ],
                 onChanged: (v) =>
                     notifier.set(ListingFilter(commodityId: v, municipality: f.municipality)),
@@ -181,7 +182,8 @@ class _BrowseList extends ConsumerWidget {
     final async = ref.watch(activeListingsProvider(f));
     final now = ref.watch(clockProvider).value ?? DateTime.now();
     final names = {
-      for (final x in ref.watch(commoditiesProvider).value ?? const <Commodity>[]) x.id: x.nameFil,
+      for (final x in ref.watch(commoditiesProvider).value ?? const <Commodity>[])
+        x.id: x.nameIn(context),
     };
     return async.when(
       loading: () => const Padding(
@@ -228,7 +230,8 @@ class _MineList extends ConsumerWidget {
     final async = ref.watch(myListingsProvider);
     final now = ref.watch(clockProvider).value ?? DateTime.now();
     final names = {
-      for (final x in ref.watch(commoditiesProvider).value ?? const <Commodity>[]) x.id: x.nameFil,
+      for (final x in ref.watch(commoditiesProvider).value ?? const <Commodity>[])
+        x.id: x.nameIn(context),
     };
     return async.when(
       loading: () => const Padding(

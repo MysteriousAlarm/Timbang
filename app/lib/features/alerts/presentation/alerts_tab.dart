@@ -8,6 +8,7 @@ import '../../../shared/widgets/sections.dart';
 import '../../../shared/widgets/state_views.dart';
 import '../../catalog/data/catalog_providers.dart';
 import '../../catalog/domain/catalog_item.dart';
+import '../../catalog/presentation/commodity_names.dart';
 import '../../price_board/application/board_providers.dart';
 import '../../price_board/domain/board_entry.dart';
 import '../../price_board/presentation/board_widgets.dart';
@@ -93,7 +94,7 @@ class _AlertCard extends ConsumerWidget {
     final repo = ref.read(alertRepositoryProvider);
     String name = alert.commodityId;
     for (final x in ref.watch(commoditiesProvider).value ?? const <Commodity>[]) {
-      if (x.id == alert.commodityId) name = x.nameFil;
+      if (x.id == alert.commodityId) name = x.nameIn(context);
     }
     String market = alert.marketId;
     for (final m in ref.watch(marketsProvider).value ?? const <Market>[]) {

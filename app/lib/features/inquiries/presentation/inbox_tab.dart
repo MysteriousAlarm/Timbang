@@ -14,6 +14,7 @@ import '../../../shared/widgets/state_views.dart';
 import '../../auth/application/session.dart';
 import '../../catalog/data/catalog_providers.dart';
 import '../../catalog/domain/catalog_item.dart';
+import '../../catalog/presentation/commodity_names.dart';
 import '../../price_board/application/board_providers.dart';
 import '../../price_board/presentation/board_widgets.dart';
 import '../data/inquiry_repository.dart';
@@ -43,7 +44,8 @@ class _InboxTabState extends ConsumerState<InboxTab> {
         : ref.watch(sentInquiriesProvider);
     final now = ref.watch(clockProvider).value ?? DateTime.now();
     final names = {
-      for (final x in ref.watch(commoditiesProvider).value ?? const <Commodity>[]) x.id: x.nameFil,
+      for (final x in ref.watch(commoditiesProvider).value ?? const <Commodity>[])
+        x.id: x.nameIn(context),
     };
     final unread = ref.watch(newInquiryCountProvider);
 
@@ -131,7 +133,7 @@ class _StatusPill extends StatelessWidget {
     };
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-      decoration: BoxDecoration(color: fill, borderRadius: BorderRadius.circular(999)),
+      decoration: BoxDecoration(color: fill, borderRadius: BorderRadius.circular(4)),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [

@@ -16,6 +16,7 @@ import '../../admin/presentation/admin_labels.dart';
 import '../../auth/application/session.dart';
 import '../../catalog/data/catalog_providers.dart';
 import '../../catalog/domain/catalog_item.dart';
+import '../../catalog/presentation/commodity_names.dart';
 import '../../inquiries/presentation/ask_farmer.dart';
 import '../../moderation/presentation/flag_sheet.dart';
 import '../../price_board/application/board_providers.dart';
@@ -107,7 +108,7 @@ class _Body extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(commodity?.nameFil ?? listing.commodityId, style: t.headlineSmall),
+                  Text(commodity?.nameIn(context) ?? listing.commodityId, style: t.headlineSmall),
                   if (commodity != null) Text(commodity.nameEn, style: t.bodyMedium),
                 ],
               ),
@@ -205,7 +206,7 @@ class _Body extends ConsumerWidget {
             const SizedBox(height: SharedTokens.space3),
             AskFarmerButton(
               listing: listing,
-              commodityName: commodity?.nameFil ?? listing.commodityId,
+              commodityName: commodity?.nameIn(context) ?? listing.commodityId,
             ),
           ],
           const SizedBox(height: SharedTokens.space2),

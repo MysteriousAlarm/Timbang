@@ -18,6 +18,7 @@ import '../../admin/presentation/admin_labels.dart';
 import '../../auth/application/session.dart';
 import '../../catalog/data/catalog_providers.dart';
 import '../../catalog/domain/catalog_item.dart';
+import '../../catalog/presentation/commodity_names.dart';
 import '../../price_board/application/board_providers.dart';
 import '../../price_board/domain/board_entry.dart';
 import '../../profile/presentation/municipality_field.dart';
@@ -213,7 +214,7 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
                       ),
                       items: [
                         for (final x in commodities)
-                          DropdownMenuItem(value: x.id, child: Text('${x.nameFil} (${x.nameEn})')),
+                          DropdownMenuItem(value: x.id, child: Text(x.labelIn(context))),
                       ],
                       onChanged: (v) => setState(() => _commodityId = v),
                     ),

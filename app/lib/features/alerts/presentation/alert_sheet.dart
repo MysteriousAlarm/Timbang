@@ -8,6 +8,7 @@ import '../../../shared/widgets/sections.dart';
 import '../../auth/application/session.dart';
 import '../../catalog/data/catalog_providers.dart';
 import '../../catalog/domain/catalog_item.dart';
+import '../../catalog/presentation/commodity_names.dart';
 import '../../price_board/application/board_providers.dart';
 import '../../price_board/domain/board_entry.dart';
 import '../../reports/domain/price_report.dart';
@@ -131,7 +132,7 @@ class _AlertSheetState extends ConsumerState<_AlertSheet> {
               ),
               items: [
                 for (final x in commodities)
-                  DropdownMenuItem(value: x.id, child: Text('${x.nameFil} (${x.nameEn})')),
+                  DropdownMenuItem(value: x.id, child: Text(x.labelIn(context))),
               ],
               onChanged: (v) => setState(() => _commodityId = v),
             ),

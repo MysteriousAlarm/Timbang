@@ -16,6 +16,7 @@ import '../../admin/presentation/admin_labels.dart';
 import '../../auth/application/session.dart';
 import '../../catalog/data/catalog_providers.dart';
 import '../../catalog/domain/catalog_item.dart';
+import '../../catalog/presentation/commodity_names.dart';
 import '../data/price_report_repository.dart';
 import '../domain/price_report.dart';
 
@@ -190,7 +191,7 @@ class _ReportPriceScreenState extends ConsumerState<ReportPriceScreen> {
           ),
           items: [
             for (final x in commodities)
-              DropdownMenuItem(value: x.id, child: Text('${x.nameFil} (${x.nameEn})')),
+              DropdownMenuItem(value: x.id, child: Text(x.labelIn(context))),
           ],
           onChanged: (v) => setState(() => _commodityId = v),
         ),
