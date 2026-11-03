@@ -15,7 +15,7 @@ rules enforce it. Update it whenever the model or rules change.
 | `listings` | Step 5, live | any signed-in user | active farmer: create/update own (validated); no deletes |
 | `inquiries` | Step 6, live | the farmer, the buyer, admin | **create via `sendInquiry` only**; farmer: read/closed, buyer: closed |
 | `alerts` | Step 7, live | owner, admin | owner create/update/delete (validated); `lastTriggered*` by functions |
-| `abuse_reports` | locked until Step 8 | none | none |
+| `abuse_reports` | Step 8, live | admin | any signed-in user creates (validated); resolution via `resolveAbuseReport` |
 
 Anything not listed is denied (`match /{document=**}` → false).
 
@@ -119,10 +119,31 @@ After every board recompute, `functions/src/alerts.ts` fires an alert only when 
 so users get one notice per crossing. With no previous median, it fires if the condition already
 holds. The app caps users at 20 alerts.
 
+## `abuse_reports/{id}` (Step 8)
+
+`targetType` (listing | price_board), `targetId`, `reporterId`, `reason`
+(wrong_price | scam | spam | offensive | other), optional `note` (max 300), `status`
+(open | resolved | dismissed), `createdAt`, and server-set `resolutionNote`, `resolvedAt`.
+
+## Admin actions (Step 8)
+
+All admin-only callables write `audit_logs`:
+
+| Callable | Effect |
+|---|---|
+| `setUserRole` | role claim (reporter approval), mirrored to `users.role`, `verified` |
+| `setUserStatus` | `users.status` active / suspended (not yourself). Suspended users cannot post, report or inquire |
+| `setReporterMarkets` | `users.assignedMarketIds` (reporters only; empty = any market) |
+| `moderateReport` | price report `rejected` / restored `valid`, then board recompute. If nothing usable is left in 48 h, the board entry is removed so a rejected price is never shown |
+| `moderateListing` | listing `removed` + `moderatedAt` (owner can no longer revive it) |
+| `resolveAbuseReport` | abuse report `resolved` / `dismissed` |
+| `getPilotMetrics` | aggregates only: median price age (overall and per market), active farmers (30 d), listings (30 d), inquiries per listing, reports by source (7 d), users by role |
+
 ## `audit_logs/{id}`
 
 `actorId`, `action` (`set_user_role`, `delete_account`, `upsert_commodities`, `upsert_markets`,
-`clear_demo_commodities`, `clear_demo_markets`, `import_official_prices`), `targetPath`, `detail`, `timestamp`.
+`clear_demo_commodities`, `clear_demo_markets`, `import_official_prices`, `set_user_status`, `set_reporter_markets`,
+`reject_price_report`, `restore_price_report`, `remove_listing`, `abuse_resolved`, `abuse_dismissed`), `targetPath`, `detail`, `timestamp`.
 No personal data (uids and paths only).
 
 ## Roles (custom claims)

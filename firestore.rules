@@ -213,9 +213,28 @@ service cloud.firestore {
       allow delete: if signedIn() && resource.data.userId == request.auth.uid;
     }
 
-    // ---------- locked until their build step (Section 13) ----------
-    //
-    // abuse_reports (Step 8).
+    // ---------- abuse reports (Step 8) ----------
+    // Any signed-in user can flag a listing or a price; only admins read and resolve
+    // (resolution goes through `resolveAbuseReport`, which writes audit_logs).
+    match /abuse_reports/{id} {
+      allow read: if isAdmin();
+      allow create: if signedIn()
+        && request.resource.data.keys().hasOnly(
+             ['targetType', 'targetId', 'reporterId', 'reason', 'note', 'status', 'createdAt'])
+        && request.resource.data.keys().hasAll(
+             ['targetType', 'targetId', 'reporterId', 'reason', 'status', 'createdAt'])
+        && request.resource.data.reporterId == request.auth.uid
+        && request.resource.data.targetType in ['listing', 'price_board']
+        && request.resource.data.targetId is string
+        && request.resource.data.targetId.size() > 0 && request.resource.data.targetId.size() <= 120
+        && request.resource.data.reason in ['wrong_price', 'scam', 'spam', 'offensive', 'other']
+        && (!('note' in request.resource.data)
+            || (request.resource.data.note is string && request.resource.data.note.size() <= 300))
+        && request.resource.data.status == 'open'
+        && request.resource.data.createdAt == request.time;
+      allow update, delete: if false;
+    }
+
     // No explicit match = denied by default.
     match /{document=**} {
       allow read, write: if false;

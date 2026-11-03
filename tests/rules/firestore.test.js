@@ -408,9 +408,46 @@ describe('alerts (Step 7)', () => {
   });
 });
 
+describe('abuse_reports (Step 8)', () => {
+  const flag = (over = {}) => ({
+    targetType: 'listing', targetId: 'L1', reporterId: FARMER_UID, reason: 'scam',
+    note: 'Peke ang larawan', status: 'open', createdAt: serverTimestamp(), ...over,
+  });
+  test('signed-in user can flag a listing or a price', async () => {
+    await assertSucceeds(setDoc(doc(farmerCtx(), 'abuse_reports', 'A1'), flag()));
+    await assertSucceeds(setDoc(doc(farmerCtx(), 'abuse_reports', 'A2'), flag({ targetType: 'price_board', targetId: 'kamatis_bpm', reason: 'wrong_price' })));
+  });
+  test.each([
+    ['as someone else', { reporterId: 'other1' }],
+    ['unknown target type', { targetType: 'user' }],
+    ['unknown reason', { reason: 'ayaw ko' }],
+    ['already resolved', { status: 'resolved' }],
+    ['long note', { note: 'x'.repeat(301) }],
+  ])('rejects %s', async (_n, over) => {
+    await assertFails(setDoc(doc(farmerCtx(), 'abuse_reports', 'A1'), flag(over)));
+  });
+  test('anonymous cannot flag; only admins read; nobody edits', async () => {
+    await assertFails(setDoc(doc(anonCtx(), 'abuse_reports', 'A1'), flag()));
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      await setDoc(doc(ctx.firestore(), 'abuse_reports', 'A9'), { ...flag(), createdAt: new Date() });
+    });
+    await assertFails(getDoc(doc(farmerCtx(), 'abuse_reports', 'A9')));
+    await assertSucceeds(getDoc(doc(adminCtx(), 'abuse_reports', 'A9')));
+    await assertFails(updateDoc(doc(adminCtx(), 'abuse_reports', 'A9'), { status: 'resolved' }));
+  });
+});
+
+describe('users: admin listing', () => {
+  test('admin can query all users; others cannot', async () => {
+    const { getDocs } = require('firebase/firestore');
+    await assertSucceeds(getDocs(collection(adminCtx(), 'users')));
+    await assertFails(getDocs(collection(farmerCtx(), 'users')));
+  });
+});
+
 describe('locked collections (until their build step)', () => {
   const locked = [
-    'abuse_reports', 'random_collection',
+    'random_collection', 'sms_rate',
   ];
   test.each(locked)('%s: no client read or write', async (name) => {
     await assertFails(getDoc(doc(farmerCtx(), name, 'x')));

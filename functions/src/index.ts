@@ -12,12 +12,23 @@ import { CalcReport } from './confidence';
 import { expireListings } from './listings';
 import { sendInquiryHandler } from './inquiries';
 import { Alert, alertText, alertsToFire } from './alerts';
+import {
+  AdminStore,
+  computeMetrics,
+  moderateListingHandler,
+  moderateReportHandler,
+  requireAdmin,
+  resolveAbuseReportHandler,
+  setReporterMarketsHandler,
+  setUserStatusHandler,
+} from './admin';
 import { Notifier, PushMessage } from './notify';
 import { getMessaging } from 'firebase-admin/messaging';
 import {
   PriceStore,
   importOfficialPricesHandler,
   onReportCreated,
+  recomputeBoard,
   submitPriceReportHandler,
 } from './priceReports';
 
@@ -374,3 +385,132 @@ export const sendInquiry = onCall((req) =>
     notifier,
   ),
 );
+
+// ---------- Step 8: admin moderation, reporters, metrics ----------
+
+const adminStore: AdminStore = {
+  async userExists(uid) {
+    const d = await db.doc(`users/${uid}`).get();
+    return d.exists ? { role: d.get('role') } : null;
+  },
+  async setUserStatus(uid, status) {
+    await db.doc(`users/${uid}`).update({ status, updatedAt: FieldValue.serverTimestamp() });
+  },
+  async setAssignedMarkets(uid, marketIds) {
+    await db
+      .doc(`users/${uid}`)
+      .update({ assignedMarketIds: marketIds, updatedAt: FieldValue.serverTimestamp() });
+  },
+  async marketsExist(ids) {
+    const snaps = await db.getAll(...ids.map((id) => db.doc(`markets/${id}`)));
+    return snaps.every((s) => s.exists);
+  },
+  async getReport(id) {
+    const d = (await db.doc(`price_reports/${id}`).get()).data();
+    return d ? { commodityId: d.commodityId, marketId: d.marketId, status: d.status } : null;
+  },
+  async setReportStatus(id, status, reason) {
+    await db
+      .doc(`price_reports/${id}`)
+      .update({ status, moderationReason: reason, moderatedAt: FieldValue.serverTimestamp() });
+  },
+  async recompute(commodityId, marketId) {
+    const board = await recomputeBoard(commodityId, marketId, priceStore);
+    if (board) return;
+    // Nothing usable left in 48h (e.g. the only report was rejected): a rejected price must not
+    // stay on the board, so the entry is removed until new reports arrive.
+    const recent = await priceStore.reportsForPairSince(
+      commodityId,
+      marketId,
+      Date.now() - 48 * 3600_000,
+    );
+    if (recent.length && recent.every((r) => r.status === 'rejected')) {
+      await db.doc(`price_board/${commodityId}_${marketId}`).delete();
+    }
+  },
+  async getListing(id) {
+    const d = (await db.doc(`listings/${id}`).get()).data();
+    return d ? { status: d.status } : null;
+  },
+  async removeListing(id, reason) {
+    await db.doc(`listings/${id}`).update({
+      status: 'removed',
+      moderatedAt: FieldValue.serverTimestamp(),
+      moderationReason: reason,
+      updatedAt: FieldValue.serverTimestamp(),
+    });
+  },
+  async getAbuseReport(id) {
+    const d = (await db.doc(`abuse_reports/${id}`).get()).data();
+    return d ? { status: d.status } : null;
+  },
+  async resolveAbuseReport(id, resolution, note) {
+    await db.doc(`abuse_reports/${id}`).update({
+      status: resolution,
+      resolutionNote: note,
+      resolvedAt: FieldValue.serverTimestamp(),
+    });
+  },
+  audit: writeAudit,
+};
+
+export const setUserStatus = onCall((req) =>
+  setUserStatusHandler(caller(req.auth), req.data, adminStore),
+);
+export const setReporterMarkets = onCall((req) =>
+  setReporterMarketsHandler(caller(req.auth), req.data, adminStore),
+);
+export const moderateReport = onCall((req) =>
+  moderateReportHandler(caller(req.auth), req.data, adminStore),
+);
+export const moderateListing = onCall((req) =>
+  moderateListingHandler(caller(req.auth), req.data, adminStore),
+);
+export const resolveAbuseReport = onCall((req) =>
+  resolveAbuseReportHandler(caller(req.auth), req.data, adminStore),
+);
+
+/** Admin: pilot metrics (Section 12). Aggregates only, no personal data. */
+export const getPilotMetrics = onCall({ timeoutSeconds: 60 }, async (req) => {
+  requireAdmin(caller(req.auth));
+  const now = Date.now();
+  const since30 = Timestamp.fromMillis(now - 30 * 86400_000);
+  const since7 = Timestamp.fromMillis(now - 7 * 86400_000);
+  const [boards, markets, listings, inquiries, reports, users] = await Promise.all([
+    db.collection('price_board').select('marketId', 'latestReportAt').get(),
+    db.collection('markets').select('name').get(),
+    db.collection('listings').where('createdAt', '>', since30).select('farmerId').get(),
+    db.collection('inquiries').where('createdAt', '>', since30).count().get(),
+    db
+      .collection('price_reports')
+      .where('timestamp', '>', since7)
+      .select('source', 'reporterId')
+      .get(),
+    db.collection('users').select('role', 'status').get(),
+  ]);
+  const usersByRole: Record<string, number> = {};
+  let farmersTotal = 0;
+  users.docs.forEach((u) => {
+    const r = String(u.get('role') ?? 'buyer');
+    usersByRole[r] = (usersByRole[r] ?? 0) + 1;
+    if (r === 'farmer' && u.get('status') !== 'suspended') farmersTotal += 1;
+  });
+  const farmerIds = new Set(users.docs.filter((u) => u.get('role') === 'farmer').map((u) => u.id));
+  return computeMetrics({
+    now,
+    boards: boards.docs.map((b) => ({
+      marketId: b.get('marketId'),
+      latestReportAt: (b.get('latestReportAt') as Timestamp).toMillis(),
+    })),
+    markets: markets.docs.map((m) => ({ id: m.id, name: m.get('name') })),
+    farmersTotal,
+    activeFarmerIds30d: [
+      ...listings.docs.map((l) => l.get('farmerId') as string),
+      ...reports.docs.map((r) => r.get('reporterId') as string).filter((id) => farmerIds.has(id)),
+    ],
+    listings30d: listings.size,
+    inquiries30d: inquiries.data().count,
+    reports7d: reports.docs.map((r) => ({ source: r.get('source') })),
+    usersByRole,
+  });
+});
