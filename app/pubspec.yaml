@@ -1,0 +1,50 @@
+name: timbang
+description: "TIMBANG: verified daily vegetable prices and produce listings for Nueva Vizcaya."
+publish_to: 'none'
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  cloud_firestore: ^7.1.0
+  cloud_functions: ^7.0.1
+  file_picker: ^13.3.2
+  firebase_app_check: ^0.5.1
+  firebase_auth: ^7.0.1
+  firebase_core: ^5.1.0
+  firebase_messaging: ^17.0.1
+  firebase_storage: ^14.0.1
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  flutter_riverpod: ^3.4.3
+  go_router: ^18.1.2
+  image_picker: ^1.2.4
+  intl: ^0.20.3
+  url_launcher: ^6.3.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+  generate: true
+
+  # Public Sans (SIL Open Font License, see assets/fonts/OFL-LICENSE.md).
+  # Bundled so text renders the same offline and on low-end Android.
+  fonts:
+    - family: PublicSans
+      fonts:
+        - asset: assets/fonts/PublicSans-Regular.ttf
+        - asset: assets/fonts/PublicSans-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/PublicSans-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/PublicSans-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/PublicSans-ExtraBold.ttf
+          weight: 800

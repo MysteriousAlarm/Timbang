@@ -1,0 +1,897 @@
+{
+  "@@locale": "fil",
+  "appName": "TIMBANG",
+  "tagline": "Alamin ang presyo bago magbenta.",
+  "taglineSub": "Araw-araw na presyo ng gulay sa Nueva Vizcaya, may tatak kung gaano ito kapani-paniwala.",
+  "logIn": "Mag-log in",
+  "loginTitle": "Mag-log in gamit ang numero ng telepono",
+  "phoneLabel": "Numero ng telepono",
+  "phoneHint": "09XX XXX XXXX",
+  "phoneHelp": "Padadalhan ka namin ng 6 na numerong code sa SMS.",
+  "sendCode": "Ipadala ang code",
+  "otpTitle": "Ilagay ang code",
+  "otpSentTo": "Ipinadala namin ang code sa {phone}.",
+  "@otpSentTo": {
+    "placeholders": {
+      "phone": {
+        "type": "String"
+      }
+    }
+  },
+  "otpLabel": "6 na numerong code",
+  "verify": "Kumpirmahin",
+  "changeNumber": "Palitan ang numero",
+  "resendCode": "Ipadala ulit ang code",
+  "errInvalidPhone": "Mali ang numero. Gamitin ang 09XX XXX XXXX.",
+  "errInvalidCode": "Mali ang code. Pakisubukan ulit.",
+  "errCodeExpired": "Nag-expire na ang code. Magpadala ng bago.",
+  "errTooManyRequests": "Masyadong maraming subok. Maghintay muna bago umulit.",
+  "errNetwork": "Walang koneksyon. Suriin ang internet at subukan ulit.",
+  "errGeneric": "May nangyaring mali. Pakisubukan ulit.",
+  "errNameRequired": "Ilagay ang pangalan (2 hanggang 80 letra).",
+  "errMunicipalityRequired": "Pumili ng bayan.",
+  "errRoleRequired": "Pumili kung magsasaka o mamimili.",
+  "errConsentRequired": "Kailangang sumang-ayon bago magpatuloy.",
+  "setupTitle": "Gawin ang iyong profile",
+  "nameLabel": "Buong pangalan",
+  "municipalityLabel": "Bayan",
+  "roleQuestion": "Ikaw ba ay...",
+  "roleFarmer": "Magsasaka",
+  "roleFarmerDesc": "Magbebenta ng ani at titingin ng presyo",
+  "roleBuyer": "Mamimili",
+  "roleBuyerDesc": "Bibili ng ani mula sa mga magsasaka",
+  "roleReporter": "Tagapag-ulat ng presyo",
+  "roleAdmin": "Admin",
+  "consentTitle": "Paunawa sa privacy (RA 10173)",
+  "consentBody": "Kinokolekta lamang ng TIMBANG ang iyong pangalan, numero ng telepono, at bayan para sa iyong account at para makontak ka ng mamimili. Hindi namin ito ibinebenta o ibinabahagi sa iba. Maaari mong tingnan, itama, o burahin ang iyong data anumang oras sa Profile, alinsunod sa Data Privacy Act of 2012 (RA 10173).",
+  "consentCheckbox": "Nabasa ko at sumasang-ayon ako",
+  "saveProfile": "I-save ang profile",
+  "navPrices": "Presyo",
+  "navListings": "Ani",
+  "navInquiries": "Tanong",
+  "navAlerts": "Alerto",
+  "navProfile": "Profile",
+  "comingSoonTitle": "Malapit na",
+  "comingSoonBody": "Ginagawa pa ang bahaging ito.",
+  "priceBoardEmptyTitle": "Wala pang presyo",
+  "priceBoardEmptyBody": "Lalabas dito ang araw-araw na presyo kapag may ulat na mula sa palengke.",
+  "profileTitle": "Aking profile",
+  "phoneReadOnly": "Numero ng telepono (hindi mapapalitan)",
+  "roleLabel": "Papel",
+  "verifiedBadge": "Beripikado",
+  "editProfile": "I-edit",
+  "saved": "Na-save.",
+  "signOut": "Mag-log out",
+  "myData": "Aking data",
+  "myDataBody": "Ito lang ang hawak naming personal na data mo: pangalan, numero, at bayan.",
+  "deleteAccount": "Burahin ang account",
+  "deleteAccountConfirmTitle": "Burahin ang account?",
+  "deleteAccountConfirmBody": "Mabubura ang iyong profile, mga listing, alerto at tanong. Mananatili ang mga naiulat mong presyo pero hindi na naka-link sa iyo. Hindi na ito maibabalik.",
+  "cancel": "Kanselahin",
+  "delete": "Burahin",
+  "suspendedNotice": "Naka-suspend ang iyong account. Makipag-ugnayan sa admin.",
+  "confidenceHigh": "Mataas",
+  "confidenceMedium": "Katamtaman",
+  "confidenceLow": "Mababa",
+  "confidenceSemantics": "Kumpiyansa: {level}",
+  "@confidenceSemantics": {
+    "placeholders": {
+      "level": {
+        "type": "String"
+      }
+    }
+  },
+  "landingCta": "Buksan ang TIMBANG",
+  "landingFeature1Title": "Beripikadong presyo",
+  "landingFeature1Body": "Median na presyo bawat palengke, may tatak ng kumpiyansa at oras ng huling update.",
+  "landingFeature2Title": "Diretso sa mamimili",
+  "landingFeature2Body": "Mag-post ng ani at hayaang kontakin ka ng mamimili.",
+  "landingFeature3Title": "Gumagana kahit offline o SMS",
+  "landingFeature3Body": "Makikita ang huling presyo kahit walang internet, o mag-text para malaman ito.",
+  "landingDisclaimer": "Iniuulat lamang ng TIMBANG ang mga napansing presyo. Hindi ito nagtatakda ng presyo.",
+  "adminTitle": "Admin dashboard",
+  "adminOnly": "Para sa admin lamang.",
+  "backHome": "Bumalik",
+  "stepOf": "Hakbang {n} ng {total}",
+  "@stepOf": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "privacyFooter": "Protektado ang iyong data sa ilalim ng Data Privacy Act of 2012 (RA 10173).",
+  "buildLabel": "Unang build · v{version}",
+  "@buildLabel": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "setupSubtitle": "Pangalan, bayan, at kung ikaw ay magsasaka o mamimili lamang ang kailangan namin.",
+  "navHome": "Home",
+  "greeting": "Magandang araw, {name}",
+  "@greeting": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "myTown": "Iyong bayan",
+  "actionPostProduce": "Mag-post ng ani",
+  "actionFindProduce": "Maghanap ng ani",
+  "actionCompareMarkets": "Ihambing ang palengke",
+  "actionPriceAlerts": "Alerto sa presyo",
+  "pricesKicker": "Presyo ngayon",
+  "pricesTitle": "Presyo sa iyong palengke",
+  "utilityStrip": "Para sa mga magsasaka at mamimili ng Nueva Vizcaya",
+  "heroKicker": "Araw-araw na presyo ng gulay · Nueva Vizcaya",
+  "principlesKicker": "Ang aming pamantayan",
+  "principlesTitle": "Presyong maaasahan, kahit saan ka man",
+  "principleTimelyTitle": "Napapanahon",
+  "principleTimelyBody": "Ina-update araw-araw at laging ipinapakita kung kailan huling na-update.",
+  "principleLocalTitle": "Lokal",
+  "principleLocalBody": "Presyo sa iyong sariling palengke at sa mga kalapit na bayan.",
+  "principleTrustedTitle": "Mapagkakatiwalaan",
+  "principleTrustedBody": "Bawat presyo ay may pinagmulan at tatak ng kumpiyansa.",
+  "principleAccessibleTitle": "Abot-kamay",
+  "principleAccessibleBody": "Gumagana kahit offline, at sa SMS para sa basic na cellphone.",
+  "howKicker": "Paano gumagana",
+  "howTitle": "Tatlong hakbang bago magbenta",
+  "step1Title": "Mag-log in gamit ang numero",
+  "step1Body": "Walang password. Isang code lang sa SMS.",
+  "step2Title": "Tingnan ang presyo",
+  "step2Body": "Alamin ang median na presyo sa iyong palengke at ihambing sa iba.",
+  "step3Title": "Kumonekta sa mamimili",
+  "step3Body": "I-post ang iyong ani at hayaang kontakin ka ng mamimili.",
+  "trustKicker": "Kumpiyansa",
+  "trustTitle": "Paano basahin ang tatak ng kumpiyansa",
+  "legendHighTitle": "Opisyal o maraming tugmang ulat",
+  "legendHighBody": "May opisyal na datos, o 3 o higit pang magkakatugmang ulat kasama ang beripikadong tagapag-ulat.",
+  "legendMediumTitle": "Mula sa beripikadong tagapag-ulat",
+  "legendMediumBody": "Isa o dalawang ulat mula sa beripikadong tagapag-ulat ng presyo.",
+  "legendLowTitle": "Ulat ng komunidad lamang",
+  "legendLowBody": "Isang ulat mula sa komunidad na hindi pa natutugma. Gamitin nang may pag-iingat.",
+  "sampleBoardSemantics": "Halimbawa ng price board. Hindi ito totoong presyo.",
+  "sampleBoardKicker": "Ganito ang itsura",
+  "sampleBoardTitle": "Bayombong Public Market",
+  "exampleBadge": "HALIMBAWA",
+  "sampleKamatis": "Kamatis · kada kilo",
+  "sampleRepolyo": "Repolyo · kada kilo",
+  "sampleSitaw": "Sitaw · kada tali",
+  "trendUp": "Tumaas",
+  "trendDown": "Bumaba",
+  "trendFlat": "Walang galaw",
+  "sampleBoardFooter": "Laging may oras ng huling update. Halimbawa lamang, hindi totoong presyo.",
+  "footerCredit": "Project TIMBANG · Nueva Vizcaya State University, Bayombong",
+  "unitKg": "Kilo (kg)",
+  "unitBundle": "Tali (bundle)",
+  "unitPiece": "Piraso",
+  "marketTypePublic": "Pampublikong palengke",
+  "marketTypeTrading": "Bagsakan / trading post",
+  "marketTypeFarmgate": "Farmgate",
+  "adminCommodities": "Mga bilihin",
+  "adminMarkets": "Mga palengke",
+  "adminOverview": "Pangkalahatang-tanaw",
+  "adminOverviewDesc": "Katayuan ng mga listahan at datos ng TIMBANG.",
+  "adminBadge": "ADMIN",
+  "adminFarmerView": "Tingnan bilang user",
+  "adminCatalogKicker": "Mga listahan",
+  "issueMissing": "kulang",
+  "issueTooLong": "masyadong mahaba",
+  "issueTooShort": "masyadong maikli",
+  "issueBadId": "maliliit na titik, numero at gitling lamang (2 hanggang 49)",
+  "issueNotAllowed": "hindi kasama sa pinapayagang halaga",
+  "issueBadBool": "gamitin ang true o false",
+  "issueDuplicate": "may kapareho sa file",
+  "issueMissingColumn": "walang ganitong column",
+  "demoDataBanner": "May {count} demo na item. Pansamantala lamang ito habang hinihintay ang opisyal na listahan. Hindi ito totoong datos.",
+  "@demoDataBanner": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "kpiActiveCommodities": "Aktibong bilihin",
+  "kpiActiveMarkets": "Aktibong palengke",
+  "kpiDemoItems": "Demo na item",
+  "ofTotal": "sa kabuuang {total}",
+  "@ofTotal": {
+    "placeholders": {
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "dataSourcesKicker": "Pinagmulan ng datos",
+  "dataSourcesTitle": "Opisyal na listahan mula sa DA, DAR at NVAT",
+  "dataSourcesBody": "Hinihintay pa ang opisyal na listahan ng bilihin, palengke at presyo sa pamamagitan ng Tanggapan ng Gobernador. Pagdating nito, i-import ang CSV sa bawat listahan. Walang code na kailangang baguhin. Pagkatapos, alisin ang demo data.",
+  "importCommoditiesCsv": "I-import ang bilihin (CSV)",
+  "importMarketsCsv": "I-import ang palengke (CSV)",
+  "clearDemoTitle": "Alisin ang demo data?",
+  "clearDemoBody": "Buburahin ang {count} demo na item sa listahang ito. Hindi gagalawin ang na-import na opisyal na datos.",
+  "@clearDemoBody": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "clearDemo": "Alisin ang demo data",
+  "clearedDemo": "Naalis ang {count} demo na item.",
+  "@clearedDemo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "commoditiesDesc": "Mga gulay at iba pang ani na sinusubaybayan ang presyo.",
+  "marketsDesc": "Mga palengke, bagsakan at farmgate na pinag-uulatan ng presyo.",
+  "importCsv": "I-import ang CSV",
+  "addCommodity": "Magdagdag ng bilihin",
+  "addMarket": "Magdagdag ng palengke",
+  "editCommodity": "I-edit ang bilihin",
+  "editMarket": "I-edit ang palengke",
+  "searchHint": "Maghanap ayon sa pangalan o ID",
+  "filterAll": "Lahat",
+  "statusActive": "Aktibo",
+  "statusInactive": "Hindi aktibo",
+  "catalogEmptyTitle": "Wala pang laman",
+  "catalogEmptyBody": "Magdagdag isa-isa o mag-import ng CSV.",
+  "noMatches": "Walang tumugma sa paghahanap",
+  "showingCount": "Ipinapakita ang {shown} sa {total}",
+  "@showingCount": {
+    "placeholders": {
+      "shown": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "colName": "Pangalan",
+  "colId": "ID",
+  "colUnit": "Yunit",
+  "colCategory": "Kategorya",
+  "colStatus": "Katayuan",
+  "colMunicipality": "Bayan",
+  "colType": "Uri",
+  "fieldNameFil": "Pangalan (Filipino)",
+  "fieldNameEn": "Pangalan (English)",
+  "fieldMarketName": "Pangalan ng palengke",
+  "fieldId": "ID",
+  "fieldIdHelp": "Kusang nabubuo mula sa pangalan. Ito ang gagamitin sa CSV at hindi na mababago.",
+  "fieldIdLocked": "Hindi na mababago ang ID.",
+  "fieldCategoryHelp": "Hal. Lowland vegetables, Highland vegetables, Fruits",
+  "activeHelp": "Ang hindi aktibo ay nakatago sa app pero hindi nabubura.",
+  "save": "I-save",
+  "importedCount": "Na-import ang {count} na item.",
+  "@importedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "lineError": "Linya {line}: {message}",
+  "@lineError": {
+    "placeholders": {
+      "line": {
+        "type": "int"
+      },
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "headerError": "Header: {message}",
+  "@headerError": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "importTitle": "I-import ang {what}",
+  "@importTitle": {
+    "placeholders": {
+      "what": {
+        "type": "String"
+      }
+    }
+  },
+  "importHelp": "Gumamit ng CSV na may header sa unang linya. Ang mga item na may parehong ID ay ia-update. Kailangang tama ang lahat ng linya bago mag-import (hanggang {max} bawat file).",
+  "@importHelp": {
+    "placeholders": {
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "chooseCsvFile": "Pumili ng CSV file",
+  "orPasteCsv": "O i-paste ang laman ng CSV dito",
+  "importRows": "I-import ({count})",
+  "@importRows": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "csvTemplate": "Template",
+  "copy": "Kopyahin",
+  "copied": "Nakopya.",
+  "csvAllowedCommodity": "unit: kg, bundle, piece · active: true o false (opsyonal)",
+  "csvAllowedMarket": "municipality: isa sa 15 bayan ng Nueva Vizcaya · type: public_market, trading_post, farmgate_area · active: true o false (opsyonal)",
+  "importTooMany": "Masyadong marami. Hanggang {max} na linya lamang bawat file.",
+  "@importTooMany": {
+    "placeholders": {
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "importNoRows": "Walang nabasang linya.",
+  "importSummary": "{valid} na tamang linya · {errors} na may mali",
+  "@importSummary": {
+    "placeholders": {
+      "valid": {
+        "type": "int"
+      },
+      "errors": {
+        "type": "int"
+      }
+    }
+  },
+  "moreErrors": "at {count} pang mali",
+  "@moreErrors": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "preview": "Silip",
+  "kpiDemoNote": "alisin kapag dumating ang opisyal",
+  "sourceOfficial": "Opisyal",
+  "sourceReporter": "Beripikadong tagapag-ulat",
+  "sourceCommunity": "Komunidad",
+  "actionReportPrice": "Mag-ulat ng presyo",
+  "reportTitle": "Mag-ulat ng presyo",
+  "reportKicker": "Ulat ng presyo",
+  "reportHeading": "Magkano ang nakita mong presyo?",
+  "reportAsReporter": "Ikaw ay beripikadong tagapag-ulat. Ang ulat mo ay bibilangin bilang beripikado.",
+  "reportAsCommunity": "Ang ulat mo ay ulat ng komunidad: mababa ang kumpiyansa hanggang may tumugmang ulat mula sa beripikadong tagapag-ulat.",
+  "reportNoCatalog": "Wala pang bilihin o palengke na maiuulat. Hintayin ang admin na magdagdag.",
+  "fieldCommodity": "Bilihin",
+  "fieldMarket": "Palengke",
+  "fieldPrice": "Presyo",
+  "fieldPriceHelp": "Presyong nakita mo ngayon, hal. 55.50",
+  "reportSubmit": "Ipadala ang ulat",
+  "reportFinePrint": "Iniuulat lamang ng TIMBANG ang napansing presyo. Ang median ng lahat ng ulat ang ipinapakita, hindi ang isang ulat lamang.",
+  "reportThanks": "Salamat! Natanggap ang ulat.",
+  "reportDoneCommunity": "Isasama ito sa median kapag may iba pang tumugmang ulat.",
+  "reportDoneReporter": "Na-update na ang median at kumpiyansa para sa palengkeng ito.",
+  "reportAnother": "Mag-ulat ng iba pa",
+  "reportErrPick": "Pumili ng bilihin at palengke.",
+  "reportErrInvalid": "Ilagay ang tamang presyo (hal. 55 o 55.50).",
+  "reportErrRateLimited": "Marami ka nang naiulat ngayong oras. Subukan ulit mamaya.",
+  "reportErrDuplicate": "Kaka-ulat mo lang nito. Subukan ulit pagkalipas ng ilang minuto.",
+  "reportErrNotFound": "Hindi na aktibo ang bilihin o palengkeng ito.",
+  "reportErrNotAllowed": "Hindi ka pinapayagang mag-ulat dito.",
+  "adminPrices": "Mga presyo",
+  "adminPricesKicker": "Datos ng presyo",
+  "adminPricesDesc": "Mag-import ng opisyal na presyo at bantayan ang mga bagong ulat.",
+  "importOfficialPrices": "I-import ang opisyal na presyo",
+  "officialImportHelp": "Para sa datos mula sa DA, DAR o NVAT. Bawat linya ay magiging opisyal na ulat (mataas na kumpiyansa). Kailangang tama ang lahat ng linya (hanggang {max}).",
+  "@officialImportHelp": {
+    "placeholders": {
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "officialSourceLabel": "Pinagmulan ng datos",
+  "officialSourceHelp": "Hal. DA Bantay Presyo, Nobyembre 3, 2026",
+  "officialCsvColumns": "commodityId at marketId: ID mula sa listahan · price: hal. 60 o 60.50 · date: YYYY-MM-DD (opsyonal, ngayon kung wala)",
+  "officialFieldInvalid": "mali o hindi kilala",
+  "importedPrices": "Na-import ang {count} na opisyal na presyo.",
+  "@importedPrices": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "recentReportsKicker": "Pinakabago",
+  "recentReportsTitle": "Mga bagong ulat ng presyo",
+  "noReportsTitle": "Wala pang ulat",
+  "noReportsBody": "Lalabas dito ang mga ulat mula sa app at mga na-import na opisyal na presyo.",
+  "statusValid": "Tanggap",
+  "statusOutlier": "Outlier",
+  "statusRejected": "Tinanggihan",
+  "colTime": "Oras",
+  "colCommodity": "Bilihin",
+  "colMarket": "Palengke",
+  "colPrice": "Presyo",
+  "colSource": "Pinagmulan",
+  "sourceReporterShort": "Tagapag-ulat",
+  "agoJustNow": "ngayon lang",
+  "agoMinutes": "{n} minuto na ang nakalipas",
+  "@agoMinutes": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "agoHours": "{n} oras na ang nakalipas",
+  "@agoHours": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "agoDays": "{n} araw na ang nakalipas",
+  "@agoDays": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "updatedAgo": "Na-update {age}",
+  "@updatedAgo": {
+    "placeholders": {
+      "age": {
+        "type": "String"
+      }
+    }
+  },
+  "reportCount": "{n} ulat",
+  "@reportCount": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "perUnit": "kada {unit}",
+  "@perUnit": {
+    "placeholders": {
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "trendSemantics": "Galaw ng presyo: {label}",
+  "@trendSemantics": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "staleTag": "Luma na",
+  "staleExplain": "Walang bagong ulat sa nakaraang 24 oras. Ipinapakita pa rin ang huling median at kung gaano na ito katagal.",
+  "marketLabel": "Palengke",
+  "change": "Palitan",
+  "chooseMarket": "Pumili ng palengke",
+  "chooseCommodity": "Pumili ng bilihin na ihahambing",
+  "noMarketsTitle": "Wala pang palengke",
+  "noMarketsBody": "Hinihintay pa ang listahan ng palengke mula sa admin.",
+  "boardErrorTitle": "Hindi ma-load ang presyo",
+  "offlineBanner": "Offline ka. Ipinapakita ang huling na-save na presyo; tingnan ang oras ng update.",
+  "demoPricesBanner": "May demo na presyo dito para sa pagsubok. Hindi ito totoong presyo.",
+  "boardFootnote": "Median ng mga ulat sa nakaraang 24 oras. Iniuulat lamang ng TIMBANG ang napansing presyo.",
+  "commodityNotFound": "Hindi makita ang bilihin",
+  "commodityNotFoundBody": "Maaaring inalis na ito sa listahan.",
+  "compareKicker": "Paghahambing",
+  "compareTitle": "Presyo sa ibang palengke",
+  "compareHelp": "Nauuna ang mga palengke sa iyong bayan, pagkatapos ay mula pinakamura.",
+  "compareEmpty": "Wala pang presyo para dito sa alinmang palengke.",
+  "ownTownTag": "Iyong bayan",
+  "cheapestTag": "Pinakamura",
+  "higherBy": "{amount} mas mataas",
+  "@higherBy": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "lowerBy": "{amount} mas mababa",
+  "@lowerBy": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "sameAsYours": "Kapareho",
+  "medianAt": "Median sa {market}",
+  "@medianAt": {
+    "placeholders": {
+      "market": {
+        "type": "String"
+      }
+    }
+  },
+  "noPriceAtMarket": "Wala pang presyo nito sa {market}. Tingnan ang ibang palengke sa ibaba.",
+  "@noPriceAtMarket": {
+    "placeholders": {
+      "market": {
+        "type": "String"
+      }
+    }
+  },
+  "yesterdayMedian": "Kahapon: {amount}",
+  "@yesterdayMedian": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "reportThisPrice": "Mag-ulat ng presyo nito",
+  "unitShortKg": "kilo",
+  "unitShortBundle": "tali",
+  "unitShortPiece": "piraso",
+  "listingsKicker": "Ani na binebenta",
+  "listingsTitle": "Maghanap o mag-post ng ani",
+  "listingsAll": "Lahat",
+  "listingsMine": "Aking ani",
+  "sortNewest": "Pinakabago",
+  "sortCheapest": "Pinakamura",
+  "listingsEmptyTitle": "Walang ani na tugma",
+  "listingsEmptyBody": "Subukang baguhin ang bilihin o bayan.",
+  "myListingsEmptyTitle": "Wala ka pang na-post",
+  "myListingsEmptyBody": "I-post ang iyong ani para makontak ka ng mamimili.",
+  "listingActive": "Aktibo",
+  "listingSold": "Nabenta",
+  "listingExpired": "Nag-expire",
+  "listingRemoved": "Inalis",
+  "postedAgo": "Na-post {age}",
+  "@postedAgo": {
+    "placeholders": {
+      "age": {
+        "type": "String"
+      }
+    }
+  },
+  "postedLabel": "Na-post",
+  "listingDetailTitle": "Detalye ng ani",
+  "listingNotFound": "Hindi makita ang ani",
+  "listingNotFoundBody": "Maaaring inalis na ito.",
+  "fieldQuantity": "Dami",
+  "fieldAskingPrice": "Hinihinging presyo",
+  "fieldHarvestDate": "Petsa ng ani",
+  "fieldNote": "Paalala",
+  "fieldNoteOptional": "Paalala (opsyonal), hal. kalidad, kung saan kukunin",
+  "contactKicker": "Makipag-ugnayan sa magsasaka",
+  "contactPrivacyNote": "Nakikita lamang ang numero ng mga naka-log in na user. Gamitin lamang para sa pagbili.",
+  "call": "Tumawag",
+  "text": "Mag-text",
+  "askingSameAsMedian": "Kapareho ng median sa palengke.",
+  "askingAboveMedian": "{amount} mas mataas sa median sa palengke.",
+  "@askingAboveMedian": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "askingBelowMedian": "{amount} mas mababa sa median sa palengke.",
+  "@askingBelowMedian": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "ownerKicker": "Iyong listing",
+  "ownerTitle": "Pamahalaan ang ani",
+  "markSold": "Nabenta na",
+  "editListing": "I-edit ang dami at presyo",
+  "renewListing": "I-post ulit (14 na araw)",
+  "removeListing": "Alisin ang listing",
+  "listingModerated": "Inalis ng admin ang listing na ito dahil sa paglabag sa patakaran.",
+  "newListingKicker": "Bagong listing",
+  "newListingTitle": "Ano ang ibebenta mo?",
+  "newListingHelp": "Makikita ito ng mga mamimili kasama ang iyong pangalan at numero.",
+  "errQuantity": "Ilagay ang dami (hal. 50).",
+  "errHarvestDate": "Pumili ng petsa sa loob ng 60 araw.",
+  "photosLabel": "Mga larawan (hanggang {max})",
+  "@photosLabel": {
+    "placeholders": {
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "photosHelp": "Pinaliliit ang larawan bago i-upload. Kailangan ng internet para sa larawan.",
+  "photoTooLarge": "Masyadong malaki ang larawan. Pumili ng iba.",
+  "postListing": "I-post ang ani",
+  "listingExpiryNote": "Awtomatikong mag-e-expire ang listing pagkalipas ng {days} araw.",
+  "@listingExpiryNote": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "listingPosted": "Na-post ang iyong ani.",
+  "listingQueued": "Offline ka: naka-save sa phone at ipo-post kapag may internet na.",
+  "listingPhotosFailed": "Na-post, pero hindi na-upload ang ilang larawan.",
+  "noMedianYet": "Wala pang median para dito sa ngayon.",
+  "knowBeforeSell": "Alamin ang presyo bago magbenta.",
+  "farmersOnlyTitle": "Para sa magsasaka lamang",
+  "farmersOnlyBody": "Ang mga magsasaka lamang ang makakapag-post ng ani.",
+  "askFarmer": "Magtanong sa magsasaka",
+  "askTitle": "Magtanong kay {name}",
+  "@askTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "askHelp": "Makikita ng magsasaka ang iyong pangalan at numero para makontak ka niya.",
+  "askTemplate": "Magandang araw po! Interesado po ako sa inyong {commodity}. Available pa po ba, at saan po pwedeng kunin?",
+  "@askTemplate": {
+    "placeholders": {
+      "commodity": {
+        "type": "String"
+      }
+    }
+  },
+  "askMessageLabel": "Mensahe",
+  "askSend": "Ipadala ang tanong",
+  "askSent": "Naipadala ang tanong. Aabisuhan ang magsasaka.",
+  "askErrLength": "Isulat ang mensahe (hanggang 500 letra).",
+  "askErrDuplicate": "Nakapagtanong ka na tungkol dito. Hintayin ang sagot o tumawag.",
+  "askErrGone": "Hindi na available ang listing na ito.",
+  "inboxKicker": "Mga tanong",
+  "inboxTitle": "Mga tanong tungkol sa ani",
+  "inboxReceived": "Natanggap",
+  "inboxReceivedCount": "Natanggap ({n})",
+  "@inboxReceivedCount": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "inboxSent": "Ipinadala",
+  "inboxHelp": "Isang mensahe bawat tanong. Mag-usap sa tawag o text para sa detalye.",
+  "inboxEmptyTitle": "Wala pang tanong",
+  "inboxEmptyReceived": "Lalabas dito ang mga tanong ng mamimili tungkol sa iyong ani.",
+  "inboxEmptySent": "Lalabas dito ang mga tanong na ipinadala mo.",
+  "inqNew": "Bago",
+  "inqRead": "Nabasa",
+  "inqClosed": "Sarado",
+  "inqFrom": "Mula kay {name}",
+  "@inqFrom": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "inqAbout": "Tungkol sa {commodity}",
+  "@inqAbout": {
+    "placeholders": {
+      "commodity": {
+        "type": "String"
+      }
+    }
+  },
+  "markRead": "Markahang nabasa",
+  "viewListing": "Tingnan ang ani",
+  "closeInquiry": "Isara",
+  "alertsKicker": "Alerto sa presyo",
+  "alertsTitle": "Abisuhan ako kapag gumalaw ang presyo",
+  "alertsHelp": "Makakatanggap ka ng notification kapag ang median ay lumampas o bumaba sa presyong itinakda mo.",
+  "alertsEmptyTitle": "Wala ka pang alerto",
+  "alertsEmptyBody": "Magdagdag ng alerto para sa bilihin at palengkeng binabantayan mo.",
+  "addAlert": "Magdagdag ng alerto",
+  "newAlertTitle": "Bagong alerto",
+  "newAlertHelp": "Isang abiso lamang sa bawat paglampas, hindi sa bawat ulat.",
+  "alertAbove": "Tumaas sa",
+  "alertBelow": "Bumaba sa",
+  "alertThreshold": "Presyo ng alerto",
+  "alertSave": "I-save ang alerto",
+  "alertSaved": "Na-save ang alerto.",
+  "alertsLimit": "Hanggang {max} na alerto lamang.",
+  "@alertsLimit": {
+    "placeholders": {
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "alertWhenAbove": "Kapag umabot o lumampas sa {amount}",
+  "@alertWhenAbove": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "alertWhenBelow": "Kapag bumaba sa {amount} o mas mababa",
+  "@alertWhenBelow": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "currentMedian": "Median ngayon: {amount}",
+  "@currentMedian": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "alertLastTriggered": "Huling abiso: {amount}, {age}",
+  "@alertLastTriggered": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "age": {
+        "type": "String"
+      }
+    }
+  },
+  "alertPaused": "Naka-pause",
+  "setAlertHere": "Mag-set ng alerto sa presyo nito",
+  "flagListing": "I-report ang listing na ito",
+  "flagPrice": "Mali ang presyo? I-report",
+  "flagTitle": "Bakit mo ito ini-report?",
+  "flagHelp": "Susuriin ito ng admin. Hindi malalaman ng iba na ikaw ang nag-report.",
+  "flagNote": "Detalye (opsyonal)",
+  "flagSend": "Ipadala sa admin",
+  "flagSent": "Salamat. Natanggap ng admin ang iyong report.",
+  "abuseWrongPrice": "Mali o pekeng presyo",
+  "abuseScam": "Panloloko o scam",
+  "abuseSpam": "Spam o paulit-ulit",
+  "abuseOffensive": "Bastos o hindi angkop",
+  "abuseOther": "Iba pa",
+  "adminUsers": "Mga user",
+  "adminUsersDesc": "Aprubahan ang mga tagapag-ulat, itakda ang kanilang palengke, at i-suspend ang mga lumalabag.",
+  "adminPeopleKicker": "Mga tao",
+  "searchUsersHint": "Maghanap ayon sa pangalan, numero o bayan",
+  "changeRole": "Palitan ang papel",
+  "changeRoleFor": "Papel ni {name}",
+  "@changeRoleFor": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "roleReporterHelp": "Beripikadong tagapag-ulat: mas mataas ang bigat ng ulat",
+  "roleAdminHelp": "Buong access sa admin dashboard",
+  "assignMarkets": "Mga palengke",
+  "assignMarketsFor": "Palengke ni {name}",
+  "@assignMarketsFor": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "assignMarketsHelp": "Kapag walang pinili, maaaring mag-ulat sa kahit anong palengke.",
+  "anyMarket": "Kahit anong palengke",
+  "marketsCount": "{n} palengke",
+  "@marketsCount": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "reporterScore": "Katumpakan {pct}%",
+  "@reporterScore": {
+    "placeholders": {
+      "pct": {
+        "type": "int"
+      }
+    }
+  },
+  "suspend": "I-suspend",
+  "reactivate": "Ibalik",
+  "suspended": "Suspendido",
+  "thisIsYou": "Ikaw ito",
+  "adminModeration": "Moderasyon",
+  "adminModerationDesc": "Suriin ang mga report ng user at mga outlier na presyo. Naitatala ang bawat aksyon sa audit log.",
+  "adminSafetyKicker": "Kaligtasan",
+  "abuseKicker": "Mga report ng user",
+  "abuseTitle": "Bukas na report",
+  "abuseEmpty": "Walang bukas na report.",
+  "flagListingTarget": "Listing",
+  "flagPriceTarget": "Presyo",
+  "removeListingAndResolve": "Alisin ang listing",
+  "markResolved": "Tapos na",
+  "dismiss": "Balewalain",
+  "outliersKicker": "Outlier",
+  "outliersTitle": "Mga presyong malayo sa median",
+  "outliersHelp": "Awtomatikong hindi isinasama sa median. Tanggihan kung mali, o ibalik kung tama.",
+  "outliersEmpty": "Walang outlier ngayon.",
+  "rejectReport": "Tanggihan",
+  "restoreReport": "Ibalik",
+  "reasonLabel": "Dahilan (itatala sa audit log)",
+  "confirm": "Kumpirmahin",
+  "adminAudit": "Audit log",
+  "adminAuditDesc": "Talaan ng mga sensitibong aksyon. Cloud Functions lamang ang nakakasulat dito.",
+  "auditEmpty": "Wala pang naitalang aksyon.",
+  "auditFootnote": "Huling 100 aksyon. Walang personal na datos maliban sa user ID.",
+  "colAction": "Aksyon",
+  "colTarget": "Target",
+  "colDetail": "Detalye",
+  "colActor": "Gumawa",
+  "metricsKicker": "Pilot",
+  "metricsTitle": "Sukatan ng pilot",
+  "metricsError": "Hindi ma-load ang sukatan.",
+  "refresh": "I-refresh",
+  "metricPriceAge": "Edad ng median na presyo",
+  "metricPriceAgeNote": "Median ng lahat ng presyo sa board",
+  "metricActiveFarmers": "Aktibong magsasaka (30 araw)",
+  "metricOfFarmers": "sa {total} na nakarehistro",
+  "@metricOfFarmers": {
+    "placeholders": {
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "metricListings": "Na-post na ani",
+  "metricLast30": "Nakaraang 30 araw",
+  "metricInquiriesPerListing": "Tanong bawat listing",
+  "metricInquiries": "{n} tanong sa 30 araw",
+  "@metricInquiries": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "metricReports7d": "Mga ulat sa 7 araw: {official} opisyal · {reporter} tagapag-ulat · {community} komunidad",
+  "@metricReports7d": {
+    "placeholders": {
+      "official": {
+        "type": "String"
+      },
+      "reporter": {
+        "type": "String"
+      },
+      "community": {
+        "type": "String"
+      }
+    }
+  },
+  "metricEntries": "Presyo",
+  "metricMedianAge": "Median na edad",
+  "metricFresh": "Sariwa (≤24h)",
+  "smsKicker": "SMS",
+  "adminSms": "SMS na presyo",
+  "adminSmsDesc": "Para sa may basic na cellphone: i-text ang PRESYO <gulay> <bayan> para malaman ang median, kumpiyansa at edad ng presyo.",
+  "smsGatewayNote": "Subukan dito nang walang gastos. Kapag napili na ang SMS gateway (Semaphore o Globe Labs), ito rin ang sagot na matatanggap ng mga user.",
+  "smsPhoneTitle": "Simulator ng text",
+  "smsTryHint": "I-type ang mensahe sa ibaba at pindutin ang Ipadala.",
+  "smsInputLabel": "Mensahe",
+  "smsExamples": "Halimbawa: PRESYO KAMATIS BAYOMBONG · PRESYO REPOLYO · TULONG",
+  "exportMyData": "Tingnan / kopyahin ang aking data (RA 10173)",
+  "close": "Isara"
+}

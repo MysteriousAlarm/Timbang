@@ -1,0 +1,243 @@
+rules_version = '2';
+
+// Project TIMBANG Firestore rules.
+// Deny by default. Roles come ONLY from custom claims (request.auth.token.role),
+// which are set by the admin-only `setUserRole` Cloud Function.
+// The `role` field in users/{uid} is a display mirror and is never trusted here.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ---------- helpers ----------
+    function signedIn() {
+      return request.auth != null;
+    }
+    function claimRole() {
+      return signedIn() && ('role' in request.auth.token) ? request.auth.token.role : null;
+    }
+    function isAdmin() {
+      return claimRole() == 'admin';
+    }
+    function isOwner(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    // The 15 municipalities of Nueva Vizcaya (keep in sync with app core/config and functions config.ts).
+    function municipalities() {
+      return ['Alfonso Castañeda', 'Ambaguio', 'Aritao', 'Bagabag', 'Bambang',
+              'Bayombong', 'Diadi', 'Dupax del Norte', 'Dupax del Sur', 'Kasibu',
+              'Kayapa', 'Quezon', 'Santa Fe', 'Solano', 'Villaverde'];
+    }
+    function validName(v) {
+      return v is string && v.trim().size() >= 2 && v.size() <= 80;
+    }
+    function validMunicipality(v) {
+      return v is string && v in municipalities();
+    }
+    function validFcmTokens(v) {
+      return v is list && v.size() <= 10;
+    }
+
+    // ---------- users ----------
+    // Data minimization (RA 10173): only name, phone, municipality are personal data.
+    match /users/{uid} {
+      allow read: if isOwner(uid) || isAdmin();
+
+      // Self-signup: only farmer or buyer, unverified, active. Phone must match the
+      // verified phone on the auth token, so nobody can claim another number.
+      allow create: if isOwner(uid)
+        && request.resource.data.keys().hasOnly(
+             ['name', 'phone', 'municipality', 'role', 'verified', 'status',
+              'createdAt', 'consentAt', 'fcmTokens'])
+        && request.resource.data.keys().hasAll(
+             ['name', 'phone', 'municipality', 'role', 'verified', 'status',
+              'createdAt', 'consentAt'])
+        && validName(request.resource.data.name)
+        && request.resource.data.phone is string
+        && request.resource.data.phone == request.auth.token.phone_number
+        && validMunicipality(request.resource.data.municipality)
+        && request.resource.data.role in ['farmer', 'buyer']
+        && request.resource.data.verified == false
+        && request.resource.data.status == 'active'
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.consentAt == request.time
+        && (!('fcmTokens' in request.resource.data) || validFcmTokens(request.resource.data.fcmTokens));
+
+      // Owners may change only their name, municipality and FCM tokens.
+      // role, verified, status, reporterScore, assignedMarketIds, phone: server only.
+      allow update: if isOwner(uid)
+        && resource.data.status == 'active'
+        && request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(['name', 'municipality', 'fcmTokens', 'updatedAt'])
+        && validName(request.resource.data.name)
+        && validMunicipality(request.resource.data.municipality)
+        && (!('fcmTokens' in request.resource.data) || validFcmTokens(request.resource.data.fcmTokens))
+        && (!('updatedAt' in request.resource.data.diff(resource.data).affectedKeys())
+            || request.resource.data.updatedAt == request.time);
+
+      // Account deletion goes through a Cloud Function (it also removes the Auth user).
+      allow delete: if false;
+    }
+
+    // ---------- written by Cloud Functions only ----------
+    match /price_board/{id} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+
+    match /audit_logs/{id} {
+      allow read: if isAdmin();
+      allow write: if false;
+    }
+
+    // ---------- catalog (Step 2) ----------
+    // Readable by signed-in users. Written ONLY by the admin-only `upsertCatalog` and
+    // `clearDemoCatalog` functions, which validate every field and write audit_logs.
+    match /commodities/{id} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+    match /markets/{id} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+
+    // ---------- price reports (Step 3) ----------
+    // Submitted ONLY through `submitPriceReport` (validates, rate-limits, sets the source
+    // tier from the role claim) or the admin-only `importOfficialPrices`.
+    // Readable by admins (moderation) and by the reporter for their own reports.
+    match /price_reports/{id} {
+      allow read: if isAdmin() || (signedIn() && resource.data.reporterId == request.auth.uid);
+      allow write: if false;
+    }
+
+    // ---------- listings (Step 5) ----------
+    // Written directly by the farmer (works offline: the write syncs later) and fully
+    // validated here. Contact name/phone must equal the farmer's own profile.
+    function profile() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+    function isActiveFarmer() {
+      return signedIn() && profile().role == 'farmer' && profile().status == 'active';
+    }
+    function validListing(d) {
+      return d.commodityId is string
+        && exists(/databases/$(database)/documents/commodities/$(d.commodityId))
+        && d.quantity is number && d.quantity > 0 && d.quantity <= 100000
+        && d.unit in ['kg', 'bundle', 'piece']
+        && d.askingPrice is number && d.askingPrice >= 0.01 && d.askingPrice <= 100000
+        && validMunicipality(d.municipality)
+        && d.harvestDate is timestamp
+        && d.photoUrls is list && d.photoUrls.size() <= 3
+        && (!('note' in d) || (d.note is string && d.note.size() <= 280));
+    }
+    function validExpiry(t) {
+      return t is timestamp && t > request.time && t <= request.time + duration.value(31, 'd');
+    }
+    match /listings/{id} {
+      allow read: if signedIn();
+      allow create: if isActiveFarmer()
+        && request.resource.data.keys().hasOnly(
+             ['farmerId', 'farmerName', 'farmerPhone', 'commodityId', 'quantity', 'unit',
+              'askingPrice', 'municipality', 'harvestDate', 'photoUrls', 'note', 'status',
+              'createdAt', 'expiresAt'])
+        && request.resource.data.keys().hasAll(
+             ['farmerId', 'farmerName', 'farmerPhone', 'commodityId', 'quantity', 'unit',
+              'askingPrice', 'municipality', 'harvestDate', 'photoUrls', 'status',
+              'createdAt', 'expiresAt'])
+        && request.resource.data.farmerId == request.auth.uid
+        && request.resource.data.farmerName == profile().name
+        && request.resource.data.farmerPhone == profile().phone
+        && validListing(request.resource.data)
+        && request.resource.data.status == 'active'
+        && request.resource.data.createdAt == request.time
+        && validExpiry(request.resource.data.expiresAt);
+      // Owner edits, marks sold/removed, or renews. A listing removed by moderation is final.
+      allow update: if isActiveFarmer()
+        && resource.data.farmerId == request.auth.uid
+        && !('moderatedAt' in resource.data)
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(
+             ['quantity', 'askingPrice', 'harvestDate', 'photoUrls', 'note', 'status',
+              'expiresAt', 'updatedAt'])
+        && validListing(request.resource.data)
+        && request.resource.data.status in ['active', 'sold', 'removed']
+        && (request.resource.data.status != 'active'
+            || request.resource.data.expiresAt > request.time)
+        && (!('expiresAt' in request.resource.data.diff(resource.data).affectedKeys())
+            || validExpiry(request.resource.data.expiresAt))
+        && request.resource.data.updatedAt == request.time;
+      allow delete: if false;
+    }
+
+    // ---------- inquiries (Step 6) ----------
+    // Created only by `sendInquiry` (rate-limited, notifies the farmer). Visible to the two
+    // parties and admins. The farmer marks it read/closed; the buyer can close it.
+    match /inquiries/{id} {
+      allow read: if isAdmin() || (signedIn()
+        && (resource.data.farmerId == request.auth.uid || resource.data.buyerId == request.auth.uid));
+      allow update: if signedIn()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'updatedAt'])
+        && request.resource.data.updatedAt == request.time
+        && ((resource.data.farmerId == request.auth.uid
+              && request.resource.data.status in ['read', 'closed'])
+            || (resource.data.buyerId == request.auth.uid
+              && request.resource.data.status == 'closed'));
+      allow create, delete: if false;
+    }
+
+    // ---------- alerts (Step 7) ----------
+    // Each user manages their own alerts. lastTriggered* fields are written by functions only.
+    function validAlert(d) {
+      return d.commodityId is string
+        && exists(/databases/$(database)/documents/commodities/$(d.commodityId))
+        && d.marketId is string
+        && exists(/databases/$(database)/documents/markets/$(d.marketId))
+        && d.threshold is number && d.threshold >= 0.01 && d.threshold <= 100000
+        && d.direction in ['above', 'below']
+        && d.active is bool;
+    }
+    match /alerts/{id} {
+      allow read: if isAdmin() || (signedIn() && resource.data.userId == request.auth.uid);
+      allow create: if signedIn()
+        && request.resource.data.keys().hasOnly(
+             ['userId', 'commodityId', 'marketId', 'threshold', 'direction', 'active', 'createdAt'])
+        && request.resource.data.keys().hasAll(
+             ['userId', 'commodityId', 'marketId', 'threshold', 'direction', 'active', 'createdAt'])
+        && request.resource.data.userId == request.auth.uid
+        && validAlert(request.resource.data)
+        && request.resource.data.createdAt == request.time;
+      allow update: if signedIn() && resource.data.userId == request.auth.uid
+        && request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(['threshold', 'direction', 'active', 'updatedAt'])
+        && validAlert(request.resource.data)
+        && request.resource.data.updatedAt == request.time;
+      allow delete: if signedIn() && resource.data.userId == request.auth.uid;
+    }
+
+    // ---------- abuse reports (Step 8) ----------
+    // Any signed-in user can flag a listing or a price; only admins read and resolve
+    // (resolution goes through `resolveAbuseReport`, which writes audit_logs).
+    match /abuse_reports/{id} {
+      allow read: if isAdmin();
+      allow create: if signedIn()
+        && request.resource.data.keys().hasOnly(
+             ['targetType', 'targetId', 'reporterId', 'reason', 'note', 'status', 'createdAt'])
+        && request.resource.data.keys().hasAll(
+             ['targetType', 'targetId', 'reporterId', 'reason', 'status', 'createdAt'])
+        && request.resource.data.reporterId == request.auth.uid
+        && request.resource.data.targetType in ['listing', 'price_board']
+        && request.resource.data.targetId is string
+        && request.resource.data.targetId.size() > 0 && request.resource.data.targetId.size() <= 120
+        && request.resource.data.reason in ['wrong_price', 'scam', 'spam', 'offensive', 'other']
+        && (!('note' in request.resource.data)
+            || (request.resource.data.note is string && request.resource.data.note.size() <= 300))
+        && request.resource.data.status == 'open'
+        && request.resource.data.createdAt == request.time;
+      allow update, delete: if false;
+    }
+
+    // No explicit match = denied by default.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

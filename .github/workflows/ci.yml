@@ -1,0 +1,70 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  flutter:
+    name: Flutter (analyze, format, test, web build)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - run: dart format --set-exit-if-changed $(git ls-files '*.dart')
+      - run: flutter gen-l10n
+      - run: flutter analyze
+      - run: flutter test
+      - run: flutter build web -t lib/main_web.dart
+
+  functions:
+    name: Functions (lint, unit tests, build)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: functions
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: functions/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test
+      - run: npm run build
+
+  emulator-tests:
+    name: Rules + integration tests (Firebase emulators)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            functions/package-lock.json
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - run: npm i -g firebase-tools
+      - run: npm ci
+      - run: npm --prefix functions ci
+      - run: npm run test:rules
+      - run: npm run test:integration
+      - name: Dependency audit (production deps)
+        run: npm --prefix functions audit --omit=dev --audit-level=high

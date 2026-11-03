@@ -1,0 +1,26 @@
+rules_version = '2';
+
+// Project TIMBANG Storage rules. Deny by default.
+// Listing photos only: owner-scoped path, images only, max 1 MB (client compresses first).
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+    function validImage() {
+      return request.resource.size < 1 * 1024 * 1024
+        && request.resource.contentType.matches('image/(jpeg|png|webp)');
+    }
+
+    match /listings/{uid}/{listingId}/{fileName} {
+      allow read: if signedIn();
+      allow create, update: if signedIn() && request.auth.uid == uid && validImage();
+      allow delete: if signedIn() && request.auth.uid == uid;
+    }
+
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
