@@ -26,3 +26,9 @@ emulator-data/
 .vscode/
 !functions/.env
 .firebase.lan.json
+
+# Flutter / Gradle caches (never commit)
+.dart_tool/
+build/
+/pubspec.lock
+**/android/.kotlin/

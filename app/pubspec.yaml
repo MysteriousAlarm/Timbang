@@ -30,13 +30,12 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.14.4
 
 flutter:
   uses-material-design: true
   generate: true
 
-  # Public Sans (SIL Open Font License, see assets/fonts/OFL-LICENSE.md).
-  # Bundled so text renders the same offline and on low-end Android.
   fonts:
     - family: PublicSans
       fonts:
@@ -49,3 +48,13 @@ flutter:
           weight: 700
         - asset: assets/fonts/PublicSans-ExtraBold.ttf
           weight: 800
+
+flutter_launcher_icons:
+  android: true
+  ios: false
+  image_path: "assets/images/timbang_icon.png"
+  web:
+    generate: true
+    image_path: "assets/images/timbang_icon.png"
+    background_color: "#138A36"
+    theme_color: "#138A36"

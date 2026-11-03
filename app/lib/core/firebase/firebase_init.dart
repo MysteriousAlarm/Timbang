@@ -10,7 +10,13 @@ import '../config/app_config.dart';
 import 'firebase_options.dart';
 
 Future<void> initFirebase() async {
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  // With the local emulators, always use the demo project so the app sees the same data as
+  // the emulator scripts (seed:demo, seed:admin), even after flutterfire configure set the
+  // real project (timbang-nv). Release builds use the real project.
+  final options = AppConfig.useEmulators
+      ? DefaultFirebaseOptions.currentPlatform.copyWith(projectId: AppConfig.emulatorProjectId)
+      : DefaultFirebaseOptions.currentPlatform;
+  await Firebase.initializeApp(options: options);
 
   // Offline-first: cached price board and drafts survive without signal.
   FirebaseFirestore.instance.settings = const Settings(

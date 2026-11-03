@@ -19,6 +19,9 @@ abstract final class AppConfig {
     return '127.0.0.1';
   }
 
+  /// Project id the emulators run under (npm scripts use --project demo-timbang).
+  static const emulatorProjectId = 'demo-timbang';
+
   static const authPort = 9099;
   static const firestorePort = 8080;
   static const functionsPort = 5001;
