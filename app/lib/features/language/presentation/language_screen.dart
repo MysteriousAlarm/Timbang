@@ -19,7 +19,7 @@ class LanguageScreen extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Container(
-            color: scheme.primary,
+            color: TimbangColors.of(context).primaryDark,
             child: TerracePattern(
               child: SafeArea(
                 bottom: false,

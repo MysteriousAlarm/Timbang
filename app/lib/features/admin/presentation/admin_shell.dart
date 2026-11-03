@@ -131,10 +131,6 @@ class AdminShell extends ConsumerWidget {
           ),
           const SizedBox(width: SharedTokens.space2),
         ],
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(4),
-          child: Container(height: 4, color: c.highlight),
-        ),
       ),
       // Phones: a slide-out menu; tablets and desktops: a side rail.
       drawer: narrow

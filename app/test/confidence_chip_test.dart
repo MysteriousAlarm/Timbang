@@ -12,7 +12,7 @@ void main() {
     ('Harvest Earth', harvestEarthTheme),
     ('Forest and Gold', forestGoldTheme),
   ]) {
-    testWidgets('chips show icon + Filipino word ($name)', (tester) async {
+    testWidgets('meter shows bars + Filipino word ($name)', (tester) async {
       await tester.pumpWidget(
         harness(
           const Column(
@@ -28,7 +28,7 @@ void main() {
       expect(find.text('Mataas'), findsOneWidget);
       expect(find.text('Katamtaman'), findsOneWidget);
       expect(find.text('Mababa'), findsOneWidget);
-      expect(find.byType(Icon), findsNWidgets(3));
+      expect(find.byType(TrustMeterBars), findsNWidgets(3));
       expect(find.bySemanticsLabel('Kumpiyansa: Mataas'), findsOneWidget);
     });
   }

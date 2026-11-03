@@ -224,7 +224,7 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      expect(find.text('MEDIAN SA BAYOMBONG PM'), findsOneWidget);
+      expect(find.text('Median sa Bayombong PM'), findsOneWidget);
       double y(String k) => tester.getTopLeft(find.byKey(Key(k))).dy;
       expect(y('cmp_bayombong-pm') < y('cmp_bambang-pm'), isTrue);
       expect(y('cmp_bambang-pm') < y('cmp_solano-pm'), isTrue);

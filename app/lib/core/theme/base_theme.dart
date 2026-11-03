@@ -32,7 +32,7 @@ ThemeData buildTimbangTheme({
     visualDensity: VisualDensity.standard,
     splashFactory: InkSparkle.splashFactory,
     appBarTheme: AppBarTheme(
-      backgroundColor: scheme.primary,
+      backgroundColor: colors.primaryDark,
       foregroundColor: scheme.onPrimary,
       elevation: 0,
       scrolledUnderElevation: 0,

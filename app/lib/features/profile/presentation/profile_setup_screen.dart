@@ -85,7 +85,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
           onChanged: (v) => setState(() => _municipality = v),
         ),
         const SizedBox(height: SharedTokens.space5),
-        Text(l10n.roleQuestion.toUpperCase(), style: t.labelSmall),
+        Text(l10n.roleQuestion, style: t.labelSmall),
         const SizedBox(height: SharedTokens.space2),
         // Only farmer and buyer can be self-selected.
         for (final r in Role.selfSignup) ...[

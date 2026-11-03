@@ -125,7 +125,7 @@ The source of each price is shown as **Opisyal** (official), **Tagapag-ulat** (r
 | Alerts | Notification when the median crosses the user's price (once per crossing) |
 | Admin | Commodities and markets (forms + CSV import), official price import, users and roles, reporter market assignment, moderation and user flags, audit log, pilot metrics, SMS simulator |
 | SMS | `PRESYO <gulay> <bayan>` query behind a swappable gateway (mock for now; Semaphore or Globe Labs later) |
-| Language | Filipino first, English fallback |
+| Language | English by default; English or Filipino chosen on first launch, changeable in Profile |
 
 **Not part of TIMBANG** (by design): online payments or wallets, delivery and hauling, bookings,
 ratings, open chat, shopping carts, and any price setting.
@@ -252,5 +252,6 @@ Developed by **Aaron Anthony A. Gano II**, BS Computer Science (Robotics),
 **Nueva Vizcaya State University**, Bayombong, as a joint requirement of
 **IT ECC 6 – Application Development** and **CS PC 7 – Information Assurance and Technology**.
 
-Typeface: [Public Sans](https://public-sans.digital.gov/) (SIL Open Font License), bundled in
-`app/assets/fonts`.
+Typefaces: [Public Sans](https://public-sans.digital.gov/) for text and
+[Newsreader](https://github.com/productiontype/Newsreader) for headlines, both under the SIL Open
+Font License and bundled in `app/assets/fonts`.

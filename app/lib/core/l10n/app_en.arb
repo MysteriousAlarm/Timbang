@@ -82,7 +82,7 @@
   "privacyFooter": "Your data is protected under the Data Privacy Act of 2012 (RA 10173).",
   "buildLabel": "First build · v{version}",
   "setupSubtitle": "We only need your name, town, and whether you are a farmer or a buyer.",
-  "navHome": "Home",
+  "navHome": "Prices",
   "greeting": "Good day, {name}",
   "myTown": "Your town",
   "actionPostProduce": "Post produce",
@@ -168,7 +168,7 @@
   "clearedDemo": "{count, plural, =1{Removed 1 demo item.} other{Removed {count} demo items.}}",
   "commoditiesDesc": "Vegetables and other produce whose prices are tracked.",
   "marketsDesc": "Markets, trading posts and farmgate areas where prices are reported.",
-  "importCsv": "Import CSV",
+  "importCsv": "Import Excel or CSV",
   "addCommodity": "Add commodity",
   "addMarket": "Add market",
   "editCommodity": "Edit commodity",
@@ -596,6 +596,37 @@
     "placeholders": {
       "n": {
         "type": "int"
+      }
+    }
+  },
+  "bulletinKicker": "Daily price bulletin · Nueva Vizcaya",
+  "servicesTitle": "Services",
+  "svcPostDesc": "List your harvest so buyers can contact you",
+  "svcFindDesc": "See produce that farmers are selling",
+  "svcReportDesc": "Share today's price at your market",
+  "svcCompareDesc": "One vegetable across different markets",
+  "svcAlertsDesc": "Get notified when a price crosses your level",
+  "changeUpBy": "Up {amount} since yesterday",
+  "@changeUpBy": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "changeDownBy": "Down {amount} since yesterday",
+  "@changeDownBy": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "marketChangeSemantics": "Market: {name}. Tap to change.",
+  "@marketChangeSemantics": {
+    "placeholders": {
+      "name": {
+        "type": "String"
       }
     }
   }

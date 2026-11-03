@@ -150,7 +150,7 @@ class _OfficialImportDialogState extends ConsumerState<_OfficialImportDialog> {
                   children: [
                     Row(
                       children: [
-                        Expanded(child: Text(l10n.csvTemplate.toUpperCase(), style: t.labelSmall)),
+                        Expanded(child: Text(l10n.csvTemplate, style: t.labelSmall)),
                         TextButton.icon(
                           onPressed: () {
                             Clipboard.setData(const ClipboardData(text: officialCsvTemplate));

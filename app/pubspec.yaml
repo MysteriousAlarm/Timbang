@@ -49,6 +49,15 @@ flutter:
           weight: 700
         - asset: assets/fonts/PublicSans-ExtraBold.ttf
           weight: 800
+    # Headlines: Newsreader (SIL OFL), static instances at the 24pt optical size.
+    - family: Newsreader
+      fonts:
+        - asset: assets/fonts/Newsreader-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Newsreader-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Newsreader-Bold.ttf
+          weight: 700
 
 flutter_launcher_icons:
   android: true

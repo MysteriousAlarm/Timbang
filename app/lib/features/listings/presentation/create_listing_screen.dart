@@ -8,7 +8,6 @@ import 'package:intl/intl.dart';
 import '../../../core/config/app_config.dart';
 import '../../../core/l10n/generated/app_localizations.dart';
 import '../../../core/router/redirect.dart';
-import '../../../core/theme/timbang_colors.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../shared/models/role.dart';
 import '../../../shared/widgets/confidence_chip.dart';
@@ -137,7 +136,6 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final t = Theme.of(context).textTheme;
-    final c = TimbangColors.of(context);
     final commodities = (ref.watch(commoditiesProvider).value ?? const <Commodity>[])
         .where((x) => x.active)
         .toList();
@@ -160,10 +158,6 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
           onPressed: () => context.canPop() ? context.pop() : context.go(Routes.listings),
         ),
         title: Text(l10n.actionPostProduce),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(4),
-          child: Container(height: 4, color: c.highlight),
-        ),
       ),
       body: Align(
         alignment: Alignment.topCenter,
@@ -293,10 +287,7 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
                       ),
                     ),
                     const SizedBox(height: SharedTokens.space3),
-                    Text(
-                      l10n.photosLabel(AppConfig.listingMaxPhotos).toUpperCase(),
-                      style: t.labelSmall,
-                    ),
+                    Text(l10n.photosLabel(AppConfig.listingMaxPhotos), style: t.labelSmall),
                     const SizedBox(height: SharedTokens.space2),
                     Wrap(
                       spacing: SharedTokens.space2,
@@ -400,7 +391,7 @@ class _MedianHint extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(l10n.medianAt(rows.first.market.name).toUpperCase(), style: t.labelSmall),
+                Text(l10n.medianAt(rows.first.market.name), style: t.labelSmall),
                 Text(
                   '${peso(e.medianPrice)} ${l10n.perUnit(unitShort(l10n, e.unit))}',
                   style: t.titleMedium,

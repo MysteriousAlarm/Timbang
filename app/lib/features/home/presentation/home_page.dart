@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 
 import '../../../core/l10n/generated/app_localizations.dart';
 import '../../../core/router/redirect.dart';
@@ -14,7 +13,8 @@ import '../../catalog/domain/catalog_item.dart';
 import '../../catalog/presentation/commodity_names.dart';
 import '../../price_board/presentation/price_board_section.dart';
 
-/// Home: greeting and town, the one main action, three tools, then today's price bulletin.
+/// Home: today's price bulletin for the chosen market, then the services list.
+/// Farmers post produce from the floating button (see HomeShell).
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
 
@@ -24,72 +24,48 @@ class HomePage extends ConsumerWidget {
     final session = ref.watch(sessionProvider);
     if (session is! SignedIn) return const SizedBox.shrink();
     final t = Theme.of(context).textTheme;
-    final c = TimbangColors.of(context);
-    final locale = Localizations.localeOf(context).toLanguageTag();
-    final today = DateFormat.yMMMMEEEEd(locale).format(DateTime.now());
-    final firstName = session.profile.name.trim().split(RegExp(r'\s+')).first;
     final isFarmer = session.role == Role.farmer;
 
     return ListView(
-      padding: const EdgeInsets.fromLTRB(
-        SharedTokens.space4,
-        SharedTokens.space5,
-        SharedTokens.space4,
-        SharedTokens.space6,
-      ),
+      padding: const EdgeInsets.only(bottom: 96),
       children: [
-        Text(today, style: t.bodySmall),
-        const SizedBox(height: 2),
-        Text(l10n.greeting(firstName), style: t.headlineSmall),
-        const SizedBox(height: SharedTokens.space1),
-        Row(
-          children: [
-            Icon(Icons.place_outlined, size: 18, color: c.textMuted),
-            const SizedBox(width: SharedTokens.space1),
-            Expanded(
-              child: Semantics(
-                label: '${l10n.myTown}: ${session.profile.municipality}',
-                excludeSemantics: true,
-                child: Text('${session.profile.municipality}, Nueva Vizcaya', style: t.bodyMedium),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: SharedTokens.space5),
-        FilledButton.icon(
-          key: const Key('primaryAction'),
-          style: FilledButton.styleFrom(
-            backgroundColor: c.cta,
-            foregroundColor: c.onCta,
-            minimumSize: const Size.fromHeight(56),
-          ),
-          onPressed: () => isFarmer ? context.push(Routes.newListing) : context.go(Routes.listings),
-          icon: Icon(isFarmer ? Icons.add_business_outlined : Icons.search),
-          label: Text(isFarmer ? l10n.actionPostProduce : l10n.actionFindProduce),
+        const PriceBoardSection(),
+        const SizedBox(height: SharedTokens.space6),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: SharedTokens.space4),
+          child: Semantics(header: true, child: Text(l10n.servicesTitle, style: t.titleLarge)),
         ),
         const SizedBox(height: SharedTokens.space3),
-        _ToolStrip(
-          tools: [
-            _Tool(
-              icon: Icons.compare_arrows,
-              label: l10n.actionCompareMarkets,
-              onTap: () => _pickCommodity(context, ref),
-            ),
-            _Tool(
-              icon: Icons.notifications_active_outlined,
-              label: l10n.actionPriceAlerts,
-              onTap: () => context.go(Routes.alerts),
-            ),
-            _Tool(
+        _ServiceList(
+          items: [
+            if (!isFarmer)
+              _Service(
+                icon: Icons.search,
+                title: l10n.actionFindProduce,
+                body: l10n.svcFindDesc,
+                onTap: () => context.go(Routes.listings),
+              ),
+            _Service(
               key: const Key('tileReport'),
               icon: Icons.edit_note,
-              label: l10n.actionReportPrice,
+              title: l10n.actionReportPrice,
+              body: l10n.svcReportDesc,
               onTap: () => context.push(Routes.report),
+            ),
+            _Service(
+              icon: Icons.compare_arrows,
+              title: l10n.actionCompareMarkets,
+              body: l10n.svcCompareDesc,
+              onTap: () => _pickCommodity(context, ref),
+            ),
+            _Service(
+              icon: Icons.notifications_active_outlined,
+              title: l10n.actionPriceAlerts,
+              body: l10n.svcAlertsDesc,
+              onTap: () => context.go(Routes.alerts),
             ),
           ],
         ),
-        const SizedBox(height: SharedTokens.space6),
-        const PriceBoardSection(),
       ],
     );
   }
@@ -131,28 +107,26 @@ Future<void> _pickCommodity(BuildContext context, WidgetRef ref) async {
   if (id != null && context.mounted) await context.push(Routes.commodity(id));
 }
 
-/// Three secondary tools in one ruled strip, so they read as a toolbar, not as tiles.
-class _ToolStrip extends StatelessWidget {
-  const _ToolStrip({required this.tools});
-  final List<_Tool> tools;
+/// Civic-style list of services: icon, name, one plain sentence, chevron. Full width.
+class _ServiceList extends StatelessWidget {
+  const _ServiceList({required this.items});
+  final List<_Service> items;
 
   @override
   Widget build(BuildContext context) {
     final c = TimbangColors.of(context);
-    return Material(
-      color: Theme.of(context).colorScheme.surface,
-      clipBehavior: Clip.antiAlias,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(SharedTokens.radiusSmall),
-        side: BorderSide(color: c.border),
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        border: Border.symmetric(horizontal: BorderSide(color: c.border)),
       ),
-      child: IntrinsicHeight(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+      child: Material(
+        type: MaterialType.transparency,
+        child: Column(
           children: [
-            for (var i = 0; i < tools.length; i++) ...[
-              if (i > 0) VerticalDivider(width: 1, color: c.border),
-              Expanded(child: tools[i]),
+            for (var i = 0; i < items.length; i++) ...[
+              if (i > 0) Divider(height: 1, indent: 64, color: c.border),
+              items[i],
             ],
           ],
         ),
@@ -161,35 +135,48 @@ class _ToolStrip extends StatelessWidget {
   }
 }
 
-class _Tool extends StatelessWidget {
-  const _Tool({super.key, required this.icon, required this.label, required this.onTap});
+class _Service extends StatelessWidget {
+  const _Service({
+    super.key,
+    required this.icon,
+    required this.title,
+    required this.body,
+    required this.onTap,
+  });
 
   final IconData icon;
-  final String label;
+  final String title;
+  final String body;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
+    final t = Theme.of(context).textTheme;
+    final c = TimbangColors.of(context);
     final scheme = Theme.of(context).colorScheme;
     return InkWell(
       onTap: onTap,
       child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: SharedTokens.space2,
-          vertical: SharedTokens.space3,
+        padding: const EdgeInsets.fromLTRB(
+          SharedTokens.space4,
+          SharedTokens.space3,
+          SharedTokens.space3,
+          SharedTokens.space3,
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
+        child: Row(
           children: [
-            Icon(icon, size: 24, color: scheme.primary),
-            const SizedBox(height: SharedTokens.space1),
-            Text(
-              label,
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: Theme.of(context).textTheme.labelMedium?.copyWith(color: scheme.onSurface),
+            ExcludeSemantics(child: Icon(icon, color: scheme.primary, size: 26)),
+            const SizedBox(width: SharedTokens.space4 + 6),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title, style: t.titleSmall?.copyWith(fontWeight: FontWeight.w700)),
+                  Text(body, style: t.bodySmall),
+                ],
+              ),
             ),
+            Icon(Icons.chevron_right, color: c.textMuted),
           ],
         ),
       ),

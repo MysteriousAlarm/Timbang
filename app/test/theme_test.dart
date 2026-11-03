@@ -77,4 +77,10 @@ void main() {
     expect(contrast(ForestGoldTokens.gold, Colors.white), lessThan(4.5));
     expect(contrast(HarvestEarthTokens.cta, Colors.white), lessThan(4.5));
   });
+
+  test('trust meter bars are visible on white (non-text 3:1)', () {
+    for (final c in [SharedTokens.meterHigh, SharedTokens.meterMedium, SharedTokens.meterLow]) {
+      expect(contrast(c, Colors.white), greaterThanOrEqualTo(3.0));
+    }
+  });
 }

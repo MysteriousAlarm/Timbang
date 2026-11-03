@@ -67,13 +67,7 @@ class _PrivacyNoticeScreenState extends State<PrivacyNoticeScreen> {
       (Icons.mail_outline, l10n.privacyContactTitle, l10n.privacyContactBody),
     ];
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.privacyTitle),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(4),
-          child: Container(height: 4, color: c.highlight),
-        ),
-      ),
+      appBar: AppBar(title: Text(l10n.privacyTitle)),
       body: Align(
         alignment: Alignment.topCenter,
         child: ConstrainedBox(

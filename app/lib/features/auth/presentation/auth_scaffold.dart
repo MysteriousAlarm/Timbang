@@ -127,7 +127,7 @@ class _FormColumn extends StatelessWidget {
             ),
           ),
         if (step != null) ...[
-          Text(step!.toUpperCase(), style: t.labelSmall),
+          Text(step!, style: t.labelSmall),
           const SizedBox(height: SharedTokens.space1),
         ],
         Text(title, style: t.headlineSmall),
@@ -155,7 +155,7 @@ class _BrandBand extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final scheme = Theme.of(context).colorScheme;
     return Container(
-      color: scheme.primary,
+      color: TimbangColors.of(context).primaryDark,
       child: TerracePattern(
         child: SafeArea(
           bottom: false,
@@ -199,26 +199,16 @@ class _BrandPanel extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: scheme.onPrimary.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Icon(icon, color: scheme.onPrimary, size: 22),
-          ),
+          Icon(icon, color: scheme.onPrimary, size: 22),
           const SizedBox(width: SharedTokens.space3),
           Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(top: 6),
-              child: Text(text, style: t.bodyLarge?.copyWith(color: scheme.onPrimary)),
-            ),
+            child: Text(text, style: t.bodyLarge?.copyWith(color: scheme.onPrimary)),
           ),
         ],
       ),
     );
     return Container(
-      color: scheme.primary,
+      color: c.primaryDark,
       child: TerracePattern(
         child: Padding(
           padding: const EdgeInsets.all(SharedTokens.space6 + 16),
@@ -227,8 +217,6 @@ class _BrandPanel extends StatelessWidget {
             children: [
               const TimbangWordmark(size: 52, onDark: true),
               const Spacer(),
-              Container(height: 4, width: 64, color: c.highlight),
-              const SizedBox(height: SharedTokens.space4),
               Text(l10n.tagline, style: t.displaySmall?.copyWith(color: scheme.onPrimary)),
               const SizedBox(height: SharedTokens.space5),
               point(Icons.verified_outlined, l10n.landingFeature1Title),

@@ -26,33 +26,51 @@ PriceSource topSource(BoardEntry e) => e.official > 0
     ? PriceSource.reporter
     : PriceSource.community;
 
-/// Arrow + word; never color alone.
+/// Change since yesterday: arrow + peso amount when yesterday's median is known,
+/// otherwise arrow + word. Never color alone.
 class TrendLabel extends StatelessWidget {
-  const TrendLabel({super.key, required this.trend});
+  const TrendLabel({super.key, required this.trend, this.current, this.previous});
   final Trend trend;
+  final double? current;
+  final double? previous;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final (IconData icon, String label) = switch (trend) {
-      Trend.up => (Icons.arrow_upward, l10n.trendUp),
-      Trend.down => (Icons.arrow_downward, l10n.trendDown),
-      Trend.flat => (Icons.trending_flat, l10n.trendFlat),
-    };
+    final diff = (current != null && previous != null) ? current! - previous! : null;
+    final known = diff != null && diff.abs() >= 0.005;
+    final (IconData icon, String label, String semantics) = known
+        ? diff > 0
+              ? (Icons.arrow_upward, peso(diff), l10n.changeUpBy(peso(diff)))
+              : (Icons.arrow_downward, peso(-diff), l10n.changeDownBy(peso(-diff)))
+        : switch (trend) {
+            Trend.up => (Icons.arrow_upward, l10n.trendUp, l10n.trendSemantics(l10n.trendUp)),
+            Trend.down => (
+              Icons.arrow_downward,
+              l10n.trendDown,
+              l10n.trendSemantics(l10n.trendDown),
+            ),
+            Trend.flat => (
+              Icons.trending_flat,
+              l10n.trendFlat,
+              l10n.trendSemantics(l10n.trendFlat),
+            ),
+          };
     final color = Theme.of(context).colorScheme.onSurface;
     return Semantics(
-      label: l10n.trendSemantics(label),
+      label: semantics,
       excludeSemantics: true,
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 18, color: color),
+          Icon(icon, size: 16, color: color),
           const SizedBox(width: 2),
           Flexible(
             child: Text(
               label,
               overflow: TextOverflow.ellipsis,
-              style: Theme.of(context).textTheme.labelMedium?.copyWith(color: color),
+              style: Theme.of(context).textTheme.labelMedium
+                  ?.copyWith(color: color, fontFeatures: tabularFigures),
             ),
           ),
         ],
@@ -109,10 +127,14 @@ class PriceText extends StatelessWidget {
       children: [
         Text(
           peso(price),
-          style: (large ? t.headlineMedium : t.titleLarge)?.copyWith(
-            fontFeatures: tabularFigures,
+          style: TextStyle(
+            fontFamily: t.bodyMedium?.fontFamily,
+            fontSize: large ? 34 : 22,
             fontWeight: FontWeight.w700,
-            letterSpacing: -0.3,
+            height: 1.1,
+            letterSpacing: -0.4,
+            color: Theme.of(context).colorScheme.onSurface,
+            fontFeatures: tabularFigures,
           ),
         ),
         Text(l10n.perUnit(unitShort(l10n, unit)), style: t.bodySmall),
@@ -189,8 +211,8 @@ class PriceLedger extends StatelessWidget {
   }
 }
 
-/// One line of the price board. Always shows median, confidence, source and age.
-/// Flat row meant to sit inside a [PriceLedger].
+/// One line of the price bulletin. Always shows median, confidence, source and age.
+/// Flat row: sits in a [PriceLedger] or a full-width [BulletinList].
 class PriceRowCard extends StatelessWidget {
   const PriceRowCard({
     super.key,
@@ -228,9 +250,9 @@ class PriceRowCard extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.fromLTRB(
           SharedTokens.space4,
+          SharedTokens.space3 + 2,
           SharedTokens.space3,
-          SharedTokens.space2,
-          SharedTokens.space3,
+          SharedTokens.space3 + 2,
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -239,11 +261,11 @@ class PriceRowCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title, style: t.titleMedium),
+                  Text(title, style: t.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
                   if (subtitle.isNotEmpty) Text(subtitle, style: t.bodySmall),
                   const SizedBox(height: SharedTokens.space2),
                   Wrap(
-                    spacing: SharedTokens.space2,
+                    spacing: SharedTokens.space3,
                     runSpacing: SharedTokens.space1,
                     crossAxisAlignment: WrapCrossAlignment.center,
                     children: [
@@ -252,7 +274,7 @@ class PriceRowCard extends StatelessWidget {
                       ?badge,
                     ],
                   ),
-                  const SizedBox(height: SharedTokens.space1),
+                  const SizedBox(height: 2),
                   Text(
                     meta,
                     style: t.bodySmall?.copyWith(
@@ -269,17 +291,75 @@ class PriceRowCard extends StatelessWidget {
               children: [
                 PriceText(price: entry.medianPrice, unit: entry.unit),
                 const SizedBox(height: SharedTokens.space1),
-                TrendLabel(trend: entry.trend),
+                TrendLabel(
+                  trend: entry.trend,
+                  current: entry.medianPrice,
+                  previous: entry.previousMedian,
+                ),
               ],
             ),
             if (onTap != null)
               Padding(
-                padding: const EdgeInsets.only(left: 2, top: 4),
+                padding: const EdgeInsets.only(left: 2, top: 2),
                 child: Icon(Icons.chevron_right, color: c.textMuted, size: 22),
               ),
           ],
         ),
       ),
+    );
+  }
+}
+
+/// Full-width bulletin: rows grouped under plain category headings, hairlines between rows,
+/// no cards. Used on the home price board.
+class BulletinList extends StatelessWidget {
+  const BulletinList({super.key, required this.groups});
+
+  /// (category heading, rows) in display order.
+  final List<(String, List<Widget>)> groups;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = TimbangColors.of(context);
+    final t = Theme.of(context).textTheme;
+    final surface = Theme.of(context).colorScheme.surface;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        for (final (heading, rows) in groups) ...[
+          if (heading.isNotEmpty)
+            Semantics(
+              header: true,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  SharedTokens.space4,
+                  SharedTokens.space4,
+                  SharedTokens.space4,
+                  SharedTokens.space2,
+                ),
+                child: Text(heading, style: t.labelLarge?.copyWith(color: c.textMuted)),
+              ),
+            ),
+          DecoratedBox(
+            decoration: BoxDecoration(
+              color: surface,
+              border: Border.symmetric(horizontal: BorderSide(color: c.border)),
+            ),
+            child: Material(
+              type: MaterialType.transparency,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  for (var i = 0; i < rows.length; i++) ...[
+                    if (i > 0) Divider(height: 1, indent: SharedTokens.space4, color: c.border),
+                    rows[i],
+                  ],
+                ],
+              ),
+            ),
+          ),
+        ],
+      ],
     );
   }
 }

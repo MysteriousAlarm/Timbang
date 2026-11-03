@@ -50,7 +50,7 @@
   "navListings": "Ani",
   "navInquiries": "Tanong",
   "navAlerts": "Alerto",
-  "navProfile": "Profile",
+  "navProfile": "Ako",
   "comingSoonTitle": "Malapit na",
   "comingSoonBody": "Ginagawa pa ang bahaging ito.",
   "priceBoardEmptyTitle": "Wala pang presyo",
@@ -113,7 +113,7 @@
     }
   },
   "setupSubtitle": "Pangalan, bayan, at kung ikaw ay magsasaka o mamimili lamang ang kailangan namin.",
-  "navHome": "Home",
+  "navHome": "Presyo",
   "greeting": "Magandang araw, {name}",
   "@greeting": {
     "placeholders": {
@@ -234,7 +234,7 @@
   },
   "commoditiesDesc": "Mga gulay at iba pang ani na sinusubaybayan ang presyo.",
   "marketsDesc": "Mga palengke, bagsakan at farmgate na pinag-uulatan ng presyo.",
-  "importCsv": "I-import ang CSV",
+  "importCsv": "I-import ang Excel o CSV",
   "addCommodity": "Magdagdag ng bilihin",
   "addMarket": "Magdagdag ng palengke",
   "editCommodity": "I-edit ang bilihin",
@@ -948,5 +948,36 @@
       }
     }
   },
-  "quickTools": "Mga gamit"
+  "quickTools": "Mga gamit",
+  "bulletinKicker": "Arawang bulletin ng presyo · Nueva Vizcaya",
+  "servicesTitle": "Mga serbisyo",
+  "svcPostDesc": "Ilista ang iyong ani para makontak ka ng mamimili",
+  "svcFindDesc": "Tingnan ang inaaning ibinebenta ng mga magsasaka",
+  "svcReportDesc": "Ibahagi ang presyo ngayon sa iyong palengke",
+  "svcCompareDesc": "Isang gulay, sa iba't ibang palengke",
+  "svcAlertsDesc": "Abisuhan kapag tumawid ang presyo sa itinakda mo",
+  "changeUpBy": "Tumaas ng {amount} mula kahapon",
+  "@changeUpBy": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "changeDownBy": "Bumaba ng {amount} mula kahapon",
+  "@changeDownBy": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "marketChangeSemantics": "Palengke: {name}. Pindutin para palitan.",
+  "@marketChangeSemantics": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  }
 }

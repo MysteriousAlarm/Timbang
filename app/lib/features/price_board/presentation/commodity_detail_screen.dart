@@ -29,7 +29,6 @@ class CommodityDetailScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-    final c = TimbangColors.of(context);
     final commodities = ref.watch(commoditiesProvider).value ?? const <Commodity>[];
     Commodity? commodity;
     for (final x in commodities) {
@@ -42,10 +41,6 @@ class CommodityDetailScreen extends ConsumerWidget {
           onPressed: () => context.canPop() ? context.pop() : context.go(Routes.prices),
         ),
         title: Text(commodity?.nameIn(context) ?? l10n.navPrices),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(4),
-          child: Container(height: 4, color: c.highlight),
-        ),
       ),
       body: Align(
         alignment: Alignment.topCenter,
@@ -105,7 +100,7 @@ class _Body extends ConsumerWidget {
         SharedTokens.space6,
       ),
       children: [
-        Text(commodity.category.toUpperCase(), style: t.labelSmall),
+        Text(commodity.category, style: t.labelSmall),
         Text(commodity.labelIn(context), style: t.headlineSmall),
         Text(l10n.perUnit(unitShort(l10n, commodity.unit)), style: t.bodyMedium),
         const SizedBox(height: SharedTokens.space4),
@@ -214,7 +209,7 @@ class _Headline extends StatelessWidget {
           : Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(l10n.medianAt(marketName).toUpperCase(), style: t.labelSmall),
+                Text(l10n.medianAt(marketName), style: t.labelSmall),
                 const SizedBox(height: SharedTokens.space2),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
@@ -233,7 +228,7 @@ class _Headline extends StatelessWidget {
                         ],
                       ),
                     ),
-                    TrendLabel(trend: e.trend),
+                    TrendLabel(trend: e.trend, current: e.medianPrice, previous: e.previousMedian),
                   ],
                 ),
                 const SizedBox(height: SharedTokens.space3),

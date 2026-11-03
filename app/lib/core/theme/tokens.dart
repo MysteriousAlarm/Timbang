@@ -11,16 +11,16 @@ abstract final class HarvestEarthTokens {
   static const onSecondary = Color(0xFFFFFFFF);
   static const cta = Color(0xFFE8892B); // harvest; fill only, never text on white
   static const onCta = Color(0xFF2B2118);
-  static const canvas = Color(0xFFFBF6EC);
+  static const canvas = Color(0xFFF7F4EE); // newsprint: warm, not yellow
   static const surface = Color(0xFFFFFFFF);
   static const text = Color(0xFF2B2118);
   static const textMuted = Color(0xFF6B5A48);
   static const info = Color(0xFF2A6F97);
   // Derived tints/shades of the palette above (contrast-checked in test/theme_test.dart).
-  static const border = Color(0xFFE4D9C6); // card outlines, decoration only
+  static const border = Color(0xFFDDD6C9); // rules and outlines, decoration only
   static const primaryDark = Color(0xFF235229); // header bands, top strip
   static const primaryTint = Color(0xFFE7F0E8); // selected rows, soft headers
-  static const surfaceMuted = Color(0xFFF5EEE1); // table headers, grouped list bg
+  static const surfaceMuted = Color(0xFFF1EDE5); // table headers, grouped list bg
 }
 
 /// Forest and Gold: website (landing page + admin dashboard).
@@ -48,6 +48,13 @@ abstract final class SharedTokens {
   static const onConfidenceHigh = Color(0xFFFFFFFF);
   static const confidenceMedium = Color(0xFFF2B84B);
   static const onConfidenceMedium = Color(0xFF1B2A21);
+
+  /// Trust-meter bars (non-text, >= 3:1 on white). Medium uses a deeper amber than the
+  /// fill above so the bars stay visible in sunlight.
+  static const meterHigh = Color(0xFF1F7A3A);
+  static const meterMedium = Color(0xFFA86A00);
+  static const meterLow = Color(0xFF5B6770);
+  static const meterEmpty = Color(0xFFD9D3C7);
   static const confidenceLow = Color(0xFF5B6770);
   static const onConfidenceLow = Color(0xFFFFFFFF);
   static const error = Color(0xFFB3261E);

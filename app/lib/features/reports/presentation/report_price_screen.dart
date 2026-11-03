@@ -98,17 +98,12 @@ class _ReportPriceScreenState extends ConsumerState<ReportPriceScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final c = TimbangColors.of(context);
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 68,
         title: Text(l10n.reportTitle),
         leading: BackButton(
           onPressed: () => context.canPop() ? context.pop() : context.go(Routes.prices),
-        ),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(4),
-          child: Container(height: 4, color: c.highlight),
         ),
       ),
       body: Align(

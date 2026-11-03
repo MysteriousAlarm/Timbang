@@ -303,7 +303,7 @@ class _SampleBoard extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(l10n.sampleBoardKicker.toUpperCase(), style: t.labelSmall),
+                        Text(l10n.sampleBoardKicker, style: t.labelSmall),
                         Text(l10n.sampleBoardTitle, style: t.titleMedium),
                       ],
                     ),

@@ -33,7 +33,6 @@ class ListingDetailScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-    final c = TimbangColors.of(context);
     final async = ref.watch(listingProvider(listingId));
     return Scaffold(
       appBar: AppBar(
@@ -42,10 +41,6 @@ class ListingDetailScreen extends ConsumerWidget {
           onPressed: () => context.canPop() ? context.pop() : context.go(Routes.listings),
         ),
         title: Text(l10n.listingDetailTitle),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(4),
-          child: Container(height: 4, color: c.highlight),
-        ),
       ),
       body: Align(
         alignment: Alignment.topCenter,
@@ -301,7 +296,7 @@ class _MedianCompare extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(l10n.medianAt(r.market.name).toUpperCase(), style: t.labelSmall),
+          Text(l10n.medianAt(r.market.name), style: t.labelSmall),
           const SizedBox(height: SharedTokens.space1),
           Row(
             children: [

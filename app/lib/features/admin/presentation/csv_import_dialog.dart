@@ -179,10 +179,7 @@ class _Template extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: Text(
-                  l10n.csvTemplate.toUpperCase(),
-                  style: Theme.of(context).textTheme.labelSmall,
-                ),
+                child: Text(l10n.csvTemplate, style: Theme.of(context).textTheme.labelSmall),
               ),
               TextButton.icon(
                 onPressed: () {
@@ -254,7 +251,7 @@ class _Summary extends StatelessWidget {
         ],
         if (valid > 0) ...[
           const SizedBox(height: SharedTokens.space3),
-          Text(l10n.preview.toUpperCase(), style: t.labelSmall),
+          Text(l10n.preview, style: t.labelSmall),
           const SizedBox(height: SharedTokens.space1),
           for (final row in r.rows.where((x) => x.ok).take(6))
             Text('• ${row.item!.id} — ${row.item!.displayName}', style: t.bodyMedium),
