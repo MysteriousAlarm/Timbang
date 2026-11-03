@@ -11,6 +11,7 @@ import '../../../shared/widgets/sections.dart';
 import '../../catalog/data/catalog_providers.dart';
 import '../../catalog/domain/catalog_item.dart';
 import 'admin_shell.dart';
+import 'pilot_metrics.dart';
 
 class AdminOverviewPage extends ConsumerWidget {
   const AdminOverviewPage({super.key});
@@ -80,6 +81,8 @@ class AdminOverviewPage extends ConsumerWidget {
             );
           },
         ),
+        const SizedBox(height: SharedTokens.space6),
+        const PilotMetricsSection(),
         const SizedBox(height: SharedTokens.space6),
         SectionHeader(kicker: l10n.dataSourcesKicker, title: l10n.dataSourcesTitle),
         const SizedBox(height: SharedTokens.space3),

@@ -13,8 +13,10 @@ import '../../catalog/data/catalog_providers.dart';
 import '../../catalog/domain/catalog_item.dart';
 import '../../reports/data/price_report_repository.dart';
 import '../../reports/domain/price_report.dart';
+import '../data/admin_repository.dart';
 import 'admin_labels.dart';
 import 'admin_shell.dart';
+import 'moderation_page.dart' show askReason;
 import 'official_import_dialog.dart';
 
 /// Admin: import official prices and watch incoming reports.
@@ -183,6 +185,34 @@ class _ReportsTable extends ConsumerWidget {
                       ),
                     ),
                     DataCell(status(r.status)),
+                    DataCell(
+                      r.source == PriceSource.official
+                          ? const SizedBox.shrink()
+                          : IconButton(
+                              tooltip: r.status == ReportStatus.rejected
+                                  ? l10n.restoreReport
+                                  : l10n.rejectReport,
+                              icon: Icon(
+                                r.status == ReportStatus.rejected ? Icons.undo : Icons.block,
+                              ),
+                              onPressed: () async {
+                                final why = await askReason(
+                                  context,
+                                  r.status == ReportStatus.rejected
+                                      ? l10n.restoreReport
+                                      : l10n.rejectReport,
+                                );
+                                if (why == null) return;
+                                await ref
+                                    .read(adminRepositoryProvider)
+                                    .moderateReport(
+                                      r.id,
+                                      reject: r.status != ReportStatus.rejected,
+                                      reason: why,
+                                    );
+                              },
+                            ),
+                    ),
                   ],
                 ),
             ],

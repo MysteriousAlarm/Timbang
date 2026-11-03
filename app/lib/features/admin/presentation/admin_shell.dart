@@ -9,6 +9,7 @@ import '../../../core/theme/tokens.dart';
 import '../../../shared/widgets/brand.dart';
 import '../../auth/application/session.dart';
 import '../../profile/application/profile_controller.dart';
+import '../data/admin_repository.dart';
 
 /// Admin dashboard frame (Forest and Gold): seal header, side navigation.
 class AdminShell extends ConsumerWidget {
@@ -22,6 +23,9 @@ class AdminShell extends ConsumerWidget {
     Routes.adminCommodities,
     Routes.adminMarkets,
     Routes.adminPrices,
+    Routes.adminUsers,
+    Routes.adminModeration,
+    Routes.adminAudit,
   ];
 
   @override
@@ -32,6 +36,7 @@ class AdminShell extends ConsumerWidget {
     final session = ref.watch(sessionProvider);
     final name = session is SignedIn ? session.profile.name : '';
     final width = MediaQuery.sizeOf(context).width;
+    final openFlags = ref.watch(openAbuseProvider).value?.length ?? 0;
     final index = _routes
         .lastIndexWhere((r) => location.startsWith(r))
         .clamp(0, _routes.length - 1);
@@ -109,6 +114,25 @@ class AdminShell extends ConsumerWidget {
                 icon: const Icon(Icons.price_change_outlined),
                 selectedIcon: const Icon(Icons.price_change),
                 label: Text(l10n.adminPrices),
+              ),
+              NavigationRailDestination(
+                icon: const Icon(Icons.people_outline),
+                selectedIcon: const Icon(Icons.people),
+                label: Text(l10n.adminUsers),
+              ),
+              NavigationRailDestination(
+                icon: Badge(
+                  isLabelVisible: openFlags > 0,
+                  label: Text('$openFlags'),
+                  child: const Icon(Icons.shield_outlined),
+                ),
+                selectedIcon: const Icon(Icons.shield),
+                label: Text(l10n.adminModeration),
+              ),
+              NavigationRailDestination(
+                icon: const Icon(Icons.receipt_long_outlined),
+                selectedIcon: const Icon(Icons.receipt_long),
+                label: Text(l10n.adminAudit),
               ),
             ],
           ),

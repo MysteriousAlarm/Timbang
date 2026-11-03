@@ -17,6 +17,7 @@ import '../../auth/application/session.dart';
 import '../../catalog/data/catalog_providers.dart';
 import '../../catalog/domain/catalog_item.dart';
 import '../../inquiries/presentation/ask_farmer.dart';
+import '../../moderation/presentation/flag_sheet.dart';
 import '../../price_board/application/board_providers.dart';
 import '../../price_board/domain/board_entry.dart';
 import '../../price_board/presentation/board_widgets.dart';
@@ -207,6 +208,11 @@ class _Body extends ConsumerWidget {
               commodityName: commodity?.nameFil ?? listing.commodityId,
             ),
           ],
+          const SizedBox(height: SharedTokens.space2),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: FlagButton(targetType: 'listing', targetId: listing.id, label: l10n.flagListing),
+          ),
         ],
       ],
     );

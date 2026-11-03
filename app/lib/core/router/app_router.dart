@@ -3,9 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/admin/presentation/admin_shell.dart';
+import '../../features/admin/presentation/audit_page.dart';
 import '../../features/admin/presentation/catalog_page.dart';
+import '../../features/admin/presentation/moderation_page.dart';
 import '../../features/admin/presentation/overview_page.dart';
 import '../../features/admin/presentation/prices_page.dart';
+import '../../features/admin/presentation/users_page.dart';
 import '../../features/alerts/presentation/alerts_tab.dart';
 import '../../features/auth/application/session.dart';
 import '../../features/auth/presentation/otp_screen.dart';
@@ -96,6 +99,9 @@ final routerProvider = Provider<GoRouter>((ref) {
             builder: (_, _) => const CatalogPage(kind: CatalogKind.markets),
           ),
           GoRoute(path: Routes.adminPrices, builder: (_, _) => const AdminPricesPage()),
+          GoRoute(path: Routes.adminUsers, builder: (_, _) => const AdminUsersPage()),
+          GoRoute(path: Routes.adminModeration, builder: (_, _) => const AdminModerationPage()),
+          GoRoute(path: Routes.adminAudit, builder: (_, _) => const AdminAuditPage()),
         ],
       ),
     ],

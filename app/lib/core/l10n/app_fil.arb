@@ -755,5 +755,133 @@
     }
   },
   "alertPaused": "Naka-pause",
-  "setAlertHere": "Mag-set ng alerto sa presyo nito"
+  "setAlertHere": "Mag-set ng alerto sa presyo nito",
+  "flagListing": "I-report ang listing na ito",
+  "flagPrice": "Mali ang presyo? I-report",
+  "flagTitle": "Bakit mo ito ini-report?",
+  "flagHelp": "Susuriin ito ng admin. Hindi malalaman ng iba na ikaw ang nag-report.",
+  "flagNote": "Detalye (opsyonal)",
+  "flagSend": "Ipadala sa admin",
+  "flagSent": "Salamat. Natanggap ng admin ang iyong report.",
+  "abuseWrongPrice": "Mali o pekeng presyo",
+  "abuseScam": "Panloloko o scam",
+  "abuseSpam": "Spam o paulit-ulit",
+  "abuseOffensive": "Bastos o hindi angkop",
+  "abuseOther": "Iba pa",
+  "adminUsers": "Mga user",
+  "adminUsersDesc": "Aprubahan ang mga tagapag-ulat, itakda ang kanilang palengke, at i-suspend ang mga lumalabag.",
+  "adminPeopleKicker": "Mga tao",
+  "searchUsersHint": "Maghanap ayon sa pangalan, numero o bayan",
+  "changeRole": "Palitan ang papel",
+  "changeRoleFor": "Papel ni {name}",
+  "@changeRoleFor": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "roleReporterHelp": "Beripikadong tagapag-ulat: mas mataas ang bigat ng ulat",
+  "roleAdminHelp": "Buong access sa admin dashboard",
+  "assignMarkets": "Mga palengke",
+  "assignMarketsFor": "Palengke ni {name}",
+  "@assignMarketsFor": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "assignMarketsHelp": "Kapag walang pinili, maaaring mag-ulat sa kahit anong palengke.",
+  "anyMarket": "Kahit anong palengke",
+  "marketsCount": "{n} palengke",
+  "@marketsCount": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "reporterScore": "Katumpakan {pct}%",
+  "@reporterScore": {
+    "placeholders": {
+      "pct": {
+        "type": "int"
+      }
+    }
+  },
+  "suspend": "I-suspend",
+  "reactivate": "Ibalik",
+  "suspended": "Suspendido",
+  "thisIsYou": "Ikaw ito",
+  "adminModeration": "Moderasyon",
+  "adminModerationDesc": "Suriin ang mga report ng user at mga outlier na presyo. Naitatala ang bawat aksyon sa audit log.",
+  "adminSafetyKicker": "Kaligtasan",
+  "abuseKicker": "Mga report ng user",
+  "abuseTitle": "Bukas na report",
+  "abuseEmpty": "Walang bukas na report.",
+  "flagListingTarget": "Listing",
+  "flagPriceTarget": "Presyo",
+  "removeListingAndResolve": "Alisin ang listing",
+  "markResolved": "Tapos na",
+  "dismiss": "Balewalain",
+  "outliersKicker": "Outlier",
+  "outliersTitle": "Mga presyong malayo sa median",
+  "outliersHelp": "Awtomatikong hindi isinasama sa median. Tanggihan kung mali, o ibalik kung tama.",
+  "outliersEmpty": "Walang outlier ngayon.",
+  "rejectReport": "Tanggihan",
+  "restoreReport": "Ibalik",
+  "reasonLabel": "Dahilan (itatala sa audit log)",
+  "confirm": "Kumpirmahin",
+  "adminAudit": "Audit log",
+  "adminAuditDesc": "Talaan ng mga sensitibong aksyon. Cloud Functions lamang ang nakakasulat dito.",
+  "auditEmpty": "Wala pang naitalang aksyon.",
+  "auditFootnote": "Huling 100 aksyon. Walang personal na datos maliban sa user ID.",
+  "colAction": "Aksyon",
+  "colTarget": "Target",
+  "colDetail": "Detalye",
+  "colActor": "Gumawa",
+  "metricsKicker": "Pilot",
+  "metricsTitle": "Sukatan ng pilot",
+  "metricsError": "Hindi ma-load ang sukatan.",
+  "refresh": "I-refresh",
+  "metricPriceAge": "Edad ng median na presyo",
+  "metricPriceAgeNote": "Median ng lahat ng presyo sa board",
+  "metricActiveFarmers": "Aktibong magsasaka (30 araw)",
+  "metricOfFarmers": "sa {total} na nakarehistro",
+  "@metricOfFarmers": {
+    "placeholders": {
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "metricListings": "Na-post na ani",
+  "metricLast30": "Nakaraang 30 araw",
+  "metricInquiriesPerListing": "Tanong bawat listing",
+  "metricInquiries": "{n} tanong sa 30 araw",
+  "@metricInquiries": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "metricReports7d": "Mga ulat sa 7 araw: {official} opisyal · {reporter} tagapag-ulat · {community} komunidad",
+  "@metricReports7d": {
+    "placeholders": {
+      "official": {
+        "type": "String"
+      },
+      "reporter": {
+        "type": "String"
+      },
+      "community": {
+        "type": "String"
+      }
+    }
+  },
+  "metricEntries": "Presyo",
+  "metricMedianAge": "Median na edad",
+  "metricFresh": "Sariwa (≤24h)"
 }

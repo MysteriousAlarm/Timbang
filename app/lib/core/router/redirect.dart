@@ -18,6 +18,9 @@ abstract final class Routes {
   static const adminCommodities = '/admin/commodities';
   static const adminMarkets = '/admin/markets';
   static const adminPrices = '/admin/prices';
+  static const adminUsers = '/admin/users';
+  static const adminModeration = '/admin/moderation';
+  static const adminAudit = '/admin/audit';
   static const report = '/report';
   static String commodity(String id) => '/prices/$id';
   static const newListing = '/listings/new';

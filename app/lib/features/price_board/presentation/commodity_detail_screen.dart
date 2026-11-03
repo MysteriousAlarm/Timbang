@@ -15,6 +15,7 @@ import '../../alerts/presentation/alert_sheet.dart';
 import '../../auth/application/session.dart';
 import '../../catalog/data/catalog_providers.dart';
 import '../../catalog/domain/catalog_item.dart';
+import '../../moderation/presentation/flag_sheet.dart';
 import '../application/board_providers.dart';
 import '../domain/board_entry.dart';
 import 'board_widgets.dart';
@@ -115,7 +116,18 @@ class _Body extends ConsumerWidget {
           NoticeBanner(icon: Icons.science_outlined, message: l10n.demoPricesBanner),
           const SizedBox(height: SharedTokens.space3),
         ],
-        if (selected != null) _Headline(entry: mine, marketName: selected.name, now: now),
+        if (selected != null) ...[
+          _Headline(entry: mine, marketName: selected.name, now: now),
+          if (mine != null)
+            Align(
+              alignment: Alignment.centerRight,
+              child: FlagButton(
+                targetType: 'price_board',
+                targetId: '${commodity.id}_${selected.id}',
+                label: l10n.flagPrice,
+              ),
+            ),
+        ],
         const SizedBox(height: SharedTokens.space6),
         SectionHeader(kicker: l10n.compareKicker, title: l10n.compareTitle),
         const SizedBox(height: SharedTokens.space2),
