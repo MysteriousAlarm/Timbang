@@ -174,6 +174,7 @@ class _AdminUsersPageState extends ConsumerState<AdminUsersPage> {
               return MessageView(icon: Icons.person_search, title: l10n.noMatches, body: '');
             }
             return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 for (final u in list) ...[
                   PanelCard(
