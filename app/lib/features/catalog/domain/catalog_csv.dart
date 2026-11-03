@@ -30,8 +30,10 @@ class CsvImport {
 
 /// Parses an admin CSV (see docs/templates). Column order does not matter;
 /// header names are matched case-insensitively.
-CsvImport parseCatalogCsv(CatalogKind kind, String text) {
-  final table = parseCsv(text);
+CsvImport parseCatalogCsv(CatalogKind kind, String text) => parseCatalogTable(kind, parseCsv(text));
+
+/// Same as [parseCatalogCsv] for rows already read from a CSV or Excel file.
+CsvImport parseCatalogTable(CatalogKind kind, List<List<String>> table) {
   if (table.isEmpty) return CsvImport(kind: kind, rows: const []);
 
   final header = [for (final h in table.first) h.trim().toLowerCase()];

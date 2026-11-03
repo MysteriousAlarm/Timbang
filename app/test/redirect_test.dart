@@ -49,10 +49,11 @@ void main() {
     expect(resolveRedirect(_admin, Routes.login, w), Routes.admin);
   });
 
-  test('admin route needs the admin claim and the web build', () {
+  test('admin route needs the admin claim (website or phone app)', () {
     expect(resolveRedirect(_farmer, Routes.admin, w), Routes.prices);
     expect(resolveRedirect(_admin, Routes.admin, w), isNull);
-    expect(resolveRedirect(_admin, Routes.admin, m), Routes.prices);
+    expect(resolveRedirect(_admin, Routes.admin, m), isNull);
+    expect(resolveRedirect(_farmer, Routes.admin, m), Routes.prices);
     expect(resolveRedirect(_farmer, Routes.adminCommodities, w), Routes.prices);
     expect(resolveRedirect(_admin, Routes.adminMarkets, w), isNull);
   });

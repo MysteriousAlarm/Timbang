@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,6 +7,8 @@ import '../../../core/config/app_config.dart';
 import '../../../core/l10n/generated/app_localizations.dart';
 import '../../../core/theme/timbang_colors.dart';
 import '../../../core/theme/tokens.dart';
+import '../../../shared/utils/csv.dart';
+import '../../../shared/utils/spreadsheet.dart';
 import '../../../shared/widgets/sections.dart';
 import '../../catalog/data/catalog_providers.dart';
 import '../../catalog/domain/catalog_item.dart';
@@ -40,7 +40,9 @@ class _OfficialImportDialogState extends ConsumerState<_OfficialImportDialog> {
     super.dispose();
   }
 
-  void _parse(String text, {String? fileName}) {
+  void _parse(String text, {String? fileName}) => _parseTable(parseCsv(text), fileName: fileName);
+
+  void _parseTable(List<List<String>> table, {String? fileName}) {
     final commodityIds = {
       for (final x in ref.read(commoditiesProvider).value ?? const <Commodity>[])
         if (x.active) x.id,
@@ -50,7 +52,7 @@ class _OfficialImportDialogState extends ConsumerState<_OfficialImportDialog> {
         if (x.active) x.id,
     };
     setState(() {
-      _result = parseOfficialCsv(text, commodityIds: commodityIds, marketIds: marketIds);
+      _result = parseOfficialTable(table, commodityIds: commodityIds, marketIds: marketIds);
       _fileName = fileName;
       _serverErrors = const [];
     });
@@ -59,11 +61,16 @@ class _OfficialImportDialogState extends ConsumerState<_OfficialImportDialog> {
   Future<void> _pickFile() async {
     final picked = await FilePicker.pickFiles(
       type: FileType.custom,
-      allowedExtensions: const ['csv'],
+      allowedExtensions: const ['csv', 'xlsx'],
     );
     if (picked.isEmpty) return;
-    final bytes = await picked.first.readAsBytes();
-    _parse(utf8.decode(bytes, allowMalformed: true), fileName: picked.first.name);
+    final file = picked.first;
+    final bytes = await file.readAsBytes();
+    try {
+      _parseTable(readSpreadsheet(bytes, file.name), fileName: file.name);
+    } catch (_) {
+      if (mounted) setState(() => _serverErrors = [AppLocalizations.of(context).fileUnreadable]);
+    }
   }
 
   bool get _noteOk => _note.text.trim().length >= 2 && _note.text.trim().length <= 80;

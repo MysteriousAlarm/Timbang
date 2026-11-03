@@ -54,8 +54,14 @@ OfficialImport parseOfficialCsv(
   String text, {
   required Set<String> commodityIds,
   required Set<String> marketIds,
+}) => parseOfficialTable(parseCsv(text), commodityIds: commodityIds, marketIds: marketIds);
+
+/// Same as [parseOfficialCsv] for rows already read from a CSV or Excel file.
+OfficialImport parseOfficialTable(
+  List<List<String>> table, {
+  required Set<String> commodityIds,
+  required Set<String> marketIds,
 }) {
-  final table = parseCsv(text);
   if (table.isEmpty) return const OfficialImport([]);
   final header = [for (final h in table.first) h.trim().toLowerCase()];
   final col = <String, int>{};

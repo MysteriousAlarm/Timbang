@@ -316,8 +316,8 @@
       }
     }
   },
-  "chooseCsvFile": "Pumili ng CSV file",
-  "orPasteCsv": "O i-paste ang laman ng CSV dito",
+  "chooseCsvFile": "Pumili ng CSV o Excel file",
+  "orPasteCsv": "O i-paste ang laman ng CSV dito (o kopyahin ang mga cell mula sa Excel)",
   "importRows": "I-import ({count})",
   "@importRows": {
     "placeholders": {
@@ -893,5 +893,19 @@
   "smsInputLabel": "Mensahe",
   "smsExamples": "Halimbawa: PRESYO KAMATIS BAYOMBONG · PRESYO REPOLYO · TULONG",
   "exportMyData": "Tingnan / kopyahin ang aking data (RA 10173)",
-  "close": "Isara"
+  "close": "Isara",
+  "fileUnreadable": "Hindi mabasa ang file. Gumamit ng .csv o .xlsx (Excel).",
+  "addOfficialPrice": "Magdagdag ng isang presyo",
+  "addOfficialPriceHelp": "Para sa isang opisyal na presyo na itatama o idadagdag (hal. mula sa ulat ng DA o NVAT). Para sa maraming presyo, gamitin ang import ng Excel/CSV.",
+  "fieldObservedDate": "Petsa ng presyo",
+  "officialPriceSaved": "Na-save ang opisyal na presyo. Na-update ang board.",
+  "openAdminDashboard": "Buksan ang admin dashboard",
+  "roleNotActive": "Ang papel na {role} ay hindi pa aktibo. Ibinibigay lamang ito gamit ang \"npm run seed:admin\" (unang admin) o ng isang admin sa Admin > Mga user. Pagkatapos, mag-log out at mag-log in ulit.",
+  "@roleNotActive": {
+    "placeholders": {
+      "role": {
+        "type": "String"
+      }
+    }
+  }
 }

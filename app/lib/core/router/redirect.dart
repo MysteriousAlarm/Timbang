@@ -47,9 +47,8 @@ String? resolveRedirect(Session session, String location, AppTarget target) {
       final home = target == AppTarget.web && isAdmin ? Routes.admin : Routes.prices;
       if (location == Routes.splash || onLogin || location == Routes.setup) return home;
       if (target == AppTarget.mobile && location == Routes.landing) return home;
-      if (location.startsWith(Routes.admin) && (!isAdmin || target != AppTarget.web)) {
-        return Routes.prices;
-      }
+      // Admins can manage TIMBANG from the website OR the phone app.
+      if (location.startsWith(Routes.admin) && !isAdmin) return Routes.prices;
       return null;
   }
 }

@@ -3,10 +3,13 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../core/l10n/generated/app_localizations.dart';
+import '../../../core/router/redirect.dart';
 import '../../../core/theme/timbang_colors.dart';
 import '../../../core/theme/tokens.dart';
+import '../../../shared/models/role.dart';
 import '../../../shared/utils/phone.dart';
 import '../../../shared/widgets/sections.dart';
 import '../../auth/application/session.dart';
@@ -129,6 +132,24 @@ class ProfileScreen extends ConsumerWidget {
             ],
           ),
         ),
+        // The Firestore role says reporter/admin but the verified role claim does not: the role was
+        // typed into the database instead of granted with seed:admin / setUserRole.
+        if ((p.role == Role.admin || p.role == Role.reporter) && session.role != p.role) ...[
+          const SizedBox(height: SharedTokens.space4),
+          NoticeBanner(
+            icon: Icons.info_outline,
+            message: l10n.roleNotActive(roleLabel(l10n, p.role)),
+          ),
+        ],
+        if (session.isAdmin) ...[
+          const SizedBox(height: SharedTokens.space4),
+          FilledButton.icon(
+            key: const Key('openAdmin'),
+            onPressed: () => context.go(Routes.admin),
+            icon: const Icon(Icons.admin_panel_settings_outlined),
+            label: Text(l10n.openAdminDashboard),
+          ),
+        ],
         const SizedBox(height: SharedTokens.space5),
         SectionHeader(kicker: 'RA 10173', title: l10n.myData),
         const SizedBox(height: SharedTokens.space3),

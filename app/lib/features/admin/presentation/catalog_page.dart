@@ -214,17 +214,70 @@ class _CatalogTable extends StatelessWidget {
       );
     }
 
-    return LayoutBuilder(
-      builder: (context, box) => SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: ConstrainedBox(
-          constraints: BoxConstraints(minWidth: box.maxWidth),
-          child: DataTable(
-            columns: [for (final col in columns) DataColumn(label: Text(col.toUpperCase()))],
-            rows: [for (final i in items) row(i)],
+    // Phones: one card per item instead of a wide table.
+    Widget card(CatalogItem i) {
+      final (String title, String sub, String a, String b) = switch (i) {
+        Commodity() => (i.nameFil, '${i.nameEn} · ${i.id}', unitLabel(l10n, i.unit), i.category),
+        Market() => (i.name, i.id, i.municipality, marketTypeLabel(l10n, i.type)),
+      };
+      return InkWell(
+        key: Key('item_${i.id}'),
+        onTap: () => showCatalogForm(context, kind, existing: i),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(
+            SharedTokens.space4,
+            SharedTokens.space3,
+            SharedTokens.space2,
+            SharedTokens.space3,
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(title, style: t.titleSmall),
+                    Text(sub, style: t.bodySmall?.copyWith(color: c.textMuted)),
+                    Text('$a · $b', style: t.bodySmall),
+                    const SizedBox(height: 4),
+                    Wrap(
+                      spacing: 6,
+                      children: [
+                        _StatusPill(active: i.active),
+                        if (i.isDemo) const _DemoTag(),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              Icon(Icons.edit_outlined, color: c.textMuted),
+            ],
           ),
         ),
-      ),
+      );
+    }
+
+    return LayoutBuilder(
+      builder: (context, box) => box.maxWidth < 600
+          ? Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                for (var k = 0; k < items.length; k++) ...[
+                  if (k > 0) const Divider(),
+                  card(items[k]),
+                ],
+              ],
+            )
+          : SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minWidth: box.maxWidth),
+                child: DataTable(
+                  columns: [for (final col in columns) DataColumn(label: Text(col.toUpperCase()))],
+                  rows: [for (final i in items) row(i)],
+                ),
+              ),
+            ),
     );
   }
 }

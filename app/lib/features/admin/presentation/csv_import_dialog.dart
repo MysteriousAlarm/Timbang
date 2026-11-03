@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,6 +7,7 @@ import '../../../core/config/app_config.dart';
 import '../../../core/l10n/generated/app_localizations.dart';
 import '../../../core/theme/timbang_colors.dart';
 import '../../../core/theme/tokens.dart';
+import '../../../shared/utils/spreadsheet.dart';
 import '../../../shared/widgets/sections.dart';
 import '../../catalog/data/catalog_providers.dart';
 import '../../catalog/data/catalog_repository.dart';
@@ -51,12 +50,21 @@ class _CsvImportDialogState extends ConsumerState<_CsvImportDialog> {
   Future<void> _pickFile() async {
     final picked = await FilePicker.pickFiles(
       type: FileType.custom,
-      allowedExtensions: const ['csv'],
+      allowedExtensions: const ['csv', 'xlsx'],
     );
     if (picked.isEmpty) return;
     final file = picked.first;
     final bytes = await file.readAsBytes();
-    _parse(utf8.decode(bytes, allowMalformed: true), fileName: file.name);
+    try {
+      final table = readSpreadsheet(bytes, file.name);
+      setState(() {
+        _result = parseCatalogTable(widget.kind, table);
+        _fileName = file.name;
+        _serverErrors = const [];
+      });
+    } catch (_) {
+      if (mounted) setState(() => _serverErrors = [AppLocalizations.of(context).fileUnreadable]);
+    }
   }
 
   Future<void> _import() async {

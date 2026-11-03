@@ -202,8 +202,8 @@
   "headerError": "Header: {message}",
   "importTitle": "Import {what}",
   "importHelp": "Use a CSV with a header on the first line. Items with an existing ID are updated. Every line must be valid before importing (up to {max} per file).",
-  "chooseCsvFile": "Choose CSV file",
-  "orPasteCsv": "Or paste the CSV contents here",
+  "chooseCsvFile": "Choose a CSV or Excel file",
+  "orPasteCsv": "Or paste the CSV here (or copy cells from Excel)",
   "importRows": "Import ({count})",
   "csvTemplate": "Template",
   "copy": "Copy",
@@ -487,5 +487,12 @@
   "smsInputLabel": "Message",
   "smsExamples": "Examples: PRESYO KAMATIS BAYOMBONG · PRESYO REPOLYO · TULONG",
   "exportMyData": "View / copy my data (RA 10173)",
-  "close": "Close"
+  "close": "Close",
+  "fileUnreadable": "Could not read the file. Use .csv or .xlsx (Excel).",
+  "addOfficialPrice": "Add one price",
+  "addOfficialPriceHelp": "For a single official price to add or correct (e.g. from a DA or NVAT report). For many prices, use the Excel/CSV import.",
+  "fieldObservedDate": "Price date",
+  "officialPriceSaved": "Official price saved. The board is updated.",
+  "openAdminDashboard": "Open the admin dashboard",
+  "roleNotActive": "Your {role} role is not active yet. It can only be granted with \"npm run seed:admin\" (first admin) or by an admin in Admin > Users. Then log out and log in again."
 }

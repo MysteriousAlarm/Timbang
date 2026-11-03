@@ -38,6 +38,53 @@ class AdminShell extends ConsumerWidget {
     final name = session is SignedIn ? session.profile.name : '';
     final width = MediaQuery.sizeOf(context).width;
     final openFlags = ref.watch(openAbuseProvider).value?.length ?? 0;
+    final narrow = width < 700;
+    final items = <({Widget icon, Widget selectedIcon, String label})>[
+      (
+        icon: const Icon(Icons.space_dashboard_outlined),
+        selectedIcon: const Icon(Icons.space_dashboard),
+        label: l10n.adminOverview,
+      ),
+      (
+        icon: const Icon(Icons.eco_outlined),
+        selectedIcon: const Icon(Icons.eco),
+        label: l10n.adminCommodities,
+      ),
+      (
+        icon: const Icon(Icons.storefront_outlined),
+        selectedIcon: const Icon(Icons.storefront),
+        label: l10n.adminMarkets,
+      ),
+      (
+        icon: const Icon(Icons.price_change_outlined),
+        selectedIcon: const Icon(Icons.price_change),
+        label: l10n.adminPrices,
+      ),
+      (
+        icon: const Icon(Icons.people_outline),
+        selectedIcon: const Icon(Icons.people),
+        label: l10n.adminUsers,
+      ),
+      (
+        icon: Badge(
+          isLabelVisible: openFlags > 0,
+          label: Text('$openFlags'),
+          child: const Icon(Icons.shield_outlined),
+        ),
+        selectedIcon: const Icon(Icons.shield),
+        label: l10n.adminModeration,
+      ),
+      (
+        icon: const Icon(Icons.sms_outlined),
+        selectedIcon: const Icon(Icons.sms),
+        label: l10n.adminSms,
+      ),
+      (
+        icon: const Icon(Icons.receipt_long_outlined),
+        selectedIcon: const Icon(Icons.receipt_long),
+        label: l10n.adminAudit,
+      ),
+    ];
     final index = _routes
         .lastIndexWhere((r) => location.startsWith(r))
         .clamp(0, _routes.length - 1);
@@ -47,8 +94,10 @@ class AdminShell extends ConsumerWidget {
         toolbarHeight: 72,
         title: Row(
           children: [
-            const TimbangWordmark(size: 40, onDark: true),
-            const SizedBox(width: SharedTokens.space4),
+            narrow
+                ? const TimbangEmblem(size: 34, onDark: true)
+                : const TimbangWordmark(size: 40, onDark: true),
+            SizedBox(width: narrow ? SharedTokens.space2 : SharedTokens.space4),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(color: c.highlight, borderRadius: BorderRadius.circular(6)),
@@ -87,65 +136,53 @@ class AdminShell extends ConsumerWidget {
           child: Container(height: 4, color: c.highlight),
         ),
       ),
-      body: Row(
-        children: [
-          NavigationRail(
-            extended: width >= 1100,
-            minExtendedWidth: 232,
-            selectedIndex: index,
-            labelType: width >= 1100 ? NavigationRailLabelType.none : NavigationRailLabelType.all,
-            onDestinationSelected: (i) => context.go(_routes[i]),
-            destinations: [
-              NavigationRailDestination(
-                icon: const Icon(Icons.space_dashboard_outlined),
-                selectedIcon: const Icon(Icons.space_dashboard),
-                label: Text(l10n.adminOverview),
-              ),
-              NavigationRailDestination(
-                icon: const Icon(Icons.eco_outlined),
-                selectedIcon: const Icon(Icons.eco),
-                label: Text(l10n.adminCommodities),
-              ),
-              NavigationRailDestination(
-                icon: const Icon(Icons.storefront_outlined),
-                selectedIcon: const Icon(Icons.storefront),
-                label: Text(l10n.adminMarkets),
-              ),
-              NavigationRailDestination(
-                icon: const Icon(Icons.price_change_outlined),
-                selectedIcon: const Icon(Icons.price_change),
-                label: Text(l10n.adminPrices),
-              ),
-              NavigationRailDestination(
-                icon: const Icon(Icons.people_outline),
-                selectedIcon: const Icon(Icons.people),
-                label: Text(l10n.adminUsers),
-              ),
-              NavigationRailDestination(
-                icon: Badge(
-                  isLabelVisible: openFlags > 0,
-                  label: Text('$openFlags'),
-                  child: const Icon(Icons.shield_outlined),
+      // Phones: a slide-out menu; tablets and desktops: a side rail.
+      drawer: narrow
+          ? NavigationDrawer(
+              selectedIndex: index,
+              onDestinationSelected: (i) {
+                Navigator.pop(context);
+                context.go(_routes[i]);
+              },
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(28, 20, 16, 12),
+                  child: Text(name, style: Theme.of(context).textTheme.titleMedium),
                 ),
-                selectedIcon: const Icon(Icons.shield),
-                label: Text(l10n.adminModeration),
-              ),
-              NavigationRailDestination(
-                icon: const Icon(Icons.sms_outlined),
-                selectedIcon: const Icon(Icons.sms),
-                label: Text(l10n.adminSms),
-              ),
-              NavigationRailDestination(
-                icon: const Icon(Icons.receipt_long_outlined),
-                selectedIcon: const Icon(Icons.receipt_long),
-                label: Text(l10n.adminAudit),
-              ),
-            ],
-          ),
-          VerticalDivider(width: 1, color: c.border),
-          Expanded(child: child),
-        ],
-      ),
+                for (final d in items)
+                  NavigationDrawerDestination(
+                    icon: d.icon,
+                    selectedIcon: d.selectedIcon,
+                    label: Text(d.label),
+                  ),
+              ],
+            )
+          : null,
+      body: narrow
+          ? child
+          : Row(
+              children: [
+                NavigationRail(
+                  extended: width >= 1100,
+                  minExtendedWidth: 232,
+                  selectedIndex: index,
+                  labelType: width >= 1100
+                      ? NavigationRailLabelType.none
+                      : NavigationRailLabelType.all,
+                  onDestinationSelected: (i) => context.go(_routes[i]),
+                  destinations: [
+                    for (final d in items)
+                      NavigationRailDestination(
+                        icon: d.icon,
+                        selectedIcon: d.selectedIcon,
+                        label: Text(d.label),
+                      ),
+                  ],
+                ),
+                VerticalDivider(width: 1, color: c.border),
+                Expanded(child: child),
+              ],
+            ),
     );
   }
 }

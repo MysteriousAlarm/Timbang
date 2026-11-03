@@ -9,6 +9,7 @@ environment:
 dependencies:
   cloud_firestore: ^7.1.0
   cloud_functions: ^7.0.1
+  excel: ^4.0.6
   file_picker: ^13.3.2
   firebase_app_check: ^0.5.1
   firebase_auth: ^7.0.1

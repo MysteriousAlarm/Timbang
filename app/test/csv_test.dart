@@ -26,4 +26,10 @@ void main() {
       ['a', 'b', ''],
     ]);
   });
+  test('cells pasted from Excel (tab-separated)', () {
+    expect(parseCsv('id\tname\nkamatis\tKamatis, pula\n'), [
+      ['id', 'name'],
+      ['kamatis', 'Kamatis, pula'],
+    ]);
+  });
 }
