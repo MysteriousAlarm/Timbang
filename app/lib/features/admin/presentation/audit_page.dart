@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 
 import '../../../core/l10n/generated/app_localizations.dart';
 import '../../../core/theme/tokens.dart';
+import '../../../core/theme/typography.dart';
 import '../../../shared/widgets/sections.dart';
 import '../../../shared/widgets/state_views.dart';
 import '../data/admin_repository.dart';
@@ -67,7 +68,7 @@ class AdminAuditPage extends ConsumerWidget {
                                     Text(
                                       e.targetPath,
                                       style: t.bodySmall?.copyWith(
-                                        fontFamily: 'monospace',
+                                        fontFamily: kMonoFamily,
                                         color: t.bodyMedium?.color,
                                       ),
                                     ),
@@ -84,7 +85,7 @@ class AdminAuditPage extends ConsumerWidget {
                                           ? '${e.actorId.substring(0, 10)}…'
                                           : e.actorId,
                                       style: t.bodySmall?.copyWith(
-                                        fontFamily: 'monospace',
+                                        fontFamily: kMonoFamily,
                                         color: t.bodyMedium?.color,
                                       ),
                                     ),

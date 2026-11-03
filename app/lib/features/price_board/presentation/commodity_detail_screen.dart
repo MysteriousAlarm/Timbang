@@ -6,6 +6,7 @@ import '../../../core/l10n/generated/app_localizations.dart';
 import '../../../core/router/redirect.dart';
 import '../../../core/theme/timbang_colors.dart';
 import '../../../core/theme/tokens.dart';
+import '../../../core/theme/typography.dart';
 import '../../../shared/widgets/confidence_chip.dart';
 import '../../../shared/widgets/sections.dart';
 import '../../../shared/widgets/source_tag.dart';
@@ -218,12 +219,7 @@ class _Headline extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            peso(e.medianPrice),
-                            style: t.displaySmall?.copyWith(
-                              fontFeatures: const [FontFeature.tabularFigures()],
-                            ),
-                          ),
+                          Text(peso(e.medianPrice), style: priceStyle(context, 40)),
                           Text(l10n.perUnit(unitShort(l10n, e.unit)), style: t.bodyMedium),
                         ],
                       ),

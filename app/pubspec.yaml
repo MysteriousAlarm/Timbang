@@ -38,25 +38,31 @@ flutter:
   generate: true
 
   fonts:
-    - family: PublicSans
+    # Text and UI: IBM Plex Sans (SIL OFL). Has the peso sign and full Filipino coverage.
+    - family: IBMPlexSans
       fonts:
-        - asset: assets/fonts/PublicSans-Regular.ttf
-        - asset: assets/fonts/PublicSans-Medium.ttf
+        - asset: assets/fonts/IBMPlexSans-Regular.ttf
+        - asset: assets/fonts/IBMPlexSans-Medium.ttf
           weight: 500
-        - asset: assets/fonts/PublicSans-SemiBold.ttf
+        - asset: assets/fonts/IBMPlexSans-SemiBold.ttf
           weight: 600
-        - asset: assets/fonts/PublicSans-Bold.ttf
+        - asset: assets/fonts/IBMPlexSans-Bold.ttf
           weight: 700
-        - asset: assets/fonts/PublicSans-ExtraBold.ttf
-          weight: 800
-    # Headlines: Newsreader (SIL OFL), static instances at the 24pt optical size.
-    - family: Newsreader
+    # Prices and data labels: IBM Plex Mono, like the readout of a weighing scale.
+    - family: IBMPlexMono
       fonts:
-        - asset: assets/fonts/Newsreader-Medium.ttf
+        - asset: assets/fonts/IBMPlexMono-Medium.ttf
           weight: 500
-        - asset: assets/fonts/Newsreader-SemiBold.ttf
+        - asset: assets/fonts/IBMPlexMono-SemiBold.ttf
           weight: 600
-        - asset: assets/fonts/Newsreader-Bold.ttf
+        - asset: assets/fonts/IBMPlexMono-Bold.ttf
+          weight: 700
+    # Headlines and the wordmark: Fraunces, static instances (opsz 36, SOFT 50).
+    - family: Fraunces
+      fonts:
+        - asset: assets/fonts/Fraunces-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Fraunces-Bold.ttf
           weight: 700
 
 flutter_launcher_icons:

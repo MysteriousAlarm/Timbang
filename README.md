@@ -252,6 +252,7 @@ Developed by **Aaron Anthony A. Gano II**, BS Computer Science (Robotics),
 **Nueva Vizcaya State University**, Bayombong, as a joint requirement of
 **IT ECC 6 – Application Development** and **CS PC 7 – Information Assurance and Technology**.
 
-Typefaces: [Public Sans](https://public-sans.digital.gov/) for text and
-[Newsreader](https://github.com/productiontype/Newsreader) for headlines, both under the SIL Open
-Font License and bundled in `app/assets/fonts`.
+Typefaces, all under the SIL Open Font License and bundled in `app/assets/fonts`:
+[Fraunces](https://github.com/undercasetype/Fraunces) for headlines and the wordmark,
+[IBM Plex Sans](https://github.com/IBM/plex) for text, and IBM Plex Mono for prices and data
+labels (like the readout of a weighing scale).

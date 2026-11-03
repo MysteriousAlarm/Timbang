@@ -7,6 +7,7 @@ import '../../../core/config/app_config.dart';
 import '../../../core/l10n/generated/app_localizations.dart';
 import '../../../core/theme/timbang_colors.dart';
 import '../../../core/theme/tokens.dart';
+import '../../../core/theme/typography.dart';
 import '../../../shared/utils/csv.dart';
 import '../../../shared/utils/spreadsheet.dart';
 import '../../../shared/widgets/sections.dart';
@@ -164,7 +165,7 @@ class _OfficialImportDialogState extends ConsumerState<_OfficialImportDialog> {
                     ),
                     SelectableText(
                       officialCsvTemplate.trim(),
-                      style: const TextStyle(fontFamily: 'monospace', fontSize: 14),
+                      style: const TextStyle(fontFamily: kMonoFamily, fontSize: 14),
                     ),
                     const SizedBox(height: SharedTokens.space2),
                     Text(l10n.officialCsvColumns, style: t.bodySmall),
@@ -190,7 +191,7 @@ class _OfficialImportDialogState extends ConsumerState<_OfficialImportDialog> {
                 controller: _paste,
                 minLines: 3,
                 maxLines: 6,
-                style: const TextStyle(fontFamily: 'monospace', fontSize: 14),
+                style: const TextStyle(fontFamily: kMonoFamily, fontSize: 14),
                 decoration: InputDecoration(labelText: l10n.orPasteCsv, alignLabelWithHint: true),
                 onChanged: _parse,
               ),

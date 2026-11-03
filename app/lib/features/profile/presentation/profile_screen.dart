@@ -10,6 +10,7 @@ import '../../../core/l10n/locale_controller.dart';
 import '../../../core/router/redirect.dart';
 import '../../../core/theme/timbang_colors.dart';
 import '../../../core/theme/tokens.dart';
+import '../../../core/theme/typography.dart';
 import '../../../shared/models/role.dart';
 import '../../../shared/utils/phone.dart';
 import '../../../shared/widgets/sections.dart';
@@ -234,7 +235,7 @@ class ProfileScreen extends ConsumerWidget {
             child: SingleChildScrollView(
               child: SelectableText(
                 text,
-                style: const TextStyle(fontFamily: 'monospace', fontSize: 13),
+                style: const TextStyle(fontFamily: kMonoFamily, fontSize: 13),
               ),
             ),
           ),

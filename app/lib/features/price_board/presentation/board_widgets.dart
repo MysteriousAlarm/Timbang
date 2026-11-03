@@ -125,18 +125,7 @@ class PriceText extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        Text(
-          peso(price),
-          style: TextStyle(
-            fontFamily: t.bodyMedium?.fontFamily,
-            fontSize: large ? 34 : 22,
-            fontWeight: FontWeight.w700,
-            height: 1.1,
-            letterSpacing: -0.4,
-            color: Theme.of(context).colorScheme.onSurface,
-            fontFeatures: tabularFigures,
-          ),
-        ),
+        Text(peso(price), style: priceStyle(context, large ? 34 : 22)),
         Text(l10n.perUnit(unitShort(l10n, unit)), style: t.bodySmall),
       ],
     );
@@ -165,7 +154,7 @@ class PriceLedger extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = TimbangColors.of(context);
     final t = Theme.of(context).textTheme;
-    final head = t.labelSmall?.copyWith(color: c.textMuted, letterSpacing: 0.6);
+    final head = dataLabelStyle(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [

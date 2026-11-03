@@ -269,7 +269,7 @@ class _SampleBoard extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Text(price, style: t.titleLarge?.copyWith(fontFeatures: tabularFigures)),
+                  Text(price, style: priceStyle(context, 22)),
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [

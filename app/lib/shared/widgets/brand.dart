@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 import '../../core/theme/timbang_colors.dart';
+import '../../core/theme/typography.dart';
 
 /// Seal-style emblem: a filled disc with a highlight ring and the scale glyph.
 /// Shared across both themes; colors come from the active theme.
@@ -92,23 +93,23 @@ class TimbangWordmark extends StatelessWidget {
             Text(
               'TIMBANG',
               style: TextStyle(
-                fontFamily: 'PublicSans',
+                fontFamily: kSerifFamily,
                 color: fg,
-                fontSize: size * 0.5,
-                height: 1.05,
-                fontWeight: FontWeight.w800,
-                letterSpacing: size * 0.06,
+                fontSize: size * 0.56,
+                height: 1.0,
+                fontWeight: FontWeight.w700,
+                letterSpacing: size * 0.03,
               ),
             ),
             if (subtitle != null)
               Text(
                 subtitle!,
                 style: TextStyle(
-                  fontFamily: 'PublicSans',
+                  fontFamily: kMonoFamily,
                   color: muted,
-                  fontSize: math.max(11, size * 0.24),
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 1.6,
+                  fontSize: math.max(10, size * 0.22),
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 1.4,
                   height: 1.2,
                 ),
               ),

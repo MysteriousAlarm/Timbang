@@ -7,6 +7,7 @@ import '../../../core/l10n/generated/app_localizations.dart';
 import '../../../core/router/redirect.dart';
 import '../../../core/theme/timbang_colors.dart';
 import '../../../core/theme/tokens.dart';
+import '../../../core/theme/typography.dart';
 import '../../../shared/widgets/sections.dart';
 import '../../admin/presentation/admin_labels.dart';
 import '../../catalog/data/catalog_providers.dart';
@@ -56,7 +57,6 @@ class _Masthead extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final t = Theme.of(context).textTheme;
-    final c = TimbangColors.of(context);
     final ink = Theme.of(context).colorScheme.onSurface;
     final locale = Localizations.localeOf(context).toLanguageTag();
     final board = ref.watch(marketBoardProvider(market.id)).value;
@@ -77,7 +77,7 @@ class _Masthead extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(l10n.bulletinKicker, style: t.labelMedium?.copyWith(color: c.textMuted)),
+          Text(l10n.bulletinKicker.toUpperCase(), style: dataLabelStyle(context)),
           const SizedBox(height: SharedTokens.space1),
           _MarketPicker(market: market),
           const SizedBox(height: SharedTokens.space1),

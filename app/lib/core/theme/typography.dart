@@ -1,9 +1,34 @@
 import 'package:flutter/material.dart';
 
-/// Bundled typefaces shared by both themes (both SIL OFL):
-/// Public Sans for text and figures, Newsreader for headlines (the "bulletin" voice).
-const kFontFamily = 'PublicSans';
-const kSerifFamily = 'Newsreader';
+import 'timbang_colors.dart';
+
+/// Bundled typefaces shared by both themes (all SIL OFL, all with the peso sign):
+/// - IBM Plex Sans: text and UI. Engineered, institutional, very legible at small sizes.
+/// - Fraunces: headlines and the wordmark. A warm, soft serif: the "bulletin" voice.
+/// - IBM Plex Mono: prices and data labels, like the readout of a weighing scale (timbang).
+const kFontFamily = 'IBMPlexSans';
+const kSerifFamily = 'Fraunces';
+const kMonoFamily = 'IBMPlexMono';
+
+/// Price figures: mono, so digits and decimal points line up down a column.
+TextStyle priceStyle(BuildContext context, double size) => TextStyle(
+  fontFamily: kMonoFamily,
+  fontSize: size,
+  fontWeight: FontWeight.w600,
+  height: 1.1,
+  letterSpacing: -0.6,
+  color: Theme.of(context).colorScheme.onSurface,
+);
+
+/// Small data label (column headers, the bulletin kicker): mono caps, tracked out.
+TextStyle dataLabelStyle(BuildContext context, {Color? color}) => TextStyle(
+  fontFamily: kMonoFamily,
+  fontSize: 12,
+  fontWeight: FontWeight.w600,
+  letterSpacing: 1.2,
+  height: 1.3,
+  color: color ?? TimbangColors.of(context).textMuted,
+);
 
 /// Shared typography for both themes: large, high-contrast, low-end Android friendly.
 TextTheme timbangTextTheme(Color text, Color muted) {

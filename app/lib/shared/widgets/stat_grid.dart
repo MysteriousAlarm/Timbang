@@ -79,10 +79,7 @@ class _Cell extends StatelessWidget {
     final t = Theme.of(context).textTheme;
     final c = TimbangColors.of(context);
     final label = Text(stat.label, style: t.labelMedium?.copyWith(color: c.textMuted));
-    final value = Text(
-      stat.value,
-      style: t.headlineSmall?.copyWith(fontFeatures: tabularFigures, height: 1.15),
-    );
+    final value = Text(stat.value, style: priceStyle(context, 26));
     final note = stat.note == null ? null : Text(stat.note!, style: t.bodySmall);
     final body = inline
         ? Row(
