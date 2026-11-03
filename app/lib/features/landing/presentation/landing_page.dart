@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/config/app_config.dart';
 import '../../../core/l10n/generated/app_localizations.dart';
+import '../../../core/l10n/locale_controller.dart';
 import '../../../core/router/redirect.dart';
 import '../../../core/theme/timbang_colors.dart';
 import '../../../core/theme/tokens.dart';
@@ -144,6 +146,8 @@ class _Header extends StatelessWidget {
               TextButton(onPressed: onTrust, child: Text(l10n.trustKicker)),
               const SizedBox(width: SharedTokens.space3),
             ],
+            const _LanguageToggle(),
+            const SizedBox(width: SharedTokens.space2),
             FilledButton.icon(
               key: const Key('headerLogin'),
               onPressed: () => context.go(Routes.login),
@@ -613,6 +617,27 @@ class _Footer extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// EN | FIL switch in the website header.
+class _LanguageToggle extends ConsumerWidget {
+  const _LanguageToggle();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final current = ref.watch(languageProvider) ?? AppLanguage.english;
+    final next = current == AppLanguage.english ? AppLanguage.filipino : AppLanguage.english;
+    return Tooltip(
+      message: current == AppLanguage.english ? 'Gamitin sa Filipino' : 'Use English',
+      child: TextButton.icon(
+        key: const Key('landingLanguage'),
+        onPressed: () => ref.read(languageProvider.notifier).choose(next),
+        icon: const Icon(Icons.translate),
+        label: Text(current == AppLanguage.english ? 'FIL' : 'EN'),
+        style: TextButton.styleFrom(minimumSize: const Size(48, 48)),
       ),
     );
   }

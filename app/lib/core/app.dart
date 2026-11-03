@@ -3,6 +3,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'l10n/generated/app_localizations.dart';
+import 'l10n/locale_controller.dart';
 import 'push/push_service.dart';
 import 'router/app_router.dart';
 
@@ -21,8 +22,8 @@ class TimbangApp extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       theme: theme,
       routerConfig: ref.watch(routerProvider),
-      // Filipino first, English fallback.
-      locale: const Locale('fil'),
+      // English by default; the user picks English or Filipino on first launch.
+      locale: ref.watch(appLocaleProvider),
       supportedLocales: AppLocalizations.supportedLocales,
       localizationsDelegates: const [
         AppLocalizations.delegate,

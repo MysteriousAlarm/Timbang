@@ -148,7 +148,20 @@ class _ReportPriceScreenState extends ConsumerState<ReportPriceScreen> {
       return MessageView(
         icon: Icons.inventory_2_outlined,
         title: l10n.catalogEmptyTitle,
-        body: l10n.reportNoCatalog,
+        body:
+            (ref.watch(sessionProvider) is SignedIn &&
+                (ref.watch(sessionProvider) as SignedIn).isAdmin)
+            ? l10n.catalogEmptyAdmin
+            : l10n.reportNoCatalog,
+        action:
+            (ref.watch(sessionProvider) is SignedIn &&
+                (ref.watch(sessionProvider) as SignedIn).isAdmin)
+            ? FilledButton.icon(
+                onPressed: () => context.go(Routes.adminCommodities),
+                icon: const Icon(Icons.eco_outlined),
+                label: Text(l10n.catalogEmptyAdminButton),
+              )
+            : null,
       );
     }
 

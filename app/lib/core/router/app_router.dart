@@ -19,6 +19,7 @@ import '../../features/home/presentation/home_page.dart';
 import '../../features/home/presentation/home_shell.dart';
 import '../../features/inquiries/presentation/inbox_tab.dart';
 import '../../features/landing/presentation/landing_page.dart';
+import '../../features/language/presentation/language_screen.dart';
 import '../../features/listings/presentation/create_listing_screen.dart';
 import '../../features/listings/presentation/listing_detail_screen.dart';
 import '../../features/listings/presentation/listings_tab.dart';
@@ -27,6 +28,7 @@ import '../../features/profile/presentation/profile_screen.dart';
 import '../../features/profile/presentation/profile_setup_screen.dart';
 import '../../features/reports/presentation/report_price_screen.dart';
 import '../../shared/widgets/state_views.dart';
+import '../l10n/locale_controller.dart';
 import '../theme/forest_gold_theme.dart';
 import '../theme/harvest_earth_theme.dart';
 import 'redirect.dart';
@@ -43,12 +45,21 @@ final routerProvider = Provider<GoRouter>((ref) {
   final refresh = ValueNotifier<Session>(ref.read(sessionProvider));
   ref.listen(sessionProvider, (_, next) => refresh.value = next);
   ref.onDispose(refresh.dispose);
+  final language = ValueNotifier<bool>(ref.read(languageProvider) != null);
+  ref.listen(languageProvider, (_, next) => language.value = next != null);
+  ref.onDispose(language.dispose);
 
   return GoRouter(
     initialLocation: target == AppTarget.web ? Routes.landing : Routes.splash,
-    refreshListenable: refresh,
-    redirect: (context, state) => resolveRedirect(refresh.value, state.matchedLocation, target),
+    refreshListenable: Listenable.merge([refresh, language]),
+    redirect: (context, state) => resolveRedirect(
+      refresh.value,
+      state.matchedLocation,
+      target,
+      languageChosen: language.value,
+    ),
     routes: [
+      GoRoute(path: Routes.language, builder: (_, _) => _farmerTheme(const LanguageScreen())),
       GoRoute(
         path: Routes.landing,
         builder: (_, _) =>

@@ -5,6 +5,7 @@ enum AppTarget { mobile, web }
 
 abstract final class Routes {
   static const landing = '/';
+  static const language = '/language';
   static const splash = '/splash';
   static const login = '/login';
   static const otp = '/login/otp';
@@ -29,7 +30,17 @@ abstract final class Routes {
 }
 
 /// Pure redirect logic (unit tested). Returns null to stay on [location].
-String? resolveRedirect(Session session, String location, AppTarget target) {
+String? resolveRedirect(
+  Session session,
+  String location,
+  AppTarget target, {
+  bool languageChosen = true,
+}) {
+  // First launch: choose English or Filipino before anything else.
+  if (!languageChosen) return location == Routes.language ? null : Routes.language;
+  if (location == Routes.language) {
+    return target == AppTarget.web ? Routes.landing : Routes.splash;
+  }
   final isPublicLanding = target == AppTarget.web && location == Routes.landing;
   final onLogin = location == Routes.login || location == Routes.otp;
 

@@ -67,7 +67,23 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Kailangang sumang-ayon bago magpatuloy.'), findsOneWidget);
 
+    // Consent: open the notice, the checkbox is locked until the end is reached.
     await tester.tap(find.byKey(const Key('consentCheckbox')));
+    await tester.pumpAndSettle();
+    final check = tester.widget<CheckboxListTile>(find.byKey(const Key('privacyCheck')));
+    final lockedAtStart = check.onChanged == null;
+    await tester.dragUntilVisible(
+      find.byKey(const Key('privacyEnd')),
+      find.byKey(const Key('privacyScroll')),
+      const Offset(0, -300),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('privacyCheck')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('privacyAgree')));
+    await tester.pumpAndSettle();
+    expect(find.text('Sumang-ayon ka sa Paunawa sa Privacy.'), findsOneWidget);
+    expect(lockedAtStart || tester.view.physicalSize.height > 2000, isTrue);
     await tester.tap(find.byKey(const Key('saveProfile')));
     await tester.pumpAndSettle();
 

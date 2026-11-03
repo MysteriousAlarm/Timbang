@@ -57,4 +57,15 @@ void main() {
     expect(resolveRedirect(_farmer, Routes.adminCommodities, w), Routes.prices);
     expect(resolveRedirect(_admin, Routes.adminMarkets, w), isNull);
   });
+
+  test('first launch: language chooser before anything else', () {
+    expect(
+      resolveRedirect(const SignedOut(), Routes.login, m, languageChosen: false),
+      Routes.language,
+    );
+    expect(resolveRedirect(_farmer, Routes.prices, w, languageChosen: false), Routes.language);
+    expect(resolveRedirect(const SignedOut(), Routes.language, m, languageChosen: false), isNull);
+    expect(resolveRedirect(const SignedOut(), Routes.language, w), Routes.landing);
+    expect(resolveRedirect(const SignedOut(), Routes.language, m), Routes.splash);
+  });
 }

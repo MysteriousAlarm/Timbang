@@ -9,6 +9,7 @@ import '../../../shared/models/role.dart';
 import '../../../shared/widgets/sections.dart';
 import '../../../shared/widgets/state_views.dart';
 import '../../auth/presentation/auth_scaffold.dart';
+import '../../privacy/presentation/privacy_notice_screen.dart';
 import '../application/profile_controller.dart';
 import 'municipality_field.dart';
 import 'profile_form_text.dart';
@@ -181,28 +182,40 @@ class _ConsentCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final t = Theme.of(context).textTheme;
+    final c = TimbangColors.of(context);
     return PanelCard(
       accent: true,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Row(
             children: [
-              Icon(Icons.privacy_tip_outlined, color: TimbangColors.of(context).info),
+              Icon(
+                value ? Icons.verified_user : Icons.privacy_tip_outlined,
+                color: value ? c.confidenceHigh : c.info,
+              ),
               const SizedBox(width: SharedTokens.space2),
               Expanded(child: Text(l10n.consentTitle, style: t.titleSmall)),
             ],
           ),
           const SizedBox(height: SharedTokens.space2),
-          Text(l10n.consentBody, style: t.bodyMedium),
-          CheckboxListTile(
-            key: const Key('consentCheckbox'),
-            contentPadding: EdgeInsets.zero,
-            controlAffinity: ListTileControlAffinity.leading,
-            value: value,
-            onChanged: (v) => onChanged(v ?? false),
-            title: Text(l10n.consentCheckbox, style: t.titleSmall),
-          ),
+          Text(value ? l10n.privacyAgreedStatus : l10n.privacySummary, style: t.bodyMedium),
+          const SizedBox(height: SharedTokens.space3),
+          value
+              ? TextButton.icon(
+                  onPressed: () => showPrivacyNotice(context, requireAgreement: false),
+                  icon: const Icon(Icons.article_outlined),
+                  label: Text(l10n.privacyReadAgain),
+                )
+              : OutlinedButton.icon(
+                  key: const Key('consentCheckbox'),
+                  onPressed: () async {
+                    final agreed = await showPrivacyNotice(context);
+                    if (agreed) onChanged(true);
+                  },
+                  icon: const Icon(Icons.article_outlined),
+                  label: Text(l10n.privacyReadButton),
+                ),
         ],
       ),
     );

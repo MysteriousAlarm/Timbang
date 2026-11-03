@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'app.dart';
 import 'firebase/firebase_init.dart';
+import 'l10n/locale_controller.dart';
 import 'router/app_router.dart';
 import 'router/redirect.dart';
 
@@ -10,9 +11,13 @@ import 'router/redirect.dart';
 Future<void> bootstrap({required AppTarget target, required ThemeData theme}) async {
   WidgetsFlutterBinding.ensureInitialized();
   await initFirebase();
+  final language = await loadSavedLanguage();
   runApp(
     ProviderScope(
-      overrides: [appTargetProvider.overrideWithValue(target)],
+      overrides: [
+        appTargetProvider.overrideWithValue(target),
+        savedLanguageProvider.overrideWithValue(language),
+      ],
       child: TimbangApp(theme: theme),
     ),
   );

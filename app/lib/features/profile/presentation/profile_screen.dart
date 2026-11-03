@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/l10n/generated/app_localizations.dart';
+import '../../../core/l10n/locale_controller.dart';
 import '../../../core/router/redirect.dart';
 import '../../../core/theme/timbang_colors.dart';
 import '../../../core/theme/tokens.dart';
@@ -14,6 +15,7 @@ import '../../../shared/utils/phone.dart';
 import '../../../shared/widgets/sections.dart';
 import '../../auth/application/session.dart';
 import '../../home/presentation/home_shell.dart' show initials;
+import '../../privacy/presentation/privacy_notice_screen.dart';
 import '../application/profile_controller.dart';
 import '../domain/user_profile.dart';
 import 'municipality_field.dart';
@@ -151,6 +153,19 @@ class ProfileScreen extends ConsumerWidget {
           ),
         ],
         const SizedBox(height: SharedTokens.space5),
+        SectionHeader(kicker: l10n.settingsKicker, title: l10n.languageLabel),
+        const SizedBox(height: SharedTokens.space3),
+        SegmentedButton<AppLanguage>(
+          key: const Key('languageSwitch'),
+          showSelectedIcon: false,
+          segments: const [
+            ButtonSegment(value: AppLanguage.english, label: Text('English')),
+            ButtonSegment(value: AppLanguage.filipino, label: Text('Filipino')),
+          ],
+          selected: {ref.watch(languageProvider) ?? AppLanguage.english},
+          onSelectionChanged: (v) => ref.read(languageProvider.notifier).choose(v.first),
+        ),
+        const SizedBox(height: SharedTokens.space5),
         SectionHeader(kicker: 'RA 10173', title: l10n.myData),
         const SizedBox(height: SharedTokens.space3),
         PanelCard(
@@ -164,6 +179,11 @@ class ProfileScreen extends ConsumerWidget {
           ),
         ),
         const SizedBox(height: SharedTokens.space2),
+        TextButton.icon(
+          onPressed: () => showPrivacyNotice(context, requireAgreement: false),
+          icon: const Icon(Icons.article_outlined),
+          label: Text(l10n.privacyReadAgain),
+        ),
         OutlinedButton.icon(
           key: const Key('exportData'),
           onPressed: () => _export(context, ref),
