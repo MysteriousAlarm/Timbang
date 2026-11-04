@@ -8,7 +8,7 @@
 A verified daily vegetable price board and produce marketplace for the farmers of
 **Nueva Vizcaya, Philippines**, on Android, the web, and SMS.
 
-`Flutter` · `Firebase` · `Cloud Functions (TypeScript)` · `Filipino-first`
+`Flutter` · `Firebase` · `Cloud Functions (TypeScript)` · `English and Filipino`
 
 **Status:** first build **v0.1.0**, a working prototype for a class requirement (see [Status](#status))
 
@@ -21,8 +21,13 @@ A verified daily vegetable price board and produce marketplace for the farmers o
 *Timbang* is Filipino for **"to weigh."** Before selling, a farmer weighs the price, the buyer and
 their options. TIMBANG gives them what they need to do that:
 
-- **A daily price board** per commodity and market, showing the **median price**, a trend arrow,
-  when it was last updated, and **how much the price can be trusted** (High / Medium / Low).
+- **A daily price bulletin for the whole province.** Opening the app shows every vegetable across
+  all markets in Nueva Vizcaya: the typical price, the range between markets, the change since
+  yesterday in pesos, when it was last updated, and **how much the price can be trusted**
+  (High / Medium / Low).
+- **Switch to any municipality.** The header works like the town switcher in One Vizcaya: tap
+  *Prices in · All of Nueva Vizcaya* and pick one of the 15 towns to see its own market(s). The
+  choice is remembered on the phone, and the produce listings follow it.
 - **Market comparison:** the same vegetable across nearby markets, so a farmer can see where it
   sells best.
 - **Produce listings:** farmers post what they are harvesting, and buyers contact them directly.
@@ -70,23 +75,25 @@ Reporter and admin roles are granted only by an admin.
 
 ## Screenshots
 
-**Mobile app:** price board, market comparison, a listing with the farmer's contact, and the
-farmer's inquiry inbox
+**Mobile app:** first-launch language choice, the province-wide bulletin (the default), the
+municipality switcher, and one town's bulletin
 
-![TIMBANG mobile app](docs/screenshots/app-farmer-buyer.png)
+![Province bulletin and municipality switcher](docs/screenshots/app-province-and-towns.png)
 
-**Phone login, profile setup with the privacy notice, a price report sent, and the offline board**
+**Services, market comparison for one vegetable, and an admin's Profile** (the admin dashboard
+button comes first)
 
-![Onboarding, reporting and offline mode](docs/screenshots/app-onboarding-report-offline.png)
+![Services, comparison and admin profile](docs/screenshots/app-services-compare-admin.png)
 
 **Website:** public landing page
 
 ![TIMBANG website](docs/screenshots/website-landing.png)
 
-**Admin dashboard:** pilot metrics, the market list (CSV import), and the SMS simulator
+**Admin dashboard:** overview and pilot metrics, the commodity list (Excel or CSV import), and the
+SMS simulator
 
-![Admin pilot metrics](docs/screenshots/admin-pilot-metrics.png)
-![Admin markets](docs/screenshots/admin-markets.png)
+![Admin overview and pilot metrics](docs/screenshots/admin-pilot-metrics.png)
+![Admin commodities](docs/screenshots/admin-commodities.png)
 ![Admin SMS simulator](docs/screenshots/admin-sms.png)
 
 > The screenshots use **demo data** (marked DEMO in the app). They are not real prices.
@@ -113,19 +120,49 @@ Each price on the board is computed by a Cloud Function every time a new report 
 
 The source of each price is shown as **Opisyal** (official), **Tagapag-ulat** (reporter) or **Komunidad** (community).
 
+**Province view (the default home screen).** Each vegetable is summarised across the markets that
+have a price for it today:
+
+- **Price:** the median of the markets' medians, so one market cannot pull it alone.
+- **Range:** lowest to highest market price, and how many markets reported.
+- **Confidence:** the *lowest* among those markets, so the province view never overstates trust.
+- **Change:** the same median, compared with yesterday's.
+
+Tap a vegetable to see each market separately.
+
 ## Features in this build
 
 | Area | Included |
 |---|---|
 | Accounts | Phone OTP login, farmer/buyer self sign-up, profile, RA 10173 consent, view or copy my data, delete account |
-| Prices | Daily board, market comparison, trend, confidence, source, age, stale label, offline cache |
+| Prices | Province-wide bulletin by default; municipality switcher in the header (remembered on the phone); per-market board, market comparison, change since yesterday, confidence, source, age, stale label, offline cache |
 | Reporting | Anyone can report a price; reporters count as verified; rate limits; outlier handling |
 | Listings | Post produce (quantity, price, harvest date, town, photos), browse, filter, sort, mark sold, renew, automatic 14-day expiry |
 | Inquiries | One message to the farmer, push notification, call/text buttons, inbox with unread badge |
 | Alerts | Notification when the median crosses the user's price (once per crossing) |
-| Admin | Commodities and markets (forms + CSV import), official price import, users and roles, reporter market assignment, moderation and user flags, audit log, pilot metrics, SMS simulator |
+| Admin | Works on the website and inside the mobile app (Profile → Open the admin dashboard, or the shield icon in the header). Commodities and markets (forms, Excel or CSV import), official price import (file or one price at a time), users and roles, reporter market assignment, moderation and user flags, audit log, pilot metrics, SMS simulator |
 | SMS | `PRESYO <gulay> <bayan>` query behind a swappable gateway (mock for now; Semaphore or Globe Labs later) |
 | Language | English by default; English or Filipino chosen on first launch, changeable in Profile |
+
+## Design
+
+The look is a mix of an **official printed price bulletin** and a **civic service** app:
+
+- **Bulletin layout:** each screen opens with a masthead (place, date, "as of" time) over a double
+  rule, and prices sit in full-width ruled lists grouped by category, without cards.
+- **Light header:** the header sits on the page with a thin rule, not a solid green bar. It holds
+  the seal, the municipality switcher and the profile.
+- **Trust meter:** confidence is a 3-bar meter plus the word (▮▮▮ High, ▮▮▯ Medium, ▮▯▯ Low), so it
+  never depends on color alone.
+- **Services list:** plain rows (report a price, compare markets, price alerts), each with one
+  sentence saying what it does. Farmers also get one *Post produce* button.
+- **Type:** Fraunces (headlines and wordmark), IBM Plex Sans (text) and IBM Plex Mono (prices and
+  data labels, like the readout of a weighing scale). All three include the peso sign and Filipino
+  letters.
+- **Accessible:** text contrast at least 4.5:1 (checked in tests), touch targets at least 48 dp,
+  screen-reader labels on prices, trends and trust meters.
+- **Language:** English by default. English or Filipino is chosen on first launch and can be
+  changed in Profile or with the EN/FIL button on the website.
 
 **Not part of TIMBANG** (by design): online payments or wallets, delivery and hauling, bookings,
 ratings, open chat, shopping carts, and any price setting.
@@ -135,12 +172,17 @@ ratings, open chat, shopping carts, and any price setting.
 Security is graded for CS PC 7, so it is built in from the start:
 
 - **Deny-by-default** Firestore and Storage rules, with tests for every collection (100+ rules tests).
-- **Roles** live in Firebase custom claims set only by an admin-only function, never by the app itself.
+- **Roles** live in Firebase custom claims set only by an admin-only function, never by the app
+  itself. Typing `role: admin` into a Firestore document does nothing; the first admin is set with
+  `npm run seed:admin` (see below). Reporters and admins are approved by an admin, which is what
+  the **Verified** tag means. In this prototype the first admin is verified immediately. A fuller
+  ID and endorsement check is planned for the pilot.
 - **Prices are only written by the server.** It sets each report's trust tier and rate-limits submissions.
 - Every admin action is recorded in an **audit log**.
 - **App Check**, a signed SMS webhook, phone numbers hashed and masked in logs, and no analytics.
-- **Data Privacy Act of 2012 (RA 10173):** only name, phone and town are collected; consent is
-  recorded at sign-up; users can view and delete their data.
+- **Data Privacy Act of 2012 (RA 10173):** only name, phone and town are collected. The privacy
+  notice opens as its own full screen; *I agree* only unlocks after reading to the end. Users can
+  view, copy and delete their data.
 
 See [`docs/threat-model.md`](docs/threat-model.md) (STRIDE) and
 [`docs/security-checklist.md`](docs/security-checklist.md) (OWASP MASVS).
@@ -157,6 +199,7 @@ See [`docs/threat-model.md`](docs/threat-model.md) (STRIDE) and
 | Notifications | Firebase Cloud Messaging |
 | Integrity | Firebase App Check |
 | SMS | `SmsGateway` interface (mock now; Semaphore or Globe Labs later) |
+| Fonts | Fraunces, IBM Plex Sans, IBM Plex Mono (SIL OFL), bundled so they work offline |
 | Tests and CI | flutter_test, Jest, `@firebase/rules-unit-testing`, emulator integration tests, GitHub Actions |
 
 ```
@@ -197,12 +240,22 @@ flutter run -d chrome -t lib/main_web.dart      # website + admin
 ```
 
 Debug builds connect to the local emulators automatically. Login codes are shown in the Emulator
-UI (Authentication tab); no SMS is sent. To make yourself admin, sign in once, then:
+UI (Authentication tab); no SMS is sent. To make yourself admin, sign in once, then run the command
+below, sign out and sign in again. The app then shows **Open the admin dashboard** at the top of
+Profile.
 
 ```bash
 FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099 FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 \
   npm run seed:admin -- +639171234567
 ```
+
+**Demo logins on the real Firebase project** (no SMS cost): Firebase console → Authentication →
+Sign-in method → Phone → *Phone numbers for testing*, e.g. `+63 917 000 0001` with code `123456`.
+Remove them, or keep them private, before the pilot.
+
+**Lists and prices from a phone:** admins can add or edit commodities and markets and enter
+official prices in the app itself, or import the office's Excel (`.xlsx`) or CSV file. An empty
+list shows an *Add the list* button for admins.
 
 **Tests**
 
@@ -238,7 +291,7 @@ Firebase emulators.
 
 - **Data:** the commodity, market and price lists shown are **demo data**. The official lists
   from DA, DAR and NVAT have been requested through the Office of the Governor; when they arrive,
-  admins import them by CSV with no code changes.
+  admins import them from Excel or CSV, or type them in, with no code changes.
 - **SMS:** the gateway (Semaphore or Globe Labs) has not been chosen yet. SMS works through the
   mock gateway and the admin simulator.
 - **Pilot plan:** one public market (likely Bayombong) and one farmer group for about 4 weeks.
