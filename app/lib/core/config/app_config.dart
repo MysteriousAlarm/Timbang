@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 /// functions/src/config.ts and firestore.rules.
 abstract final class AppConfig {
   /// Shown in footers. Keep in sync with pubspec.yaml `version`.
-  static const appVersion = '0.1.0';
+  static const appVersion = '0.1.1';
 
   /// Use the Firebase Emulator Suite. Defaults to on in debug builds.
   /// Override: --dart-define=USE_EMULATORS=false

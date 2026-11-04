@@ -1,7 +1,7 @@
 name: timbang
 description: "TIMBANG: verified daily vegetable prices and produce listings for Nueva Vizcaya."
 publish_to: 'none'
-version: 0.1.0+1
+version: 0.1.1+2
 
 environment:
   sdk: ^3.13.0

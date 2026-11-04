@@ -10,7 +10,7 @@ A verified daily vegetable price board and produce marketplace for the farmers o
 
 `Flutter` · `Firebase` · `Cloud Functions (TypeScript)` · `English and Filipino`
 
-**Status:** first build **v0.1.0**, a working prototype for a class requirement (see [Status](#status))
+**Status:** first build **v0.1.1**, a working prototype for a class requirement (see [Status](#status))
 
 </div>
 
@@ -286,7 +286,7 @@ and [`docs/APK_BUILD.md`](docs/APK_BUILD.md) (Android APK checklist and troubles
 
 ## Status
 
-**First build (v0.1.0): working prototype.** All MVP features are built and tested against the
+**First build (v0.1.1): working prototype.** All MVP features are built and tested against the
 Firebase emulators.
 
 - **Data:** the commodity, market and price lists shown are **demo data**. The official lists
