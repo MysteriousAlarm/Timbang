@@ -56,6 +56,7 @@ const markets = [
     type: 'public_market',
   ),
   Market(id: 'bambang-pm', name: 'Bambang PM', municipality: 'Bambang', type: 'public_market'),
+  Market(id: 'solano-tp', name: 'Solano TP', municipality: 'Solano', type: 'trading_post'),
 ];
 
 class FakeBoard implements PriceBoardRepository {
@@ -63,7 +64,13 @@ class FakeBoard implements PriceBoardRepository {
   final commodity = StreamController<BoardSnapshot>.broadcast();
   BoardSnapshot marketData = const BoardSnapshot([]);
   BoardSnapshot commodityData = const BoardSnapshot([]);
+  BoardSnapshot allData = const BoardSnapshot([]);
   String? lastMarket;
+
+  @override
+  Stream<BoardSnapshot> watchAll() async* {
+    yield allData;
+  }
 
   @override
   Stream<BoardSnapshot> watchMarket(String marketId) async* {
@@ -105,6 +112,25 @@ void main() {
       ], commodities);
       expect(rows.map((r) => r.commodity.id), ['kamatis', 'repolyo']);
     });
+    test('provinceRows: median of market medians, range, lowest confidence', () {
+      final rows = provinceRows(
+        [
+          e('kamatis', 'bayombong-pm', 64, conf: Confidence.high),
+          e('kamatis', 'solano-pm', 60, conf: Confidence.medium),
+          e('kamatis', 'bambang-pm', 50, conf: Confidence.low),
+          e('old', 'bambang-pm', 1),
+          e('repolyo', 'gone-market', 40),
+        ],
+        commodities,
+        markets,
+      );
+      expect(rows.map((r) => r.commodity.id), ['kamatis']);
+      final k = rows.single;
+      expect(k.entry.medianPrice, 60);
+      expect((k.low, k.high, k.markets), (50, 64, 3));
+      expect(k.entry.confidence, Confidence.low);
+      expect(k.entry.reportCount, 6);
+    });
     test('compareRows: own town first, then cheapest', () {
       final rows = compareRows(
         [e('k', 'solano-pm', 50), e('k', 'bambang-pm', 45), e('k', 'bayombong-pm', 70)],
@@ -136,7 +162,7 @@ void main() {
         );
     });
 
-    Future<void> pump(WidgetTester tester, Widget child) async {
+    Future<void> pump(WidgetTester tester, Widget child, {String? scope}) async {
       tester.view.physicalSize = const Size(800, 2600);
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.reset);
@@ -150,20 +176,41 @@ void main() {
             commoditiesProvider.overrideWith((ref) => Stream.value(commodities)),
             marketsProvider.overrideWith((ref) => Stream.value(markets)),
             clockProvider.overrideWith((ref) => Stream.value(now)),
+            savedPriceScopeProvider.overrideWithValue(scope),
           ],
         ),
       );
       await tester.pumpAndSettle();
     }
 
-    testWidgets('board defaults to a market in the user town and shows every label', (
-      tester,
-    ) async {
+    testWidgets('home defaults to the whole province', (tester) async {
+      board.allData = BoardSnapshot([
+        e('kamatis', 'bayombong-pm', 64, conf: Confidence.high),
+        e('kamatis', 'solano-pm', 60),
+        e('kamatis', 'bambang-pm', 50),
+      ]);
+      await pump(tester, const PriceBoardSection());
+      expect(board.lastMarket, isNull);
+      expect(find.text('Nueva Vizcaya'), findsOneWidget);
+      expect(find.text('₱60.00'), findsOneWidget);
+      expect(find.textContaining('₱50.00–₱64.00 sa 3 palengke'), findsOneWidget);
+      expect(find.text('Katamtaman'), findsOneWidget);
+    });
+
+    testWidgets('town with no markets offers the province view', (tester) async {
+      await pump(tester, const PriceBoardSection(), scope: 'Kasibu');
+      expect(find.text('Wala pang nakalistang palengke sa Kasibu'), findsOneWidget);
+      await tester.tap(find.byKey(const Key('seeProvince')));
+      await tester.pumpAndSettle();
+      expect(find.text('Nueva Vizcaya'), findsOneWidget);
+    });
+
+    testWidgets('a chosen town shows its market and every label', (tester) async {
       board.marketData = BoardSnapshot([
         e('kamatis', 'bayombong-pm', 64, conf: Confidence.high),
         e('repolyo', 'bayombong-pm', 44, age: const Duration(hours: 30), conf: Confidence.low),
       ]);
-      await pump(tester, const PriceBoardSection());
+      await pump(tester, const PriceBoardSection(), scope: 'Bayombong');
       expect(board.lastMarket, 'bayombong-pm');
       expect(find.text('Bayombong PM'), findsOneWidget);
       expect(find.text('₱64.00'), findsOneWidget);
@@ -182,7 +229,7 @@ void main() {
       board.marketData = BoardSnapshot([
         e('kamatis', 'bayombong-pm', 64, demo: true),
       ], fromCache: true);
-      await pump(tester, const PriceBoardSection());
+      await pump(tester, const PriceBoardSection(), scope: 'Bayombong');
       expect(find.textContaining('Offline ka'), findsOneWidget);
       expect(find.textContaining('Hindi ito totoong presyo'), findsOneWidget);
     });
@@ -192,13 +239,14 @@ void main() {
       expect(find.text('Wala pang presyo'), findsOneWidget);
     });
 
-    testWidgets('switching market', (tester) async {
-      await pump(tester, const PriceBoardSection());
+    testWidgets('switching market inside a town with two markets', (tester) async {
+      await pump(tester, const PriceBoardSection(), scope: 'Solano');
+      expect(board.lastMarket, 'solano-pm');
       await tester.tap(find.byKey(const Key('marketPicker')));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Solano PM'));
+      await tester.tap(find.text('Solano TP'));
       await tester.pumpAndSettle();
-      expect(board.lastMarket, 'solano-pm');
+      expect(board.lastMarket, 'solano-tp');
     });
 
     testWidgets('comparison: headline, own town first, cheapest and differences', (tester) async {

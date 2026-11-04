@@ -211,6 +211,7 @@ class PriceRowCard extends StatelessWidget {
     required this.now,
     this.onTap,
     this.badge,
+    this.lead,
   });
 
   final String title;
@@ -222,6 +223,9 @@ class PriceRowCard extends StatelessWidget {
   /// Extra label such as "Pinakamababa" or "Iyong bayan".
   final Widget? badge;
 
+  /// Replaces the source in the meta line (province view: price range across markets).
+  final String? lead;
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -230,7 +234,7 @@ class PriceRowCard extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
     final stale = entry.isStale(now);
     final meta = [
-      sourceLabelShort(l10n, topSource(entry)),
+      lead ?? sourceLabelShort(l10n, topSource(entry)),
       l10n.reportCount(entry.reportCount),
       l10n.updatedAgo(ageLabel(l10n, now, entry.latestReportAt)),
     ].join(' · ');

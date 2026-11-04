@@ -33,7 +33,6 @@ class AdminShell extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final c = TimbangColors.of(context);
-    final scheme = Theme.of(context).colorScheme;
     final session = ref.watch(sessionProvider);
     final name = session is SignedIn ? session.profile.name : '';
     final width = MediaQuery.sizeOf(context).width;
@@ -94,9 +93,7 @@ class AdminShell extends ConsumerWidget {
         toolbarHeight: 72,
         title: Row(
           children: [
-            narrow
-                ? const TimbangEmblem(size: 34, onDark: true)
-                : const TimbangWordmark(size: 40, onDark: true),
+            narrow ? const TimbangEmblem(size: 34) : const TimbangWordmark(size: 40),
             SizedBox(width: narrow ? SharedTokens.space2 : SharedTokens.space4),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -112,12 +109,7 @@ class AdminShell extends ConsumerWidget {
           if (width >= 700)
             Padding(
               padding: const EdgeInsets.only(right: SharedTokens.space2),
-              child: Center(
-                child: Text(
-                  name,
-                  style: Theme.of(context).textTheme.labelLarge?.copyWith(color: scheme.onPrimary),
-                ),
-              ),
+              child: Center(child: Text(name, style: Theme.of(context).textTheme.labelLarge)),
             ),
           IconButton(
             tooltip: l10n.adminFarmerView,

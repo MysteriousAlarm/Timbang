@@ -8,6 +8,9 @@ abstract class PriceBoardRepository {
 
   /// One commodity across all markets (market comparison).
   Stream<BoardSnapshot> watchCommodity(String commodityId);
+
+  /// Every board entry in the province (province-wide view). Small: commodities x markets.
+  Stream<BoardSnapshot> watchAll();
 }
 
 /// Firestore with offline persistence: the last board stays readable without signal.
@@ -33,4 +36,7 @@ class FirestorePriceBoardRepository implements PriceBoardRepository {
   @override
   Stream<BoardSnapshot> watchCommodity(String commodityId) =>
       _watch(_db.collection('price_board').where('commodityId', isEqualTo: commodityId));
+
+  @override
+  Stream<BoardSnapshot> watchAll() => _watch(_db.collection('price_board'));
 }

@@ -52,6 +52,9 @@ class Board implements PriceBoardRepository {
     ]),
   );
   @override
+  Stream<BoardSnapshot> watchAll() => watchMarket('');
+
+  @override
   Stream<BoardSnapshot> watchCommodity(String commodityId) => Stream.value(const BoardSnapshot([]));
 }
 

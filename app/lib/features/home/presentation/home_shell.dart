@@ -11,6 +11,7 @@ import '../../../shared/widgets/brand.dart';
 import '../../../shared/widgets/sections.dart';
 import '../../auth/application/session.dart';
 import '../../inquiries/data/inquiry_repository.dart';
+import '../../price_board/presentation/scope_picker.dart';
 
 /// Farmer/buyer frame: seal app bar with a highlight rule, labeled bottom navigation.
 class HomeShell extends ConsumerWidget {
@@ -27,8 +28,10 @@ class HomeShell extends ConsumerWidget {
     final unread = ref.watch(newInquiryCountProvider);
     return Scaffold(
       appBar: AppBar(
-        toolbarHeight: 60,
-        title: const TimbangWordmark(size: 32, onDark: true),
+        toolbarHeight: 68,
+        // Prices and produce follow the chosen place (One Vizcaya style switcher);
+        // the other tabs show the plain wordmark.
+        title: shell.currentIndex <= 1 ? const ScopeButton() : const TimbangWordmark(size: 32),
         actions: [
           if (signedIn?.isAdmin ?? false)
             IconButton(
@@ -129,10 +132,10 @@ class _Avatar extends StatelessWidget {
           width: 40,
           height: 40,
           alignment: Alignment.center,
-          decoration: BoxDecoration(color: scheme.onPrimary, shape: BoxShape.circle),
+          decoration: BoxDecoration(color: scheme.primary, shape: BoxShape.circle),
           child: Text(
             initials(name),
-            style: TextStyle(color: scheme.primary, fontWeight: FontWeight.w800, fontSize: 16),
+            style: TextStyle(color: scheme.onPrimary, fontWeight: FontWeight.w700, fontSize: 15),
           ),
         ),
       ),

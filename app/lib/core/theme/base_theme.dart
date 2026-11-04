@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'timbang_colors.dart';
 import 'tokens.dart';
@@ -31,14 +32,21 @@ ThemeData buildTimbangTheme({
     materialTapTargetSize: MaterialTapTargetSize.padded,
     visualDensity: VisualDensity.standard,
     splashFactory: InkSparkle.splashFactory,
+    // Light header that sits on the page (paper), separated by a single rule: the green
+    // lives in the seal, the selected tab and the actions, not in a solid bar.
     appBarTheme: AppBarTheme(
-      backgroundColor: colors.primaryDark,
-      foregroundColor: scheme.onPrimary,
+      backgroundColor: colors.canvas,
+      foregroundColor: text,
+      surfaceTintColor: Colors.transparent,
       elevation: 0,
       scrolledUnderElevation: 0,
       centerTitle: false,
       titleSpacing: SharedTokens.space4,
-      titleTextStyle: textTheme.titleLarge?.copyWith(color: scheme.onPrimary),
+      systemOverlayStyle: SystemUiOverlayStyle.dark.copyWith(statusBarColor: Colors.transparent),
+      shape: Border(bottom: BorderSide(color: colors.border)),
+      iconTheme: IconThemeData(color: text),
+      actionsIconTheme: IconThemeData(color: scheme.primary),
+      titleTextStyle: textTheme.titleLarge,
     ),
     cardTheme: CardThemeData(
       color: scheme.surface,

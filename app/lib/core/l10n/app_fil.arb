@@ -949,7 +949,7 @@
     }
   },
   "quickTools": "Mga gamit",
-  "bulletinKicker": "Arawang bulletin ng presyo · Nueva Vizcaya",
+  "bulletinKicker": "Arawang bulletin ng presyo",
   "servicesTitle": "Mga serbisyo",
   "svcPostDesc": "Ilista ang iyong ani para makontak ka ng mamimili",
   "svcFindDesc": "Tingnan ang inaaning ibinebenta ng mga magsasaka",
@@ -979,5 +979,51 @@
         "type": "String"
       }
     }
-  }
+  },
+  "scopeProvince": "Buong Nueva Vizcaya",
+  "scopeLabel": "Presyo sa",
+  "choosePlace": "Pumili ng lugar",
+  "scopeProvinceSub": "Lahat ng palengke sa lalawigan",
+  "scopeSemantics": "Presyo sa {place}. Pindutin para palitan ang lugar.",
+  "@scopeSemantics": {
+    "placeholders": {
+      "place": {
+        "type": "String"
+      }
+    }
+  },
+  "noMarketsInTown": "Wala pang nakalistang palengke sa {town}",
+  "@noMarketsInTown": {
+    "placeholders": {
+      "town": {
+        "type": "String"
+      }
+    }
+  },
+  "noMarketsInTownBody": "Maaaring magdagdag ang admin ng palengke para sa bayang ito. Samantala, tingnan ang presyo sa buong lalawigan.",
+  "seeProvince": "Tingnan ang buong Nueva Vizcaya",
+  "provinceRange": "{low}–{high} sa {count} palengke",
+  "@provinceRange": {
+    "placeholders": {
+      "low": {
+        "type": "String"
+      },
+      "high": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "provinceFootnote": "Buong lalawigan: ang gitna ng median ng bawat palengke. Ang kumpiyansa ay ang pinakamababa sa mga palengkeng iyon. Pindutin ang gulay para makita ang bawat palengke.",
+  "townMarketsCount": "{n, plural, =0{Wala pang palengke} other{{n} palengke}}",
+  "@townMarketsCount": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "provinceOneMarket": "Sa 1 palengke lang"
 }

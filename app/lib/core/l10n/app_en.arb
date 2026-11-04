@@ -599,7 +599,7 @@
       }
     }
   },
-  "bulletinKicker": "Daily price bulletin · Nueva Vizcaya",
+  "bulletinKicker": "Daily price bulletin",
   "servicesTitle": "Services",
   "svcPostDesc": "List your harvest so buyers can contact you",
   "svcFindDesc": "See produce that farmers are selling",
@@ -629,5 +629,51 @@
         "type": "String"
       }
     }
-  }
+  },
+  "scopeProvince": "All of Nueva Vizcaya",
+  "scopeLabel": "Prices in",
+  "choosePlace": "Choose a place",
+  "scopeProvinceSub": "Every market in the province",
+  "scopeSemantics": "Prices in {place}. Tap to change the place.",
+  "@scopeSemantics": {
+    "placeholders": {
+      "place": {
+        "type": "String"
+      }
+    }
+  },
+  "noMarketsInTown": "No markets listed in {town} yet",
+  "@noMarketsInTown": {
+    "placeholders": {
+      "town": {
+        "type": "String"
+      }
+    }
+  },
+  "noMarketsInTownBody": "An admin can add markets for this town. Meanwhile, see prices across the province.",
+  "seeProvince": "See all of Nueva Vizcaya",
+  "provinceRange": "{low}–{high} across {count} markets",
+  "@provinceRange": {
+    "placeholders": {
+      "low": {
+        "type": "String"
+      },
+      "high": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "provinceFootnote": "Province view: the middle of each market's median. Confidence shows the lowest among those markets. Tap a vegetable to see each market.",
+  "townMarketsCount": "{n, plural, =0{No markets yet} =1{1 market} other{{n} markets}}",
+  "@townMarketsCount": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "provinceOneMarket": "At 1 market only"
 }

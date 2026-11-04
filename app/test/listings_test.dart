@@ -95,6 +95,9 @@ class EmptyBoard implements PriceBoardRepository {
   @override
   Stream<BoardSnapshot> watchMarket(String marketId) => Stream.value(const BoardSnapshot([]));
   @override
+  Stream<BoardSnapshot> watchAll() => Stream.value(const BoardSnapshot([]));
+
+  @override
   Stream<BoardSnapshot> watchCommodity(String commodityId) => Stream.value(BoardSnapshot(entries));
 }
 

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/config/app_config.dart';
 import '../../auth/application/session.dart';
+import '../../price_board/application/price_scope.dart';
 import '../data/listing_repository.dart';
 import '../domain/listing.dart';
 
@@ -12,8 +13,9 @@ final listingRepositoryProvider = Provider<ListingRepository>(
 );
 
 class ListingFilterNotifier extends Notifier<ListingFilter> {
+  /// Starts from the place chosen in the header (null = whole province).
   @override
-  ListingFilter build() => const ListingFilter();
+  ListingFilter build() => ListingFilter(municipality: ref.watch(priceScopeProvider));
   void set(ListingFilter f) => state = f;
 }
 
