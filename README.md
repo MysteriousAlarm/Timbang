@@ -253,9 +253,20 @@ FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099 FIRESTORE_EMULATOR_HOST=127.0.0.1:808
 Sign-in method → Phone → *Phone numbers for testing*, e.g. `+63 917 000 0001` with code `123456`.
 Remove them, or keep them private, before the pilot.
 
-**Lists and prices from a phone:** admins can add or edit commodities and markets and enter
-official prices in the app itself, or import the office's Excel (`.xlsx`) or CSV file. An empty
-list shows an *Add the list* button for admins.
+**Lists and prices after the build, from a phone:** the commodity, market and price lists live in
+the database, not in the code, so no rebuild is needed. Admins add or edit them in the app
+(Profile → Open the admin dashboard) or on the website, one at a time or by importing the office's
+Excel (`.xlsx`) or CSV file as it is:
+
+- names are enough (IDs are made from them), in Filipino or English;
+- title rows above the header and section headings (e.g. *HIGHLAND VEGETABLES*) are skipped, and a
+  heading becomes the category of the rows under it;
+- units such as *per kilo*, *tali* or *pcs* are understood;
+- price sheets can have one row per price, or one column per market.
+
+Order: import the **markets**, then the **commodities**, then the **prices**. Editing needs an
+internet connection (each change is checked and logged by the server); reading the price board
+works offline. An empty list shows an *Add the list* button for admins.
 
 **Tests**
 

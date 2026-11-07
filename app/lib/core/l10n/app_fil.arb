@@ -308,7 +308,7 @@
       }
     }
   },
-  "importHelp": "Gumamit ng CSV na may header sa unang linya. Ang mga item na may parehong ID ay ia-update. Kailangang tama ang lahat ng linya bago mag-import (hanggang {max} bawat file).",
+  "importHelp": "I-upload ang Excel o CSV ng opisina kahit ganoon lang: sapat na ang pangalan (gagawa ng ID mula rito), nilalaktawan ang mga titulo at pamagat ng seksiyon, at naiintindihan ang yunit gaya ng \"per kilo\" o \"tali\". Ina-update ang item na may kaparehong ID. Dapat tama ang bawat linya bago mag-import (hanggang {max} bawat file).",
   "@importHelp": {
     "placeholders": {
       "max": {
@@ -391,7 +391,7 @@
   "adminPricesKicker": "Datos ng presyo",
   "adminPricesDesc": "Mag-import ng opisyal na presyo at bantayan ang mga bagong ulat.",
   "importOfficialPrices": "I-import ang opisyal na presyo",
-  "officialImportHelp": "Para sa datos mula sa DA, DAR o NVAT. Bawat linya ay magiging opisyal na ulat (mataas na kumpiyansa). Kailangang tama ang lahat ng linya (hanggang {max}).",
+  "officialImportHelp": "Para sa datos mula sa DA, DAR o NVAT. Puwedeng pangalan ang nakasulat na gulay at palengke. Gumagana sa isang hilera bawat presyo, o isang kolum bawat palengke. Bawat presyo ay nagiging opisyal na ulat (mataas na kumpiyansa). Idagdag muna ang mga gulay at palengke. Dapat tama ang bawat linya (hanggang {max}).",
   "@officialImportHelp": {
     "placeholders": {
       "max": {

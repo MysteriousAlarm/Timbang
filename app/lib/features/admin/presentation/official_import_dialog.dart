@@ -13,6 +13,7 @@ import '../../../shared/utils/spreadsheet.dart';
 import '../../../shared/widgets/sections.dart';
 import '../../catalog/data/catalog_providers.dart';
 import '../../catalog/domain/catalog_item.dart';
+import '../../catalog/domain/name_index.dart';
 import '../../reports/data/price_report_repository.dart';
 import '../../reports/domain/official_csv.dart';
 
@@ -44,16 +45,22 @@ class _OfficialImportDialogState extends ConsumerState<_OfficialImportDialog> {
   void _parse(String text, {String? fileName}) => _parseTable(parseCsv(text), fileName: fileName);
 
   void _parseTable(List<List<String>> table, {String? fileName}) {
-    final commodityIds = {
+    final commodities = [
       for (final x in ref.read(commoditiesProvider).value ?? const <Commodity>[])
-        if (x.active) x.id,
-    };
-    final marketIds = {
+        if (x.active) x,
+    ];
+    final markets = [
       for (final x in ref.read(marketsProvider).value ?? const <Market>[])
-        if (x.active) x.id,
-    };
+        if (x.active) x,
+    ];
     setState(() {
-      _result = parseOfficialTable(table, commodityIds: commodityIds, marketIds: marketIds);
+      _result = parseOfficialTable(
+        table,
+        commodityIds: {for (final x in commodities) x.id},
+        marketIds: {for (final x in markets) x.id},
+        commodityNames: commodityNameIndex(commodities),
+        marketNames: marketNameIndex(markets),
+      );
       _fileName = fileName;
       _serverErrors = const [];
     });

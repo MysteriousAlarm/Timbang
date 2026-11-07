@@ -31,10 +31,57 @@ void main() {
     });
   });
 
-  test('missing required column is a header error', () {
-    final r = parseCatalogCsv(CatalogKind.commodities, 'id,nameFil\nkamatis,Kamatis\n');
+  test('a list with no name column is a header error', () {
+    final r = parseCatalogCsv(CatalogKind.commodities, 'id,unit\nkamatis,kg\n');
     expect(r.canImport, isFalse);
-    expect(r.headerIssues, contains(const RowIssue('unit', IssueKind.missingColumn)));
+    expect(r.headerIssues, contains(const RowIssue('nameFil', IssueKind.missingColumn)));
+    final m = parseCatalogCsv(CatalogKind.markets, 'name\nBayombong Public Market\n');
+    expect(m.headerIssues, contains(const RowIssue('municipality', IssueKind.missingColumn)));
+  });
+
+  test('office sheet: title rows, plain names, units in words, no IDs', () {
+    final r = parseCatalogTable(CatalogKind.commodities, [
+      ['PROVINCE OF NUEVA VIZCAYA'],
+      ['Office of the Provincial Agriculturist'],
+      [''],
+      ['No.', 'Commodity', 'Local Name', 'Unit', 'Classification'],
+      ['1', 'Tomato', 'Kamatis', 'per kilo', 'Lowland Vegetables'],
+      ['', 'HIGHLAND VEGETABLES', '', '', ''],
+      ['2', 'Pechay (Native)', 'Pechay Tagalog', 'tali', 'Highland Vegetables'],
+      ['3', 'Squash', '', 'pcs', ''],
+    ]);
+    final sheet2 = parseCatalogTable(CatalogKind.commodities, [
+      ['Commodity', 'Unit'],
+      ['HIGHLAND VEGETABLES', ''],
+      ['Cabbage', 'kg'],
+    ]);
+    expect((sheet2.items.single as Commodity).category, 'Highland Vegetables');
+    expect(r.canImport, isTrue, reason: '${r.headerIssues} ${r.rows.map((x) => x.issues)}');
+    final items = r.items.cast<Commodity>();
+    expect(items.map((c) => c.id), ['kamatis', 'pechay-tagalog', 'squash']);
+    expect(items[0].nameEn, 'Tomato');
+    expect(items[1].unit, 'bundle');
+    expect(items[2].unit, 'piece');
+    expect(items[2].nameFil, 'Squash');
+    expect(items[2].category, 'Highland Vegetables');
+  });
+
+  test('office market list: town spelled loosely, type in words, no IDs', () {
+    final r = parseCatalogTable(CatalogKind.markets, [
+      ['Market', 'Town', 'Type'],
+      ['Bayombong Public Market', 'Municipality of Bayombong', 'Public Market'],
+      ['NVAT Trading Post', 'BAMBANG, Nueva Vizcaya', 'Trading post'],
+      ['Alfonso Castañeda Market', 'Alfonso Castaneda', ''],
+    ]);
+    expect(r.canImport, isTrue, reason: '${r.rows.map((x) => x.issues)}');
+    final m = r.items.cast<Market>();
+    expect(m.map((x) => x.id), [
+      'bayombong-public-market',
+      'nvat-trading-post',
+      'alfonso-castaneda-market',
+    ]);
+    expect(m.map((x) => x.municipality), ['Bayombong', 'Bambang', 'Alfonso Castañeda']);
+    expect(m.map((x) => x.type), ['public_market', 'trading_post', 'public_market']);
   });
 
   test('row errors carry line numbers; one bad row blocks the import', () {
