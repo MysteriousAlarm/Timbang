@@ -168,6 +168,32 @@ in `asia-southeast1` → Storage → `flutterfire configure` → deploy). The AP
 
 ---
 
+## Private files: back up and restore
+
+Some files are private and never go to GitHub. Without them the build or phone login breaks:
+
+| File | Lives at | Why it matters |
+|---|---|---|
+| `google-services.json` | `app\android\app\` | Connects the Android app to Firebase (timbang-nv) |
+| `debug.keystore` | `%USERPROFILE%\.android\` | Signs the APK. Its SHA-1/SHA-256 are registered in Firebase; a new one means new fingerprints |
+| `timbang-sa.json` | `%USERPROFILE%\keys\` | Service-account key, used only by `npm run seed:admin` |
+| `timbang-upload.jks` + `key.properties` | `%USERPROFILE%\keys\`, `app\android\` | Release signing key, once it is set up |
+
+**Back up** (from the Timbang folder), then upload the zip to a private Google Drive folder:
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\secrets-backup.ps1 -IncludeGradle
+```
+The zip goes to `Documents\TIMBANG-SECRETS\`. `-IncludeGradle` also saves the Gradle download
+(~230 MB) so a new PC can build even when GitHub's download fails.
+
+**Restore** on a new or reset PC: download the zip into `Downloads`, then:
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\secrets-restore.ps1
+```
+It places every file where the build expects it. A file that is already there and different is
+kept as `*.bak-<date>`. It refuses a `google-services.json` that is not for timbang-nv
+(for example One Vizcaya's).
+
 ## Troubleshooting
 
 | Error / symptom | Fix |
