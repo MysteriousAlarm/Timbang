@@ -329,7 +329,7 @@
   "csvTemplate": "Template",
   "copy": "Kopyahin",
   "copied": "Nakopya.",
-  "csvAllowedCommodity": "unit: kg, bundle, piece · active: true o false (opsyonal)",
+  "csvAllowedCommodity": "Pangalan lang ang kailangan. yunit: kg, bundle, piece (o per kilo, tali, pcs; kg kung wala) · active: true o false (opsyonal)",
   "csvAllowedMarket": "municipality: isa sa 15 bayan ng Nueva Vizcaya · type: public_market, trading_post, farmgate_area · active: true o false (opsyonal)",
   "importTooMany": "Masyadong marami. Hanggang {max} na linya lamang bawat file.",
   "@importTooMany": {
@@ -401,7 +401,7 @@
   },
   "officialSourceLabel": "Pinagmulan ng datos",
   "officialSourceHelp": "Hal. DA Bantay Presyo, Nobyembre 3, 2026",
-  "officialCsvColumns": "commodityId at marketId: ID mula sa listahan · price: hal. 60 o 60.50 · date: YYYY-MM-DD (opsyonal, ngayon kung wala)",
+  "officialCsvColumns": "Gulay at palengke: ang pangalan (Filipino o English) o ang ID · presyo: hal. 60 o 60.50 · petsa: YYYY-MM-DD (opsyonal, ngayon kung wala) · o isang kolum bawat palengke",
   "officialFieldInvalid": "mali o hindi kilala",
   "importedPrices": "Na-import ang {count} na opisyal na presyo.",
   "@importedPrices": {
@@ -927,7 +927,7 @@
   "privacySecurityBody": "Naka-encrypt ang koneksyon. Ang access sa datos ay limitado ng mahigpit na security rules: makikita mo lamang ang sa iyo, at ang mga sensitibong aksyon ng admin ay naitatala sa audit log. Hindi kami gumagamit ng analytics na nangongolekta ng personal na datos.",
   "privacyContactTitle": "Makipag-ugnayan",
   "privacyContactBody": "Para sa mga tanong o reklamo tungkol sa privacy, makipag-ugnayan sa admin ng TIMBANG sa inyong tanggapan ng agrikultura, o sa developer ng Project TIMBANG sa Nueva Vizcaya State University, Bayombong. Maaari ka ring magsampa ng reklamo sa National Privacy Commission (privacy.gov.ph).",
-  "privacyUpdated": "Huling na-update: Nobyembre 2026 · Unang build v0.1.0",
+  "privacyUpdated": "Huling na-update: Nobyembre 2026 · Unang build v0.1.1",
   "privacyScrollHint": "Mag-scroll hanggang dulo para makasang-ayon.",
   "privacyAgreeCheck": "Nabasa at naunawaan ko ang Paunawa sa Privacy at sumasang-ayon ako",
   "privacyAgreeButton": "Sumasang-ayon ako",

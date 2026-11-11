@@ -104,7 +104,8 @@ class _Body extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(commodity?.nameIn(context) ?? listing.commodityId, style: t.headlineSmall),
-                  if (commodity != null) Text(commodity.nameEn, style: t.bodyMedium),
+                  if (commodity != null && commodity.altNameIn(context).isNotEmpty)
+                    Text(commodity.altNameIn(context), style: t.bodyMedium),
                 ],
               ),
             ),
