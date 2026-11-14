@@ -187,6 +187,19 @@ Security is graded for CS PC 7, so it is built in from the start:
 See [`docs/threat-model.md`](docs/threat-model.md) (STRIDE) and
 [`docs/security-checklist.md`](docs/security-checklist.md) (OWASP MASVS).
 
+## Testing
+
+Every part of the system has automated tests, run against the Firebase Local Emulator Suite.
+Last full run: **November 11, 2026, 393 tests, all passed.**
+
+| Test suite | What it checks | Tests |
+|---|---|---|
+| App (`flutter_test`) | Screens, price board, imports, accessibility (text contrast, touch target size, labels), language | 106 |
+| Cloud Functions (Jest) | Price confidence, roles, reports, imports, listings, inquiries, alerts, SMS, account deletion | 166 |
+| Security rules (`@firebase/rules-unit-testing`) | Allowed and denied reads and writes for every collection and for Storage | 103 |
+| Integration (Node test runner) | End-to-end function calls on the emulators: prices, roles, catalog, inquiries, SMS, admin | 18 |
+| **Total** | | **393** |
+
 ## Tech stack
 
 | Layer | Technology |
