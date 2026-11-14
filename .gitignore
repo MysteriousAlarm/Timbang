@@ -36,3 +36,7 @@ build/
 # Private-file backups made by scripts/secrets-backup.ps1 (keep them on Drive, never here)
 TIMBANG-SECRETS*/
 TIMBANG-SECRETS*.zip
+
+# Submission files sent directly (large or rebuilt from the repo)
+docs/submission/*.mp4
+docs/submission/*.zip
