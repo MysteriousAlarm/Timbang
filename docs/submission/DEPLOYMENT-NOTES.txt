@@ -2,6 +2,9 @@
  PROJECT TIMBANG - DEPLOYMENT NOTES
  Verified daily vegetable price board and produce marketplace for Nueva Vizcaya
  Version 0.1.1 (first build)  -  Repository: github.com/MysteriousAlarm/Timbang
+ Team: Aaron Anthony A. Gano II (Lead Developer / Member),
+       Jhon Kenneth S. Soriano (Member), Kurt John Zel H. Raba (Member)
+       Nueva Vizcaya State University - IT ECC 6 and CS PC 7
 ===============================================================================
 
 WHAT GETS DEPLOYED

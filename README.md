@@ -325,9 +325,14 @@ Provincial Government of Nueva Vizcaya, DA, DAR or NVAT.
 
 ## About
 
-Developed by **Aaron Anthony A. Gano II**, BS Computer Science (Robotics),
-**Nueva Vizcaya State University**, Bayombong, as a joint requirement of
+Developed at **Nueva Vizcaya State University**, Bayombong, as a joint requirement of
 **IT ECC 6 – Application Development** and **CS PC 7 – Information Assurance and Technology**.
+
+| Name | Role |
+|---|---|
+| **Aaron Anthony A. Gano II** | Lead Developer / Member |
+| **Jhon Kenneth S. Soriano** | Member |
+| **Kurt John Zel H. Raba** | Member |
 
 Typefaces, all under the SIL Open Font License and bundled in `app/assets/fonts`:
 [Fraunces](https://github.com/undercasetype/Fraunces) for headlines and the wordmark,
