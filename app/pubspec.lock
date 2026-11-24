@@ -109,10 +109,10 @@ packages:
     dependency: "direct main"
     description:
       name: cloud_functions
-      sha256: "630a4f8a104ec4a0197796ffc559c1e2cd58200fbfabc46c5f694161dba86f88"
+      sha256: dc03dee69b3e005ff3c7337766d2d0ae32d1b6ec084b87dddc7107c9ffcb038f
       url: "https://pub.dev"
     source: hosted
-    version: "7.0.1"
+    version: "7.1.0"
   cloud_functions_platform_interface:
     dependency: transitive
     description:
@@ -910,10 +910,10 @@ packages:
     dependency: transitive
     description:
       name: test_api
-      sha256: "2a122cbe059f8b610d3a5415f42e255b6c17b1f21eee1d960f31080237fb4f11"
+      sha256: "0a10344e901e5b2e63819567951cb6a06673ed6b84f40462188ff5a0c41f371f"
       url: "https://pub.dev"
     source: hosted
-    version: "0.7.12"
+    version: "0.7.14"
   typed_data:
     dependency: transitive
     description:
